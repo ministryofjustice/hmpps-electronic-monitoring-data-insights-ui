@@ -2,6 +2,15 @@
 
 {% block head %}
   <link href="{{ '/assets/css/app.css' | assetMap }}" rel="stylesheet"/>
+  <style>
+    .govuk-main-wrapper  {
+        padding: 0px;
+    }
+    {# .govuk-width-container{
+      margin-left: 0;
+      margin-right: 0;
+    } #}
+  </style>
 {% endblock %}
 
 {% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}

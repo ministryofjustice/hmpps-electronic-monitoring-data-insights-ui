@@ -4,7 +4,77 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}
+  
+  {# <h1>Hello from Nunjucks Host App!</h1> #}
+  {# Approach 1 - iframe solution #}
+  <div class="iframe-container" style="width: 100%;height: 100vh;overflow: hidden;">
+    <iframe style="border:none;" src="http://localhost:5001" width="100%" height="100%"></iframe>
+  </div>
 
-  <h1>Welcome to Electronic Monitoring For Probation Officers</h1>
+  {# Approach 2 - Web Component #}
+  {# <img src="/assets/images/crest.svg"></img>
+  {# <my-web-component title="Hello from Nunjucks" content="This is a React component built with Vite."></my-web-component>
+  <script src="/assets/js/web-component.js"></script> #} 
+
+
+  {# Approach 3 - Module Federation #}
+  {# <div id="react-root"></div>
+  <script type="module">
+    import React from 'https://esm.sh/react';
+    import { createRoot } from 'https://esm.sh/react-dom/client';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const container = document.getElementById('react-root');
+
+      if (!container) {
+        console.error('Target container not found');
+        return;
+      }
+
+      // Load the exposed module from the remote
+      const App = await import('http://localhost:5001/assets/remoteEntry.js');
+
+      // Check if ReactApp is defined
+      console.log('app ',App)
+      if (!App || typeof App !== 'function') {
+        console.error('App is not a valid React component:', App);
+        return;
+      }
+
+      // Render the React app
+      const root = createRoot(container);
+      root.render(React.createElement(App));
+    });
+  </script> #}
+
+  {# <script type="module">
+    import React from 'https://esm.sh/react';
+    import { createRoot } from 'https://esm.sh/react-dom/client';
+
+    // Dynamically load the React microfrontend
+    async function loadReactApp() {
+      const container = document.getElementById('react-root');
+
+      if (!container) {
+        console.error('Target container not found');
+        return;
+      }
+
+      // Load the exposed module from the remote
+      const { App } = await import('http://localhost:5001/assets/remoteEntry.js');
+
+      // Check if App is defined
+      if (!App) {
+        console.error('App is undefined');
+        return;
+      }
+
+      // Use createRoot to render the React app
+      const root = createRoot(container);
+      root.render(React.createElement(App));
+    }
+
+    loadReactApp();
+  </script> #}
 
 {% endblock %}
