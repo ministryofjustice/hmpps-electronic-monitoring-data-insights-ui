@@ -1,14 +1,14 @@
 ---
-# Per environment values which override defaults in hmpps-electronic-monitoring-for-probation-officers-ui/values.yaml
+# Per environment values which override defaults in hmpps-electronic-monitoring-data-insights-ui/values.yaml
 
 generic-service:
   replicaCount: 2
 
   ingress:
-    host: electronic-monitoring-for-probation-officers-ui-dev.hmpps.service.justice.gov.uk
+    host: electronic-monitoring-data-insights-ui
 
   env:
-    INGRESS_URL: "https://electronic-monitoring-for-probation-officers-ui-dev.hmpps.service.justice.gov.uk"
+    INGRESS_URL: "https://electronic-monitoring-data-insights-ui"
     HMPPS_AUTH_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-dev.prison.service.justice.gov.uk"
     ENVIRONMENT_NAME: DEV
