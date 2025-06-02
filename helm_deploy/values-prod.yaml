@@ -13,4 +13,4 @@ generic-service:
     AUDIT_ENABLED: "false"
 
 generic-prometheus-alerts:
-  alertSeverity: 
+  alertSeverity: hmpps_electronic_monitoring_data_insights_alerts
