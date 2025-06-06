@@ -7,6 +7,7 @@ import config from '../config'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import generateOauthClientToken from '../utils/clientCredentials'
 import logger from '../../logger'
+import tokenVerifier from '../data/tokenVerification'
 
 passport.serializeUser((user, done) => {
   // Not used but required for Passport
@@ -37,7 +38,6 @@ passport.use(
 
 export default function setupAuthentication() {
   const router = Router()
-  const tokenVerificationClient = new VerificationClient(config.apis.tokenVerification, logger)
 
   router.use(passport.initialize())
   router.use(passport.session())
@@ -75,7 +75,7 @@ export default function setupAuthentication() {
   })
 
   router.use(async (req, res, next) => {
-    if (req.isAuthenticated() && (await tokenVerificationClient.verifyToken(req as unknown as AuthenticatedRequest))) {
+    if (req.isAuthenticated() && (await tokenVerifier(req as unknown as AuthenticatedRequest))) {
       return next()
     }
     req.session.returnTo = req.originalUrl
