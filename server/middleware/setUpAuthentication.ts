@@ -7,6 +7,7 @@ import config from '../config'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import generateOauthClientToken from '../utils/clientCredentials'
 import tokenVerifier from '../data/tokenVerification'
+import rateLimitSetUp from '../utils/rateLimitSetUp'
 
 passport.serializeUser((user, done) => {
   // Not used but required for Passport
@@ -41,6 +42,7 @@ export default function setupAuthentication() {
   router.use(passport.initialize())
   router.use(passport.session())
   router.use(flash())
+  rateLimitSetUp(router, config)
 
   router.get('/autherror', (req, res) => {
     res.status(401)

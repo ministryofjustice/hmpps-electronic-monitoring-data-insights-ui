@@ -28,7 +28,7 @@ const auditConfig = () => {
   }
 }
 
-export default {
+const config = {
   buildNumber: get('BUILD_NUMBER', '1_0_0', requiredInProduction),
   productId: get('PRODUCT_ID', 'UNASSIGNED', requiredInProduction),
   gitRef: get('GIT_REF', 'xxxxxxxxxxxxxxxxxxx', requiredInProduction),
@@ -87,4 +87,9 @@ export default {
   },
   ingressUrl: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   environmentName: get('ENVIRONMENT_NAME', ''),
+  rateWindowMS: Number(get('RATE_WINDOW_MS', 900000)),
+  rateLimitMax: Number(get('RATE_LIMIT_MAX', 100)),
 }
+
+export default config
+export type Config = typeof config
