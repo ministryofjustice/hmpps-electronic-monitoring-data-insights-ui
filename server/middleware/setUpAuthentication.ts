@@ -2,11 +2,10 @@ import passport from 'passport'
 import flash from 'connect-flash'
 import { Router } from 'express'
 import { Strategy } from 'passport-oauth2'
-import { VerificationClient, AuthenticatedRequest } from '@ministryofjustice/hmpps-auth-clients'
+import { AuthenticatedRequest } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import generateOauthClientToken from '../utils/clientCredentials'
-import logger from '../../logger'
 import tokenVerifier from '../data/tokenVerification'
 
 passport.serializeUser((user, done) => {
