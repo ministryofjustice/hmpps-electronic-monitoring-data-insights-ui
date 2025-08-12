@@ -1,10 +1,14 @@
 import { HmppsUser } from '../../interfaces/hmppsUser'
+import { ValidationResult } from '../../models/ValidationResult'
 
 export declare module 'express-session' {
   // Declare that the session will potentially contain these additional fields
   interface SessionData {
     returnTo: string
     nowInMinutes: number
+    formData: unknown
+    validationErrors: ValidationResult
+    queryId: string
   }
 }
 

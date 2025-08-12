@@ -1,10 +1,10 @@
 import nock from 'nock'
 import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
-import EMDIApiClient from './emdiApiClient'
+import EmdiApiClient from './emdiApiClient'
 import config from '../config'
 
-describe('EMDIApiClient', () => {
-  let emdiApiClient: EMDIApiClient
+describe('EmdiApiClient', () => {
+  let emdiApiClient: EmdiApiClient
   let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('EMDIApiClient', () => {
       getToken: jest.fn().mockResolvedValue('test-system-token'),
     } as unknown as jest.Mocked<AuthenticationClient>
 
-    emdiApiClient = new EMDIApiClient(mockAuthenticationClient)
+    emdiApiClient = new EmdiApiClient(mockAuthenticationClient)
   })
 
   afterEach(() => {

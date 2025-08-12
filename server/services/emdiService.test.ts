@@ -1,10 +1,10 @@
-import EMDIApiClient from '../data/emdiApiClient'
+import EmdiApiClient from '../data/emdiApiClient'
 import ExampleService from './emdiService'
 
 jest.mock('../data/emdiApiClient')
 
 describe('ExampleService', () => {
-  const emdiApiClient = new EMDIApiClient(null) as jest.Mocked<EMDIApiClient>
+  const emdiApiClient = new EmdiApiClient(null) as jest.Mocked<EmdiApiClient>
   let exampleService: ExampleService
 
   beforeEach(() => {
