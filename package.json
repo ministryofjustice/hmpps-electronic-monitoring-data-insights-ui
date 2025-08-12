@@ -78,6 +78,7 @@
     "@ministryofjustice/hmpps-auth-clients": "^0.0.1-alpha.4",
     "@ministryofjustice/hmpps-monitoring": "^0.0.1-beta.2",
     "@ministryofjustice/hmpps-rest-client": "^0.0.1-alpha.9",
+    "agentkeepalive": "^4.6.0",
     "applicationinsights": "^2.9.6",
     "body-parser": "^2.2.0",
     "bunyan": "^1.8.15",
@@ -98,7 +99,8 @@
     "passport": "^0.7.0",
     "passport-oauth2": "^1.8.0",
     "redis": "^4.7.0",
-    "superagent": "^10.2.1"
+    "superagent": "^10.2.1",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "^4.0.3",

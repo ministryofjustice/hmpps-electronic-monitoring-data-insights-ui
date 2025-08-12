@@ -1,5 +1,3 @@
-import { AgentConfig } from '@ministryofjustice/hmpps-rest-client'
-
 const production = process.env.NODE_ENV === 'production'
 
 function get<T>(name: string, fallback: T, options = { requireInProduction: false }): T | string {
@@ -25,6 +23,15 @@ const auditConfig = () => {
     ),
     serviceName: get('AUDIT_SERVICE_NAME', 'UNASSIGNED', auditEnabled && requiredInProduction),
     region: get('AUDIT_SQS_REGION', 'eu-west-2'),
+  }
+}
+
+export class AgentConfig {
+  // Sets the working socket to timeout after timeout milliseconds of inactivity on the working socket.
+  timeout: number
+
+  constructor(timeout = 8000) {
+    this.timeout = timeout
   }
 }
 
@@ -76,10 +83,10 @@ const config = {
       url: get('EMDI_API_URL', 'http://localhost:8080', requiredInProduction),
       healthPath: '/health/ping',
       timeout: {
-        response: Number(get('EXAMPLE_API_TIMEOUT_RESPONSE', 5000)),
-        deadline: Number(get('EXAMPLE_API_TIMEOUT_DEADLINE', 5000)),
+        response: Number(get('EMDI_API_TIMEOUT_RESPONSE', 5000)),
+        deadline: Number(get('EMDI_API_TIMEOUT_DEADLINE', 5000)),
       },
-      agent: new AgentConfig(Number(get('EXAMPLE_API_TIMEOUT_RESPONSE', 5000))),
+      agent: new AgentConfig(Number(get('EMDI_API_TIMEOUT_RESPONSE', 5000))),
     },
   },
   sqs: {
@@ -89,6 +96,19 @@ const config = {
   environmentName: get('ENVIRONMENT_NAME', ''),
   rateWindowMS: Number(get('RATE_WINDOW_MS', 900000)),
   rateLimitMax: Number(get('RATE_LIMIT_MAX', 100)),
+}
+
+export interface ApiConfig {
+  url: string
+  timeout: {
+    // sets maximum time to wait for the first byte to arrive from the server, but it does not limit how long the
+    // entire download can take.
+    response: number
+    // sets a deadline for the entire request (including all uploads, redirects, server processing time) to complete.
+    // If the response isn't fully downloaded within that time, the request will be aborted.
+    deadline: number
+  }
+  agent: AgentConfig
 }
 
 export default config
