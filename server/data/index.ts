@@ -4,7 +4,6 @@
  * In particular, applicationinsights automatically collects bunyan logs
  */
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
-// import { RestClient } from '@ministryofjustice/hmpps-rest-client'
 import { initialiseAppInsights, buildAppInsightsClient } from '../utils/azureAppInsights'
 import applicationInfoSupplier from '../applicationInfo'
 
@@ -12,15 +11,13 @@ const applicationInfo = applicationInfoSupplier()
 initialiseAppInsights()
 buildAppInsightsClient(applicationInfo)
 
-import HmppsAuthClient from './hmppsAuthClient'
 import { createRedisClient } from './redisClient'
 import RedisTokenStore from './tokenStore/redisTokenStore'
 import InMemoryTokenStore from './tokenStore/inMemoryTokenStore'
 import config from '../config'
 import HmppsAuditClient from './hmppsAuditClient'
 import logger from '../../logger'
-
-type RestClientBuilder<T> = (token: string) => T
+import EmdiApiClient from './emdiApiClient'
 
 export const dataAccess = () => {
   const hmppsAuthClient = new AuthenticationClient(
@@ -33,10 +30,10 @@ export const dataAccess = () => {
     applicationInfo,
     hmppsAuthClient,
     hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
-    // emdiApiClient: new RestClient('emdiApiClient', config.apis.emdiApi, logger, hmppsAuthClient),
+    emdiApiClient: new EmdiApiClient(hmppsAuthClient),
   }
 }
 
 export type DataAccess = ReturnType<typeof dataAccess>
 
-export { HmppsAuthClient, RestClientBuilder, HmppsAuditClient }
+export { HmppsAuditClient }

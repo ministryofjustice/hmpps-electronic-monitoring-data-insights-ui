@@ -4,14 +4,14 @@ context('Example feature', () => {
     cy.task('stubSignIn')
   })
 
-  it.skip('Time from emdiApi is visible on page', () => {
+  it('Time from emdiApi is visible on page', () => {
     cy.task('stubExampleTime')
     cy.signIn()
 
     cy.get('#timestamp').contains('The time is currently 2025-01-01T12:00:00Z')
   })
 
-  it.skip('EMDIApi failure shows error page with custom error message', () => {
+  it('EMDIApi failure shows error page with custom error message', () => {
     cy.task('stubExampleTime', 500)
 
     cy.signIn({ failOnStatusCode: false })
