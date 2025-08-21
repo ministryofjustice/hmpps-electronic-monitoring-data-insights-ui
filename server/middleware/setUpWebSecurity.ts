@@ -15,6 +15,7 @@ export default function setUpWebSecurity(): Router {
   })
   router.use(
     helmet({
+      crossOriginResourcePolicy: false,
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
@@ -24,13 +25,19 @@ export default function setUpWebSecurity(): Router {
           // <link href="http://example.com/" rel="stylesheet" nonce="{{ cspNonce }}">
           // This ensures only scripts we trust are loaded, and not anything injected into the
           // page by an attacker.
+          connectSrc: ["'self'", 'api.os.uk'],
+          imgSrc: ["'self'", 'api.os.uk', 'data: blob:'],
+
           scriptSrc: ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
-          styleSrc: ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
-          fontSrc: ["'self'"],
+
+          styleSrc: ["'self'", 'cdn.jsdelivr.net', (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
+          // Allow inline style ATTRIBUTES only (needed by Open Layers controls):
+          styleSrcAttr: ["'unsafe-inline'"],
+          fontSrc: ["'self'", 'cdn.jsdelivr.net'],
           formAction: [`'self' ${config.apis.hmppsAuth.externalUrl}`],
         },
       },
-      crossOriginEmbedderPolicy: true,
+      crossOriginEmbedderPolicy: false,
     }),
   )
   return router
