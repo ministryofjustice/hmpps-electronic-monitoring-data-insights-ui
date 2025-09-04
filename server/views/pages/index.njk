@@ -20,14 +20,7 @@
   <div class="govuk-!-margin-top-6">
     <h2 class="govuk-heading-m">Map Preview</h2>
     <div class="emdi-map-wrap" style="height:60vh">
-      {{ mojMap({
-          cspNonce: cspNonce,
-          geoData: {
-            points: vm.mojMapProps.geoData.points,
-            lines: pvm.mojMapProps.geoData.lines
-          }
-        }) 
-      }}
+      {{ mojMap(vm.mojMapProps) }}
       
     </div>
   </div>
