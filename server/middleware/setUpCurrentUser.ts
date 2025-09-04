@@ -17,7 +17,6 @@ export default function setUpCurrentUser() {
         user_id?: string
         authorities?: string[]
       }
-
       res.locals.user = {
         ...res.locals.user,
         userId,

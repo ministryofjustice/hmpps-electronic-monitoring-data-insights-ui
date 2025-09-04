@@ -1,5 +1,5 @@
 import express from 'express'
-
+import pdsComponents from '@ministryofjustice/hmpps-probation-frontend-components'
 import createError from 'http-errors'
 
 import nunjucksSetup from './utils/nunjucksSetup'
@@ -18,6 +18,8 @@ import setUpWebSession from './middleware/setUpWebSession'
 
 import routes from './routes'
 import type { Services } from './services'
+import logger from '../logger'
+import config from './config'
 
 export default function createApp(services: Services): express.Application {
   const app = express()
@@ -37,7 +39,14 @@ export default function createApp(services: Services): express.Application {
   app.use(authorisationMiddleware())
   app.use(setUpCsrf())
   app.use(setUpCurrentUser())
-
+  app.use(
+    '*',
+    pdsComponents.getPageComponents({
+      pdsUrl: config.apis.probationApi.url,
+      logger,
+    }),
+  )
+  app.use(routes(services))
   app.use(routes(services))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))

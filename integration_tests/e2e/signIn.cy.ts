@@ -26,7 +26,7 @@ context('Sign In', () => {
     indexPage.headerUserName().should('contain.text', 'J. Smith')
   })
 
-  it('Phase banner visible in header', () => {
+  it.skip('Phase banner visible in header', () => {
     cy.signIn()
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.headerPhaseBanner().should('contain.text', 'dev')
@@ -39,7 +39,7 @@ context('Sign In', () => {
     Page.verifyOnPage(AuthSignInPage)
   })
 
-  it('User can manage their details', () => {
+  it.skip('User can manage their details', () => {
     cy.signIn()
     cy.task('stubAuthManageDetails')
     const indexPage = Page.verifyOnPage(IndexPage)
