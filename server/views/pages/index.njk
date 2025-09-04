@@ -13,25 +13,22 @@
   <p>Please check back later when there is content to view.</p>
   <p id="timestamp">The time is currently {{ currentTime }}</p>
 
+  <p class="govuk-hint">
+    Lines: {{ vm.mojMapProps.geoData.lines | length }}
+    Pts: {{ vm.mojMapProps.geoData.points | length }}
+  </p>
   <div class="govuk-!-margin-top-6">
     <h2 class="govuk-heading-m">Map Preview</h2>
     <div class="emdi-map-wrap" style="height:60vh">
       {{ mojMap({
-        cspNonce: cspNonce,
-        geoData: {
-          points: params.geoData.points,
-          lines: params.geoData.lines
-        },
-        usesInternalOverlays: true,
-
-        controls: {
-          scaleControl: 'bar',         
-          locationDisplay: 'latlon',       
-          locationSource: 'pointer',   
-          rotateControl: 'auto-hide',  
-          zoomSlider: true
-        }
-      }) }}
+          cspNonce: cspNonce,
+          geoData: {
+            points: vm.mojMapProps.geoData.points,
+            lines: pvm.mojMapProps.geoData.lines
+          }
+        }) 
+      }}
+      
     </div>
   </div>
 
