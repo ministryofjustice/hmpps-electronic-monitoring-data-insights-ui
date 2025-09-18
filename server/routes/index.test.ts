@@ -29,7 +29,6 @@ afterEach(() => {
 describe('GET /', () => {
   it('should render index page', () => {
     auditService.logPageView.mockResolvedValue(null)
-    emdiService.getCurrentTime.mockResolvedValue('2025-01-01T12:00:00.000')
 
     return request(app)
       .get('/')
@@ -37,18 +36,15 @@ describe('GET /', () => {
       .expect(200)
       .expect(res => {
         expect(res.text).toContain('This site is under construction...')
-        expect(res.text).toContain('The time is currently 2025-01-01T12:00:00.000')
         expect(auditService.logPageView).toHaveBeenCalledWith(Page.HOME_PAGE, {
           who: user.username,
           correlationId: expect.any(String),
         })
-        expect(emdiService.getCurrentTime).toHaveBeenCalled()
       })
   })
 
   it('service errors are handled', () => {
-    auditService.logPageView.mockResolvedValue(null)
-    emdiService.getCurrentTime.mockRejectedValue(new Error('Some problem calling external api!'))
+    auditService.logPageView.mockRejectedValue(new Error('Some problem calling external api!'))
 
     return request(app)
       .get('/')
