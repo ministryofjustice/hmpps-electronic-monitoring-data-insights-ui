@@ -2,7 +2,9 @@ import HmppsAuditClient, { AuditEvent } from '../data/hmppsAuditClient'
 
 export enum Page {
   HOME_PAGE = 'HOME_PAGE',
-  CASES_PAGE = 'CASES_PAGE',
+  CASES_OVERVIEW_PAGE = 'CASES_OVERVIEW_PAGE',
+  CASES_CURFEW_PAGE = 'CASES_CURFEW_PAGE',
+  CASES_NOTES_PAGE = 'CASES_NOTES_PAGE',
   SEARCH_PAGE = 'SEARCH_PAGE',
 }
 
