@@ -1,0 +1,18 @@
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+
+{{ mojSubNavigation({
+    label: "Sub navigation",
+    items: [{
+      text: "Overview",
+      href: "/cases",
+      active: activeTab == "overview"
+    }, {
+      text: "Curfew Activity",
+      href: "/cases/curfew",
+      active: activeTab == "curfew"
+    }, {
+      text: "Case Notes",
+      href: "/cases/notes",
+      active: activeTab == "notes"
+    }]
+  }) }}

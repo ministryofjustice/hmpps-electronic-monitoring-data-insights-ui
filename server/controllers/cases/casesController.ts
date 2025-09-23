@@ -9,7 +9,7 @@ export default class CasesController {
       who: res.locals.user.username,
       correlationId: req.id,
     })
-    res.render('pages/cases', {
+    res.render('pages/casesOverview', {
       activeNav: 'cases',
       activeTab: 'overview',
     })
@@ -20,7 +20,7 @@ export default class CasesController {
       who: res.locals.user.username,
       correlationId: req.id,
     })
-    res.render('pages/cases', {
+    res.render('pages/casesCurfew', {
       activeNav: 'cases',
       activeTab: 'curfew',
     })
@@ -28,7 +28,7 @@ export default class CasesController {
 
   async notes(req: Request, res: Response): Promise<void> {
     await this.auditService.logPageView(Page.CASES_NOTES_PAGE, { who: res.locals.user.username, correlationId: req.id })
-    res.render('pages/cases', {
+    res.render('pages/casesNotes', {
       activeNav: 'cases',
       activeTab: 'notes',
     })

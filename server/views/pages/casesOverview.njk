@@ -1,0 +1,14 @@
+{% extends "../partials/layout.njk" %}
+{% extends "moj/template.njk" %}
+
+{% set pageTitle = applicationName + " - Cases" %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+  {% include "../partials/primaryHeader.njk" %}
+{% endblock %}
+
+{% block content %}
+  {% include "partials/casesSubNavigation.njk" %}
+  <h1>Overview</h1>
+{% endblock %}
