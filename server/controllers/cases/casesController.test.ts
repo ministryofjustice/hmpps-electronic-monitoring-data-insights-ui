@@ -32,7 +32,7 @@ describe('CasesController', () => {
         who: 'user1',
         correlationId: 'test-correlation-id',
       })
-      expect(res.render).toHaveBeenCalledWith('pages/cases', {
+      expect(res.render).toHaveBeenCalledWith('pages/casesOverview', {
         activeNav: 'cases',
         activeTab: 'overview',
       })
@@ -46,7 +46,7 @@ describe('CasesController', () => {
         who: 'user1',
         correlationId: 'test-correlation-id',
       })
-      expect(res.render).toHaveBeenCalledWith('pages/cases', {
+      expect(res.render).toHaveBeenCalledWith('pages/casesCurfew', {
         activeNav: 'cases',
         activeTab: 'curfew',
       })
@@ -60,7 +60,7 @@ describe('CasesController', () => {
         who: 'user1',
         correlationId: 'test-correlation-id',
       })
-      expect(res.render).toHaveBeenCalledWith('pages/cases', {
+      expect(res.render).toHaveBeenCalledWith('pages/casesNotes', {
         activeNav: 'cases',
         activeTab: 'notes',
       })
