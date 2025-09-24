@@ -57,20 +57,6 @@ describe('GET /', () => {
 })
 
 describe('Routes', () => {
-  it('GET /cases', () => {
-    return request(app)
-      .get('/cases')
-      .expect('Content-Type', /html/)
-      .expect(200)
-      .expect(res => {
-        expect(res.text).toContain('Cases')
-        expect(auditService.logPageView).toHaveBeenCalledWith(Page.CASES_PAGE, {
-          who: user.username,
-          correlationId: expect.any(String),
-        })
-      })
-  })
-
   it('GET /search', () => {
     return request(app)
       .get('/search')

@@ -1,20 +1,24 @@
 import { type RequestHandler, Router } from 'express'
-
-import asyncMiddleware from '../middleware/asyncMiddleware'
 import type { Services } from '../services'
-import { Page } from '../services/auditService'
-import populateSessionData from '../middleware/populateSessionData'
+import CasesController from '../controllers/cases/casesController'
 
-export default function routes({ auditService }: Services): Router {
-  const router = Router()
-  const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+export default function casesRoutes(
+  { auditService }: Services,
+  get: (path: string, handler: RequestHandler) => Router,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  post: (path: string, handler: RequestHandler) => Router,
+): void {
+  const casesController = new CasesController(auditService)
 
-  get('/cases', async (req, res, next) => {
-    await auditService.logPageView(Page.CASES_PAGE, { who: res.locals.user.username, correlationId: req.id })
-    res.render('pages/cases', { activeNav: 'cases' })
+  get('/cases', async (req, res) => {
+    await casesController.overview(req, res)
   })
 
-  router.use(populateSessionData)
+  get('/cases/curfew', async (req, res) => {
+    await casesController.curfew(req, res)
+  })
 
-  return router
+  get('/cases/notes', async (req, res) => {
+    await casesController.notes(req, res)
+  })
 }
