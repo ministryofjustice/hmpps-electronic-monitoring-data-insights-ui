@@ -10,7 +10,7 @@ context('Cases', () => {
 
   it('Navigates to Cases page via primary navigation and sub navigation is present', () => {
     cy.signIn()
-    cy.get('.moj-primary-navigation').contains('a', 'Cases').click()
+    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
 
     const casesPage = Page.verifyOnPage(CasesPage)
     casesPage.casesSubNav().should('exist')
@@ -20,7 +20,7 @@ context('Cases', () => {
 
   it('Navigates to Cases page via primary navigation and curfew badge is present', () => {
     cy.signIn()
-    cy.get('.moj-primary-navigation').contains('a', 'Cases').click()
+    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
 
     const casesPage = Page.verifyOnPage(CasesPage)
     casesPage.casesCurfewBadge().should('exist')
