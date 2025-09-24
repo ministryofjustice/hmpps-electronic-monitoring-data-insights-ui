@@ -6,4 +6,6 @@ export default class CasesPage extends Page {
   }
 
   casesSubNav = (): PageElement => cy.get('[data-qa=cases-sub-navigation]')
+
+  casesCurfewBadge = (): PageElement => cy.get('[data-qa=curfew-badge]')
 }
