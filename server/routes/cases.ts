@@ -5,6 +5,7 @@ import CasesController from '../controllers/cases/casesController'
 export default function casesRoutes(
   { auditService }: Services,
   get: (path: string, handler: RequestHandler) => Router,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   post: (path: string, handler: RequestHandler) => Router,
 ): void {
   const casesController = new CasesController(auditService)
