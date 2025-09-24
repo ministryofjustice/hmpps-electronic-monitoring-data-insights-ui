@@ -19,19 +19,19 @@ context('Cases', () => {
 
   it('Navigates between Cases sub navigation tabs', () => {
     cy.signIn()
-    cy.get('.moj-primary-navigation').contains('a', 'Cases').click()
+    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
 
     // Overview tab (should be active by default)
     cy.get('[aria-current=page]').should('contain.text', 'Overview')
     cy.contains('h1', 'Overview')
 
     // Curfew Activity tab
-    cy.get('.moj-sub-navigation__link').contains('a', 'Curfew Activity').click()
+    cy.get('[data-qa=cases-sub-navigation]').contains('a', 'Curfew Activity').click()
     cy.get('[aria-current=page]').should('contain.text', 'Curfew Activity')
     cy.contains('h1', 'Curfew')
 
     // Case Notes tab
-    cy.get('.moj-sub-navigation__link').contains('a', 'Case Notes').click()
+    cy.get('[data-qa=cases-sub-navigation]').contains('a', 'Case Notes').click()
     cy.get('[aria-current=page]').should('contain.text', 'Case Notes')
     cy.contains('h1', 'Notes')
   })
