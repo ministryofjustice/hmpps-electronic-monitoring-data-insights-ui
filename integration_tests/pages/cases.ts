@@ -5,5 +5,5 @@ export default class CasesPage extends Page {
     super('Overview')
   }
 
-  casesSubNav = (): PageElement => cy.get('.moj-sub-navigation')
+  casesSubNav = (): PageElement => cy.get('[data-qa=cases-sub-navigation]')
 }
