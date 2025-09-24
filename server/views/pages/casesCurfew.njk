@@ -1,4 +1,4 @@
-{% extends "../partials/layout.njk" %}
+{% extends "partials/layout.njk" %}
 {% extends "moj/template.njk" %}
 
 
@@ -6,7 +6,7 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-  {% include "../partials/primaryHeader.njk" %}
+  {% include "partials/primaryHeader.njk" %}
 {% endblock %}
 
 {% block content %}
