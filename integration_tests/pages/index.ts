@@ -12,4 +12,14 @@ export default class IndexPage extends Page {
   fallbackHeader = (): PageElement => cy.get('.probation-common-fallback-header')
 
   fallbackFooter = (): PageElement => cy.get('.probation-common-fallback-footer')
+
+  profileInfoHeader = (): PageElement => cy.get('[data-qa=profile-info-header__subject-details]')
+
+  verifyProfileDetails(details) {
+    this.profileInfoHeader().within(() => {
+      details.forEach(item => {
+        cy.checkDlItem(item.label, item.value)
+      })
+    })
+  }
 }

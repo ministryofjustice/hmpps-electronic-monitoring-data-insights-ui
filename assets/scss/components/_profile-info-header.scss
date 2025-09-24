@@ -1,3 +1,32 @@
-.profile-info-header {
-    border: 10px solid red;
+.profile-info-header__subject-details {
+    display: flex;
+    align-items: center; 
+    font-size: 19px;
+    list-style: none; 
+    padding: 0;
+    margin-top: 32px;
+    margin-bottom: 0;
+    font-family: "GDS Transport", arial, sans-serif;
+    color: #505A5F;
+
+    & dt {
+        margin-right: 5px; 
+    }
+
+    & dd {
+        font-weight: normal; 
+        margin: 0; 
+        padding-right: 16px; 
+        white-space: nowrap; 
+    }
+
+     & dd:not(:last-child)::after {
+        content: "|";
+        padding-left: 15px; 
+        color: #505A5F;
+    }
+
 }
+
+
+

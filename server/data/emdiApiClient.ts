@@ -14,6 +14,6 @@ export default class EmdiApiClient extends RestClient {
   }
 
   getCurrentTime() {
-    return this.get({ path: '//' }, asSystem())
+    return this.get({ path: '/' }, asSystem())
   }
 }

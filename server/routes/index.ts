@@ -8,7 +8,7 @@ import SearchController from '../controllers/search/searchController'
 import casesRoutes from './cases'
 interface PoPData {
   crn: string
-  dob: string
+  dateOfBirth: string
   tier: string
 }
 
@@ -19,7 +19,7 @@ export default function routes(services: Services): Router {
   const post = (path: string | string[], handler: RequestHandler) => router.post(path, asyncMiddleware(handler))
   const mockData = {
     crn: 'X172591',
-    dob: '1964-10-07',
+    dateOfBirth: '1964-10-07',
     tier: 'B3',
   }
 
