@@ -1,0 +1,28 @@
+.profile-info-header__subject-details {
+    display: flex;
+    align-items: center; 
+    @include govuk-font($size: 19);
+    margin-bottom: govuk-spacing(0);
+    font-family: "GDS Transport", arial, sans-serif;
+    color: #505A5F;
+
+    & dt {
+        margin-right: govuk-spacing(1); 
+    }
+
+    & dd {
+        margin: govuk-spacing(0); 
+        padding-right: govuk-spacing(2); 
+        white-space: nowrap; 
+    }
+
+     & dd:not(:last-child)::after {
+        content: "|";
+        padding-left: govuk-spacing(2);
+        color: govuk-colour("dark-grey");
+    }
+
+}
+
+
+

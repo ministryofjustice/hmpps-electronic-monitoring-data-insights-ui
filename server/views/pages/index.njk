@@ -6,9 +6,13 @@
 
 {% block beforeContent %}
   {% include "../partials/primaryHeader.njk" %}
+  {% if popData %}
+    {% include "../partials/profileInfoHeader.njk" %}
+  {% endif %}
 {% endblock %}
 
 {% block content %}
-  <h1>This site is under construction...</h1>
+
+  <h1>This site is under construction... </h1>
   <p>Please check back later when there is content to view.</p>
 {% endblock %}

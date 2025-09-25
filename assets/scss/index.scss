@@ -10,6 +10,7 @@ $govuk-page-width: $moj-page-width;
 @import './components/header-bar';
 @import './components/primary-header';
 @import './components/cases-header';
+@import './components/profile-info-header';
 @import './overrides/local';
 
 @import 'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/footer';

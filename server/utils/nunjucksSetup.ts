@@ -6,6 +6,17 @@ import fs from 'fs'
 import { initialiseName } from './utils'
 import config from '../config'
 import logger from '../../logger'
+import formatDate from './helpers'
+
+const commonLocale = {
+  en: {
+    profileInfoHeader: {
+      crnLabel: 'CRN',
+      dateOfBirthLabel: 'Date of birth',
+      tierLabel: 'Tier',
+    },
+  },
+}
 
 export default function nunjucksSetup(app: express.Express): void {
   app.set('view engine', 'njk')
@@ -14,6 +25,8 @@ export default function nunjucksSetup(app: express.Express): void {
   app.locals.applicationName = 'HMPPS Electronic Monitoring Data Insights Ui'
   app.locals.environmentName = config.environmentName
   app.locals.environmentNameColour = config.environmentName === 'PRE-PRODUCTION' ? 'govuk-tag--green' : ''
+  app.locals.common = commonLocale.en
+
   let assetManifest: Record<string, string> = {}
 
   try {
@@ -38,6 +51,7 @@ export default function nunjucksSetup(app: express.Express): void {
     },
   )
 
+  njkEnv.addFilter('formatSimpleDate', date => formatDate(date, 'simple'))
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
 }
