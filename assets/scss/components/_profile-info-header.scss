@@ -22,7 +22,7 @@
 
      & dd:not(:last-child)::after {
         content: "|";
-        padding-left: 15px; 
+        padding-left: 16px; 
         color: #505A5F;
     }
 
