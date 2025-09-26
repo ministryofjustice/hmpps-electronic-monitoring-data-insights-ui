@@ -12,6 +12,7 @@ export default class CasesController {
     res.render('pages/casesOverview', {
       activeNav: 'cases',
       activeTab: 'overview',
+      alert: true,
     })
   }
 
@@ -23,6 +24,7 @@ export default class CasesController {
     res.render('pages/casesCurfew', {
       activeNav: 'cases',
       activeTab: 'curfew',
+      alert: true,
     })
   }
 
