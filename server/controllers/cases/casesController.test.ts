@@ -35,6 +35,7 @@ describe('CasesController', () => {
       expect(res.render).toHaveBeenCalledWith('pages/casesOverview', {
         activeNav: 'cases',
         activeTab: 'overview',
+        alert: true,
       })
     })
   })
@@ -49,6 +50,7 @@ describe('CasesController', () => {
       expect(res.render).toHaveBeenCalledWith('pages/casesCurfew', {
         activeNav: 'cases',
         activeTab: 'curfew',
+        alert: true,
       })
     })
   })

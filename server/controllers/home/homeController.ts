@@ -13,6 +13,7 @@ export default class HomeController {
     res.render('pages/index', {
       activeNav: '/',
       popData: mockPopDetails,
+      alert: true,
     })
   }
 }

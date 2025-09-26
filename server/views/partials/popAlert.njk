@@ -1,0 +1,16 @@
+{%- from "moj/components/alert/macro.njk" import mojAlert -%}
+
+{% if alert %}
+    {{ mojAlert({
+            variant: "warning",
+            title: "Richard Marks has violated their curfew within the last 7 days",
+            showTitleAsHeading: true,
+            dismissible: true,
+            html: '<a href="#">View Richards’s compliance</a>',
+            classes: 'govuk-!-static-margin-top-6',
+            attributes: {
+                'data-qa': 'popCurfewStatusAlert'
+            }
+        }) 
+    }}    
+{% endif %}
