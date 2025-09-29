@@ -1,13 +1,10 @@
-
+{%- from "moj/components/badge/macro.njk" import mojBadge -%}
 <header class="profile-info-header">
-    <dl class="profile-info-header__subject-details govuk-list govuk-!-margin-top-6" data-qa="profile-info-header__subject-details">
-        <dt>{{ common.profileInfoHeader.crnLabel }}:</dt>
-        <dd>{{ popData.crn }} </dd>
-        
-        <dt>{{ common.profileInfoHeader.dateOfBirthLabel }}:</dt>
-        <dd>{{ popData.dateOfBirth | formatSimpleDate }}</dd>
-        
-        <dt>{{ common.profileInfoHeader.tierLabel }}:</dt>
-        <dd>{{ popData.tier }}</dd>
-    </dl>
+    {% include "../partials/profileInfo.njk" %}
+    {{ mojBadge({
+        text: "Compliance - Not Likely",
+        classes: "moj-badge--red moj-badge--large",
+        attributes: { "data-qa": "curfew-badge" }
+        }) 
+    }}
 </header>

@@ -1,15 +1,5 @@
-{%- from "moj/components/badge/macro.njk" import mojBadge -%}
-<div class="govuk-grid-row cases-header" data-qa="cases-header">
-  <div class="govuk-grid-column-one-half">
-    &nbsp;
-  </div>
-  <div class="govuk-grid-column-one-half badge-column">
-    <div class="badge-conatiner">
-      {{ mojBadge({
-        text: "Compliance Not Likely",
-        classes: "moj-badge--red moj-badge--large",
-        attributes: { "data-qa": "curfew-badge" }
-      }) }}
-    </div>
-  </div>
+<div class="cases-header" data-qa="cases-header">
+  {% if popData %}
+     {% include "../partials/profileInfoHeader.njk" %}
+  {% endif %}
 </div>

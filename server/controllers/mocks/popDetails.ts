@@ -1,4 +1,4 @@
-import { PopDetails } from '../../../data/types'
+import { PopDetails } from '../../data/types'
 
 const mockPopDetails = {
   crn: 'X172591',

@@ -35,14 +35,14 @@ context('Cases', () => {
     cy.get('[aria-current=page]').should('contain.text', 'Overview')
     cy.contains('h1', 'Overview')
 
-    // Curfew Activity tab
-    cy.get('[data-qa=cases-sub-navigation]').contains('a', 'Curfew Activity').click()
-    cy.get('[aria-current=page]').should('contain.text', 'Curfew Activity')
+    // Curfew activity tab
+    cy.get('[data-qa=cases-sub-navigation]').contains('a', 'Curfew activity').click()
+    cy.get('[aria-current=page]').should('contain.text', 'Curfew activity')
     cy.contains('h1', 'Curfew')
 
-    // Case Notes tab
-    cy.get('[data-qa=cases-sub-navigation]').contains('a', 'Case Notes').click()
-    cy.get('[aria-current=page]').should('contain.text', 'Case Notes')
+    // Case notes tab
+    cy.get('[data-qa=cases-sub-navigation]').contains('a', 'Case notes').click()
+    cy.get('[aria-current=page]').should('contain.text', 'Case notes')
     cy.contains('h1', 'Notes')
   })
 })

@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import CasesController from './casesController'
 import AuditService, { Page } from '../../services/auditService'
 import { user } from '../../routes/testutils/appSetup'
+import mockPopDetails from '../mocks/popDetails'
 
 jest.mock('../../services/auditService')
 
@@ -35,6 +36,7 @@ describe('CasesController', () => {
       expect(res.render).toHaveBeenCalledWith('pages/casesOverview', {
         activeNav: 'cases',
         activeTab: 'overview',
+        popData: mockPopDetails,
         alert: true,
       })
     })
@@ -50,6 +52,7 @@ describe('CasesController', () => {
       expect(res.render).toHaveBeenCalledWith('pages/casesCurfew', {
         activeNav: 'cases',
         activeTab: 'curfew',
+        popData: mockPopDetails,
         alert: true,
       })
     })
