@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import AuditService, { Page } from '../../services/auditService'
+import mockPopDetails from '../mocks/popDetails'
 
 export default class CasesController {
   constructor(private readonly auditService: AuditService) {}
@@ -12,6 +13,7 @@ export default class CasesController {
     res.render('pages/casesOverview', {
       activeNav: 'cases',
       activeTab: 'overview',
+      popData: mockPopDetails,
       alert: true,
     })
   }
@@ -24,6 +26,7 @@ export default class CasesController {
     res.render('pages/casesCurfew', {
       activeNav: 'cases',
       activeTab: 'curfew',
+      popData: mockPopDetails,
       alert: true,
     })
   }

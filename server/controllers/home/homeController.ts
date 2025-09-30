@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import AuditService, { Page } from '../../services/auditService'
-import mockPopDetails from './mocks/popDetails'
+import mockPopDetails from '../mocks/popDetails'
 
 export default class HomeController {
   constructor(private readonly auditService: AuditService) {}

@@ -29,7 +29,7 @@ context('PoP Alert', () => {
     cy.signIn()
     cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
     Page.verifyOnPage(CasesPage)
-    cy.get('[data-qa=cases-sub-navigation]').contains('a', 'Case Notes').click()
+    cy.get('[data-qa=cases-sub-navigation]').contains('a', 'Case notes').click()
     PopAlert.getAlert().should('not.exist')
   })
 })
