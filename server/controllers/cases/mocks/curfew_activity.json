@@ -1,0 +1,1225 @@
+{
+  "curfew_activity": [
+    {
+      "delius_id": "X123456",
+      "first_name": "Adam",
+      "middle_name": null,
+      "last_name": "Collins",
+      "date_of_birth": {
+        "year": 1990,
+        "month": 1,
+        "day": 1
+      },
+      "curfew_violation_forecast": "Likely",
+      "violations": [
+        {
+          "violation_alert_id": "564321",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 12,
+            "hour": 20,
+            "minute": 0,
+            "second": 0
+          },
+          "violation_alert_duration": {
+            "hour": 0,
+            "minute": 19,
+            "second": 0
+          },
+          "violation_alert_type": "AL09 Return home late",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+
+        {
+          "violation_alert_id": "11313789",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 17,
+            "hour": 3,
+            "minute": 17,
+            "second": 27
+          },
+          "violation_alert_duration": 77,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "47805488",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 3,
+            "hour": 4,
+            "minute": 25,
+            "second": 7
+          },
+          "violation_alert_duration": 258,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "29633534",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 8,
+            "day": 17,
+            "hour": 3,
+            "minute": 25,
+            "second": 56
+          },
+          "violation_alert_duration": 8,
+          "violation_alert_type": "AL05 Movement of Home Monitoring Unit",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "25896447",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 21,
+            "hour": 23,
+            "minute": 3,
+            "second": 18
+          },
+          "violation_alert_duration": 24,
+          "violation_alert_type": "AL04 Power off of Curfew Monitoring Equipment at home",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "15043029",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 16,
+            "hour": 20,
+            "minute": 0,
+            "second": 0
+          },
+          "violation_alert_duration": 720,
+          "violation_alert_type": "AL12 Out for entire Curfew period",
+          "exclude_from_atv_total": "Y",
+          "reasonable_excuse_reason": "Device-Wearer has been required to work at short notice, the work forms part of a permanent job, is not just a “one-off” piece of work, and the employer has provided written verification that the work was required and took place",
+          "reasonable_excuse_date": { "year": 2025, "month": 9, "day": 23 }
+        },
+        {
+          "violation_alert_id": "80888826",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 6,
+            "day": 23,
+            "hour": 20,
+            "minute": 47,
+            "second": 13
+          },
+          "violation_alert_duration": 4,
+          "violation_alert_type": "AL05 Movement of Home Monitoring Unit",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "41149306",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 7,
+            "day": 27,
+            "hour": 1,
+            "minute": 6,
+            "second": 34
+          },
+          "violation_alert_duration": 37,
+          "violation_alert_type": "AL04 Power off of Curfew Monitoring  Equipment at home",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "52592115",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 8,
+            "day": 16,
+            "hour": 0,
+            "minute": 0,
+            "second": 19
+          },
+          "violation_alert_duration": 8,
+          "violation_alert_type": "AL05 Movement of Home Monitoring Unit",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "40900582",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 8,
+            "day": 2,
+            "hour": 21,
+            "minute": 38,
+            "second": 39
+          },
+          "violation_alert_duration": 8,
+          "violation_alert_type": "AL24 Fault with Device (non-Tamper)",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "24020293",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 6,
+            "hour": 6,
+            "minute": 12,
+            "second": 42
+          },
+          "violation_alert_duration": 104,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "24587872",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 7,
+            "day": 30,
+            "hour": 4,
+            "minute": 26,
+            "second": 11
+          },
+          "violation_alert_duration": 39,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "50517287",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 7,
+            "day": 9,
+            "hour": 1,
+            "minute": 25,
+            "second": 9
+          },
+          "violation_alert_duration": 38,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "86597064",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 18,
+            "hour": 2,
+            "minute": 41,
+            "second": 4
+          },
+          "violation_alert_duration": 4,
+          "violation_alert_type": "AL23 Charged Device Battery dead",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "86487999",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 7,
+            "day": 15,
+            "hour": 22,
+            "minute": 16,
+            "second": 22
+          },
+          "violation_alert_duration": 93,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "32394084",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 8,
+            "day": 12,
+            "hour": 23,
+            "minute": 3,
+            "second": 11
+          },
+          "violation_alert_duration": 4,
+          "violation_alert_type": "AL05 Movement of Home Monitoring Unit",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "61293901",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 7,
+            "hour": 5,
+            "minute": 19,
+            "second": 50
+          },
+          "violation_alert_duration": 29,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "82668345",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 7,
+            "day": 25,
+            "hour": 2,
+            "minute": 43,
+            "second": 19
+          },
+          "violation_alert_duration": 77,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "18228483",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 8,
+            "day": 24,
+            "hour": 1,
+            "minute": 49,
+            "second": 34
+          },
+          "violation_alert_duration": 354,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "Y",
+          "reasonable_excuse_reason": "Irregular or unexpected personal medical appointments or treatment. Proof provided: appointment card or letter from hospital/doctor. Irregular or unexpected medical appointments / treatment for the Device-Wearer’s child or adult dependents. Proof provided: appointment card or letter from hospital/doctor.",
+          "reasonable_excuse_date": { "year": 2025, "month": 8, "day": 31 }
+        },
+        {
+          "violation_alert_id": "57612616",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 6,
+            "day": 21,
+            "hour": 20,
+            "minute": 0,
+            "second": 0
+          },
+          "violation_alert_duration": 39,
+          "violation_alert_type": "AL08 Out Past Curfew Commencement",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "12938931",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 15,
+            "hour": 7,
+            "minute": 52,
+            "second": 24
+          },
+          "violation_alert_duration": 7,
+          "violation_alert_type": "AL11 Out at end of Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        }
+      ],
+      "first_installation_attempt_datetime": {
+        "year": 2025,
+        "month": 6,
+        "day": 20,
+        "hour": 18,
+        "minute": 0,
+        "second": 0
+      },
+      "first_installation_attempt_install_outcome": "Refused Access",
+      "second_installation_attempt_datetime": {
+        "year": 2025,
+        "month": 6,
+        "day": 21,
+        "hour": 14,
+        "minute": 5,
+        "second": 33
+      },
+      "second_installation_attempt_install_outcome": "Success",
+      "device_installed_date_time": {
+        "year": 2025,
+        "month": 6,
+        "day": 21,
+        "hour": 14,
+        "minute": 5,
+        "second": 33
+      },
+      "tag_tampers": [
+        {
+          "tag_tamper_date": {
+            "year": 2025,
+            "month": 7,
+            "day": 3,
+            "hour": 14,
+            "minute": 30
+          },
+          "tag_tamper_type": "Strap cut"
+        },
+
+        {
+          "tag_tamper_date": {
+            "year": 2025,
+            "month": 7,
+            "day": 10,
+            "hour": 20,
+            "minute": 56
+          },
+          "tag_tamper_type": "Case open"
+        },
+        {
+          "tag_tamper_date": {
+            "year": 2025,
+            "month": 9,
+            "day": 6,
+            "hour": 4,
+            "minute": 7
+          },
+          "tag_tamper_type": "Strap cut"
+        }
+      ],
+      "hmu_tampers": [
+        {
+          "hmu_tamper_date": {
+            "year": 2025,
+            "month": 8,
+            "day": 1,
+            "hour": 19,
+            "minute": 43
+          },
+          "hmu_tamper_type": "HMU moved"
+        },
+
+        {
+          "hmu_tamper_date": {
+            "year": 2025,
+            "month": 9,
+            "day": 19,
+            "hour": 6,
+            "minute": 24
+          },
+          "hmu_tamper_type": "HMU mains to battery power"
+        }
+      ]
+    },
+    {
+      "delius_id": "X654321",
+      "first_name": "Sam",
+      "middle_name": "James",
+      "last_name": "Walker",
+      "date_of_birth": {
+        "year": 1972,
+        "month": 9,
+        "day": 18
+      },
+      "violations": [
+        {
+          "violation_alert_id": "30033630",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 3,
+            "day": 25,
+            "hour": 1,
+            "minute": 38,
+            "second": 32
+          },
+          "violation_alert_duration": 96,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "13662148",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 8,
+            "day": 9,
+            "hour": 19,
+            "minute": 0,
+            "second": 0
+          },
+          "violation_alert_duration": 34,
+          "violation_alert_type": "AL09 Return home late",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "17038876",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 2,
+            "day": 17,
+            "hour": 4,
+            "minute": 48,
+            "second": 13
+          },
+          "violation_alert_duration": 39,
+          "violation_alert_type": "AL23 Charged Device Battery dead",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "77409796",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 5,
+            "day": 12,
+            "hour": 4,
+            "minute": 14,
+            "second": 15
+          },
+          "violation_alert_duration": 15,
+          "violation_alert_type": "AL05 Movement of Home Monitoring Unit",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "36600254",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 4,
+            "day": 1,
+            "hour": 23,
+            "minute": 26,
+            "second": 57
+          },
+          "violation_alert_duration": 110,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "34603556",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 6,
+            "hour": 19,
+            "minute": 0,
+            "second": 0
+          },
+          "violation_alert_duration": 180,
+          "violation_alert_type": "AL09 Return home late",
+          "exclude_from_atv_total": "Y",
+          "reasonable_excuse_reason": "Attending a wedding or funeral of a close relative - meaning a spouse (including a partner with whom the Device-Wearer is living as a spouse), parent or child (including in loco parentis relationships), sibling (including half and step) or fiancé/fiancée)). Proof provided: invitation card/letter or other appropriate written confirmation.",
+          "reasonable_excuse_date": { "year": 2025, "month": 9, "day": 20 }
+        },
+        {
+          "violation_alert_id": "20887272",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 24,
+            "hour": 22,
+            "minute": 55,
+            "second": 33
+          },
+          "violation_alert_duration": 22,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "93930981",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 9,
+            "hour": 22,
+            "minute": 32,
+            "second": 30
+          },
+          "violation_alert_duration": 4,
+          "violation_alert_type": "AL05 Movement of Home Monitoring Unit",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "55065905",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 12,
+            "hour": 2,
+            "minute": 53,
+            "second": 11
+          },
+          "violation_alert_duration": 27,
+          "violation_alert_type": "AL04 Power off of Curfew Monitoring  Equipment at home",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "67264319",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 5,
+            "day": 22,
+            "hour": 3,
+            "minute": 55,
+            "second": 5
+          },
+          "violation_alert_duration": 194,
+          "violation_alert_type": "AL11 Out at end of Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "71820254",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 4,
+            "day": 15,
+            "hour": 0,
+            "minute": 34,
+            "second": 15
+          },
+          "violation_alert_duration": 74,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "36947475",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 8,
+            "day": 20,
+            "hour": 20,
+            "minute": 0,
+            "second": 0
+          },
+          "violation_alert_duration": 41,
+          "violation_alert_type": "AL09 Return home late",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "17280132",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 21,
+            "hour": 23,
+            "minute": 48,
+            "second": 6
+          },
+          "violation_alert_duration": 2,
+          "violation_alert_type": "AL05 Movement of Home Monitoring Unit",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "40078318",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 3,
+            "day": 22,
+            "hour": 4,
+            "minute": 12,
+            "second": 8
+          },
+          "violation_alert_duration": 34,
+          "violation_alert_type": "AL23 Charged Device Battery dead",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "76746423",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 6,
+            "day": 18,
+            "hour": 22,
+            "minute": 16,
+            "second": 1
+          },
+          "violation_alert_duration": 4,
+          "violation_alert_type": "AL05 Movement of Home Monitoring Unit",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "28957464",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 2,
+            "day": 13,
+            "hour": 3,
+            "minute": 24,
+            "second": 42
+          },
+          "violation_alert_duration": 80,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        }
+      ],
+      "first_installation_attempt_datetime": {
+        "year": 2025,
+        "month": 1,
+        "day": 3,
+        "hour": 15,
+        "minute": 6,
+        "second": 33
+      },
+      "first_installation_attempt_install_outcome": "Success",
+      "second_installation_attempt_datetime": null,
+      "second_installation_attempt_install_outcome": null,
+      "device_installed_date_time": {
+        "year": 2025,
+        "month": 1,
+        "day": 3,
+        "hour": 15,
+        "minute": 6,
+        "second": 33
+      },
+      "tag_tampers": null,
+      "hmu_tampers": [
+        {
+          "hmu_tamper_date": {
+            "year": 2025,
+            "month": 1,
+            "day": 29,
+            "hour": 12,
+            "minute": 15,
+            "second": 30
+          },
+          "hmu_tamper_type": "HMU moved"
+        },
+
+        {
+          "hmu_tamper_date": {
+            "year": 2025,
+            "month": 5,
+            "day": 20,
+            "hour": 10,
+            "minute": 40,
+            "second": 10
+          },
+          "hmu_tamper_type": "HMU moved"
+        },
+        {
+          "hmu_tamper_date": {
+            "year": 2025,
+            "month": 5,
+            "day": 23,
+            "hour": 19,
+            "minute": 20,
+            "second": 9
+          },
+          "hmu_tamper_type": "HMU moved"
+        }
+      ]
+    },
+    {
+      "delius_id": "W123456",
+      "first_name": "Leonel",
+      "middle_name": null,
+      "last_name": "James",
+      "date_of_birth": {
+        "year": 1964,
+        "month": 10,
+        "day": 1
+      },
+      "curfew_violation_forecast": "Likely",
+      "violations": [
+        {
+          "violation_alert_id": "66655717",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 12,
+            "day": 13,
+            "hour": 23,
+            "minute": 6,
+            "second": 4
+          },
+          "violation_alert_duration": 25,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "21389083",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 11,
+            "day": 16,
+            "hour": 4,
+            "minute": 26,
+            "second": 37
+          },
+          "violation_alert_duration": 8,
+          "violation_alert_type": "AL05 Movement of Home Monitoring Unit",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "2816847",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 12,
+            "day": 15,
+            "hour": 21,
+            "minute": 0,
+            "second": 0
+          },
+          "violation_alert_duration": 34,
+          "violation_alert_type": "AL09 Return home late",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "83898655",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 9,
+            "day": 23,
+            "hour": 23,
+            "minute": 6,
+            "second": 49
+          },
+          "violation_alert_duration": 25,
+          "violation_alert_type": "",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "72164705",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 4,
+            "day": 23,
+            "hour": 0,
+            "minute": 23,
+            "second": 42
+          },
+          "violation_alert_duration": 81,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "64633126",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 6,
+            "day": 30,
+            "hour": 1,
+            "minute": 48,
+            "second": 43
+          },
+          "violation_alert_duration": 39,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "75952528",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 1,
+            "day": 7,
+            "hour": 23,
+            "minute": 26,
+            "second": 11
+          },
+          "violation_alert_duration": 24,
+          "violation_alert_type": "AL21 Non-charged Device Low Battery. Battery running low",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "84961491",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 4,
+            "day": 29,
+            "hour": 23,
+            "minute": 0,
+            "second": 0
+          },
+          "violation_alert_duration": 64,
+          "violation_alert_type": "AL08 Out Past Curfew Commencement",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "42914931",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 9,
+            "day": 25,
+            "hour": 4,
+            "minute": 33,
+            "second": 32
+          },
+          "violation_alert_duration": 1,
+          "violation_alert_type": "AL05 Movement of Home Monitoring Unit",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "30525149",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 12,
+            "day": 1,
+            "hour": 22,
+            "minute": 11,
+            "second": 58
+          },
+          "violation_alert_duration": 17,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "25692742",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 5,
+            "day": 6,
+            "hour": 2,
+            "minute": 26,
+            "second": 19
+          },
+          "violation_alert_duration": 126,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "15298066",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 5,
+            "day": 17,
+            "hour": 5,
+            "minute": 2,
+            "second": 0
+          },
+          "violation_alert_duration": 58,
+          "violation_alert_type": "AL11 Out at end of Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "20740834",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 9,
+            "day": 27,
+            "hour": 4,
+            "minute": 8,
+            "second": 55
+          },
+          "violation_alert_duration": 101,
+          "violation_alert_type": "AL11 Out at end of Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "9788812",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 3,
+            "day": 26,
+            "hour": 0,
+            "minute": 7,
+            "second": 17
+          },
+          "violation_alert_duration": 210,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "30086288",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 10,
+            "day": 16,
+            "hour": 3,
+            "minute": 47,
+            "second": 58
+          },
+          "violation_alert_duration": 4,
+          "violation_alert_type": "AL05 Movement of Home Monitoring Unit",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "56355389",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 7,
+            "day": 26,
+            "hour": 1,
+            "minute": 46,
+            "second": 34
+          },
+          "violation_alert_duration": 53,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "95701592",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 8,
+            "day": 11,
+            "hour": 21,
+            "minute": 50,
+            "second": 9
+          },
+          "violation_alert_duration": 27,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "34244723",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 4,
+            "day": 15,
+            "hour": 2,
+            "minute": 29,
+            "second": 2
+          },
+          "violation_alert_duration": 121,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "64342940",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 7,
+            "day": 18,
+            "hour": 23,
+            "minute": 59,
+            "second": 31
+          },
+          "violation_alert_duration": 7,
+          "violation_alert_type": "AL23 Charged Device Battery dead",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "14390841",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 5,
+            "day": 4,
+            "hour": 21,
+            "minute": 42,
+            "second": 10
+          },
+          "violation_alert_duration": 34,
+          "violation_alert_type": "",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "24877585",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 8,
+            "day": 16,
+            "hour": 2,
+            "minute": 43,
+            "second": 22
+          },
+          "violation_alert_duration": 286,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "Y",
+          "reasonable_excuse_reason": "Irregular or unexpected personal medical appointments or treatment. Proof provided: appointment card or letter from hospital/doctor.",
+          "reasonable_excuse_date": { "year": 2024, "month": 9, "day": 1 }
+        },
+        {
+          "violation_alert_id": "60795128",
+          "violation_alert_datetime": {
+            "year": 2024,
+            "month": 7,
+            "day": 31,
+            "hour": 1,
+            "minute": 9,
+            "second": 18
+          },
+          "violation_alert_duration": 122,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        },
+        {
+          "violation_alert_id": "65877070",
+          "violation_alert_datetime": {
+            "year": 2025,
+            "month": 2,
+            "day": 22,
+            "hour": 3,
+            "minute": 47,
+            "second": 9
+          },
+          "violation_alert_duration": 25,
+          "violation_alert_type": "AL10 Left home during Curfew",
+          "exclude_from_atv_total": "N",
+          "reasonable_excuse_reason": null,
+          "reasonable_excuse_date": null
+        }
+      ],
+      "first_installation_attempt_datetime": {
+        "year": 2024,
+        "month": 3,
+        "day": 12,
+        "hour": 19,
+        "minute": 0,
+        "second": 0
+      },
+      "first_installation_attempt_install_outcome": "No Show",
+      "second_installation_attempt_datetime": {
+        "year": 2024,
+        "month": 3,
+        "day": 17,
+        "hour": 15,
+        "minute": 5,
+        "second": 30
+      },
+      "second_installation_attempt_install_outcome": "No Show",
+      "device_installed_date_time": {
+        "year": 2024,
+        "month": 3,
+        "day": 19,
+        "hour": 10,
+        "minute": 5,
+        "second": 30
+      },
+
+      "tag_tampers": [
+        {
+          "tag_tamper_date": {
+            "year": 2024,
+            "month": 4,
+            "day": 2,
+            "hour": 4,
+            "minute": 58,
+            "second": 12
+          },
+          "tag_tamper_type": "Strap cut"
+        },
+
+        {
+          "tag_tamper_date": {
+            "year": 2024,
+            "month": 7,
+            "day": 12,
+            "hour": 16,
+            "minute": 1,
+            "second": 18
+          },
+          "tag_tamper_type": "Strap cut"
+        }
+      ],
+      "hmu_tampers": [
+        {
+          "hmu_tamper_date": {
+            "year": 2024,
+            "month": 4,
+            "day": 3,
+            "hour": 21,
+            "minute": 2,
+            "second": 49
+          },
+          "hmu_tamper_type": "HMU moved"
+        },
+
+        {
+          "hmu_tamper_date": {
+            "year": 2025,
+            "month": 6,
+            "day": 29,
+            "hour": 13,
+            "minute": 30,
+            "second": 4
+          },
+          "hmu_tamper_type": "HMU phone damaged"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+import { Person } from '../../../interfaces/dummyDataPerson'
+
+const samJamesWalker: Person = {
+  delius_id: 'X654321',
+  first_name: 'Sam',
+  middle_name: 'James',
+  last_name: 'Walker',
+  date_of_birth: { year: 1972, month: 9, day: 18 },
+  gender: 'Male',
+  alias: null,
+  marital_status: 'Married',
+  disabilities_and_health_conditions: 'Mental health',
+  primary_address_house_number_and_street_name: '102 Petty France',
+  primary_address_city_town: 'London',
+  primary_address_county: null,
+  primary_address_country: 'United Kingdom',
+  primary_address_postcode: 'SW1H9AJ',
+  phone_mobile_number: '02087654321',
+  additional_phone_number: '07444555666',
+  responsible_officer_name: 'Simon Smith',
+  responsible_officer_phone_number: '02066777777',
+  responsible_officer_email: 'simon.smith@justice.gov.uk',
+  offence: 'Sexual offences',
+  offence_additional_details: null,
+  order_type: 'Post Release',
+  order_type_description: 'GPS HDC',
+  enforceable_condition: 'Curfew with EM',
+  licence_condition_details:
+    'Allow person(s) as designated by your supervising officer to install an electronic monitoring tag on you and access to install any associated equipment in your property, and for the purpose of ensuring that equipment is functioning correctly. You must not damage or tamper with these devices and ensure that the tag is charged, and report to your supervising officer immediately if the tag or the associated equipment are not working correctly.',
+  order_start_date: { year: 2025, month: 1, day: 1 },
+  order_end_date: { year: 2026, month: 1, day: 2 },
+  device_installed_date_time: { year: 2025, month: 1, day: 3, hour: 15, minute: 6, second: 33 },
+  release_date: { year: 2024, month: 12, day: 29 },
+  notifying_organisation: 'Prison',
+  notifying_organisation_name: 'Belmarsh Prison',
+  tag_model: 'OM 247-PID',
+  tag_serial_number: 160101,
+  hmu_model: 'OM 247-MU',
+  curfew_schedule: [
+    {
+      curfew_days: [1, 2, 3, 4, 5],
+      curfew_duration: 660,
+      start_time: { hour: 20, minute: 0, second: 0 },
+      end_time: { hour: 7, minute: 0, second: 0 },
+    },
+    {
+      curfew_days: [6, 7],
+      curfew_duration: 720,
+      start_time: { hour: 19, minute: 0, second: 0 },
+      end_time: { hour: 7, minute: 0, second: 0 },
+    },
+  ],
+}
+
+export default samJamesWalker
