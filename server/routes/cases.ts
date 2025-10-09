@@ -10,15 +10,15 @@ export default function casesRoutes(
 ): void {
   const casesController = new CasesController(auditService)
 
-  get('/cases', async (req, res) => {
+  get('/cases/:person_id/overview/:highlight?', async (req, res) => {
     await casesController.overview(req, res)
   })
 
-  get('/cases/curfew', async (req, res) => {
+  get('/cases/:person_id/curfew', async (req, res) => {
     await casesController.curfew(req, res)
   })
 
-  get('/cases/notes', async (req, res) => {
+  get('/cases/:person_id/notes', async (req, res) => {
     await casesController.notes(req, res)
   })
 }

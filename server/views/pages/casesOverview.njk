@@ -10,7 +10,237 @@
 
 {% block content %}
   {% include "partials/casesHeader.njk" %}
+  <h1 class="govuk-heading-xl govuk-!-margin-bottom-6 govuk-!-margin-top-6">{{ fullName }}</h1>
   {% include "partials/popAlert.njk" %}
   {% include "partials/casesSubNavigation.njk" %}
-  <h1>Overview</h1>
+  <h2 class="govuk-heading-m">Overview</h2>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      
+      <div class="govuk-!-margin-bottom-6">
+        <div class="govuk-summary-card">
+          <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+              Personal details
+            </h2>
+          </div>
+          <div class="govuk-summary-card__content {% if highlight === 'true' %} highlight {% endif %}">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-4">
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Name</dt>
+                <dd class="govuk-summary-list__value">{{ person.first_name }}{% if person.middle_name %} {{ person.middle_name }}{% endif %} {{ person.last_name }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Date of birth</dt>
+                <dd class="govuk-summary-list__value">{{ person.date_of_birth_string }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Gender</dt>
+                <dd class="govuk-summary-list__value">{{ person.gender }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Aliases</dt>
+                <dd class="govuk-summary-list__value">{{ person.alias }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Current circumstances</dt>
+                <dd class="govuk-summary-list__value">
+                  <span>Educational Attainment Levels: Literacy - No Qualification</span><br />
+                  <span>Educational Attainment Levels: Numeracy - No Qualification</span><br />
+                  {% if person.marital_status %} Relationship: {{ person.marital_status }}{% endif %}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Disabilities</dt>
+                <dd class="govuk-summary-list__value">
+                  {% for item in person.disabilities %}
+                    {{ item }}{% if not loop.last %}<br /> {% endif %}
+                  {% endfor %}
+                </dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Adjustments</dt>
+                <dd class="govuk-summary-list__value"><span>No adjustments</span></dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="govuk-!-margin-bottom-6">
+        <div class="govuk-summary-card">
+          <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+              Contact details
+            </h2>
+          </div>
+          <div class="govuk-summary-card__content {% if highlight === 'true' %} highlight {% endif %}">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-4">
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Approved address</dt>
+                <dd class="govuk-summary-list__value">{{ person.primary_address_house_number_and_street_name }}<br>{{ person.primary_address_city_town }}<br>{{ person.primary_address_postcode }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Phone number</dt>
+                <dd class="govuk-summary-list__value">{{ person.additional_phone_number }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Mobile number</dt>
+                <dd class="govuk-summary-list__value">{{ person.phone_mobile_number }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Email address</dt>
+                <dd class="govuk-summary-list__value">
+                  <a href="mailto:Richard.Marks@gmail.com"><span>Richard.Marks@gmail.com</span></a>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="govuk-!-margin-bottom-6">
+        <div class="govuk-summary-card">
+          <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+              Responsible officer (RO)
+            </h2>
+          </div>
+          <div class="govuk-summary-card__content {% if highlight === 'true' %} highlight {% endif %}">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-4">
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Name</dt>
+                <dd class="govuk-summary-list__value">{{ person.responsible_officer_name }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Address</dt>
+                <dd class="govuk-summary-list__value"><span>101 Petty France<br>London<br>SW1H 9AJ</span></dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Phone number</dt>
+                <dd class="govuk-summary-list__value">{{ person.responsible_officer_phone_number }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Mobile number</dt>
+                <dd class="govuk-summary-list__value"><span>07814 999 999</span></dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Email</dt>
+                <dd class="govuk-summary-list__value">
+                  <a href="mailto:{{ person.responsible_officer_email }}">{{ person.responsible_officer_email }}</a>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>        
+      </div>
+
+      <div class="govuk-!-margin-bottom-6">
+        <div class="govuk-summary-card">
+          <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+              Sentence
+            </h2>
+          </div>
+          <div class="govuk-summary-card__content {% if highlight === 'true' %} highlight {% endif %}">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-4">
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Main offence</dt>
+                <dd class="govuk-summary-list__value">{{ person.offence }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Order</dt>
+                <dd class="govuk-summary-list__value">{{ person.order_type }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">EM licence conditions</dt>
+                <dd class="govuk-summary-list__value">
+                  {{ person.licence_condition_details }}
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div> 
+      </div>
+
+      <div class="govuk-!-margin-bottom-6">
+        <div class="govuk-summary-card">
+          <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+              Curfew tag details
+            </h2>
+          </div>
+          <div class="govuk-summary-card__content {% if highlight === 'true' %} highlight {% endif %}">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-4">
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Start date</dt>
+                <dd class="govuk-summary-list__value">{{ person.order_start_date_string }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">End date</dt>
+                <dd class="govuk-summary-list__value">{{ person.order_end_date_string }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Tag fitted</dt>
+                <dd class="govuk-summary-list__value">{{ person.device_installed_date_time_string }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Days remaining</dt>
+                <dd class="govuk-summary-list__value">{{ person.order_days_left }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Released</dt>
+                <dd class="govuk-summary-list__value">{{ person.release_date_string }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Released from</dt>
+                <dd class="govuk-summary-list__value">{{ person.notifying_organisation_name }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Tag model</dt>
+                <dd class="govuk-summary-list__value">{{ person.tag_model }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Tag serial number</dt>
+                <dd class="govuk-summary-list__value">{{ person.tag_serial_number }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Tag status</dt>
+                <dd class="govuk-summary-list__value"><span>On</span></dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">HMU model</dt>
+                <dd class="govuk-summary-list__value">{{ person.hmu_model }}</dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">HMU status</dt>
+                <dd class="govuk-summary-list__value"><span>On</span></dd>
+              </div>
+              {% for curfew in person.curfew %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">{{ curfew.key }}</dt>
+                  <dd class="govuk-summary-list__value">{{ curfew.value }}</dd>
+                </div>
+              {% endfor %}
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="govuk-!-margin-bottom-6">
+        <div class="govuk-summary-card">
+          <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+              Help and support
+            </h2>
+          </div>
+          <div class="govuk-summary-card__content">
+            <strong>Home Detention Curfew team</strong><br>
+            Email: <a href="mailto:hdc@justice.gov.uk">hdc@justice.gov.uk</a><br>
+            Telephone: 0800 123 4567<br>
+            Open 24 hours a day, 7 days a week
+          </div>
+        </div>  
+      </div>
+    </div>
+  </div>
 {% endblock %}
