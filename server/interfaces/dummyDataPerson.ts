@@ -52,6 +52,18 @@ export type Person = {
   curfew_schedule: CurfewSchedule[]
 }
 
+export type FormattedPerson = Person & {
+  full_name: string
+  date_of_birth_string: string
+  disabilities: string[]
+  order_start_date_string: string
+  order_end_date_string: string
+  order_days_left: string
+  device_installed_date_time_string: string
+  release_date_string: string
+  curfew: { key: string; value: string }[]
+}
+
 export const dayMap: Record<number, string> = {
   1: 'Monday',
   2: 'Tuesday',
