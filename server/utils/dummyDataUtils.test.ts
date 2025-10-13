@@ -4,7 +4,7 @@ import {
   getDOBInformationFromDateObject,
   getDisabilitiesList,
 } from './dummyDataUtils'
-import { Person, CurfewSchedule } from '../interfaces/dummyDataPerson'
+import { Person } from '../interfaces/dummyDataPerson'
 
 describe('getNameFromPersonObject', () => {
   const person = {

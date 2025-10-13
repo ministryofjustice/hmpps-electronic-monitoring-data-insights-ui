@@ -4,7 +4,7 @@ import AuditService, { Page } from '../../services/auditService'
 import { user } from '../../routes/testutils/appSetup'
 import mockPopDetails from '../mocks/popDetails'
 import * as dummyDataUtils from '../../utils/dummyDataUtils'
-import { FormattedPerson, Person } from '../../interfaces/dummyDataPerson'
+import { FormattedPerson } from '../../interfaces/dummyDataPerson'
 
 jest.mock('../../services/auditService')
 
