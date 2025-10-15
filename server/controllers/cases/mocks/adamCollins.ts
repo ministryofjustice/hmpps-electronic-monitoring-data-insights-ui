@@ -1,0 +1,48 @@
+import { Person } from '../../../interfaces/dummyDataPerson'
+
+const adamCollins: Person = {
+  delius_id: 'X123456',
+  first_name: 'Adam',
+  middle_name: null,
+  last_name: 'Collins',
+  date_of_birth: { year: 1990, month: 1, day: 1 },
+  gender: 'Male',
+  alias: null,
+  marital_status: 'Single',
+  disabilities_and_health_conditions: 'None of the above',
+  primary_address_house_number_and_street_name: '10 South Colonnade',
+  primary_address_city_town: 'London',
+  primary_address_county: null,
+  primary_address_country: 'United Kingdom',
+  primary_address_postcode: 'E145EA',
+  phone_mobile_number: '02012345678',
+  additional_phone_number: '07521306873',
+  responsible_officer_name: 'Caroline Jones',
+  responsible_officer_phone_number: '02033344445',
+  responsible_officer_email: 'caroline.jones1@justice.gov.uk',
+  offence: 'Drug offences',
+  offence_additional_details: null,
+  order_type: 'Post Release',
+  order_type_description: 'GPS HDC',
+  enforceable_condition: 'Curfew with EM',
+  licence_condition_details: 'Confined to an address between certain hours',
+  order_start_date: { year: 2025, month: 6, day: 20 },
+  order_end_date: { year: 2027, month: 6, day: 21 },
+  device_installed_date_time: { year: 2025, month: 6, day: 21, hour: 14, minute: 5, second: 33 },
+  release_date: { year: 2025, month: 6, day: 10 },
+  notifying_organisation: 'Prison',
+  notifying_organisation_name: 'Pentonville Prison',
+  tag_model: 'OM 247-PID',
+  tag_serial_number: 176000,
+  hmu_model: 'OM 247-MU',
+  curfew_schedule: [
+    {
+      curfew_days: [1, 2, 3, 4, 5, 6, 7],
+      curfew_duration: 720,
+      start_time: { hour: 19, minute: 0, second: 0 },
+      end_time: { hour: 7, minute: 0, second: 0 },
+    },
+  ],
+}
+
+export default adamCollins

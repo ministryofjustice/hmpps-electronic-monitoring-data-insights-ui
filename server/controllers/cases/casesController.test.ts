@@ -3,6 +3,8 @@ import CasesController from './casesController'
 import AuditService, { Page } from '../../services/auditService'
 import { user } from '../../routes/testutils/appSetup'
 import mockPopDetails from '../mocks/popDetails'
+import * as dummyDataUtils from '../../utils/dummyDataUtils'
+import { FormattedPerson } from '../../interfaces/dummyDataPerson'
 
 jest.mock('../../services/auditService')
 
@@ -12,9 +14,16 @@ describe('CasesController', () => {
   let req: Partial<Request>
   let res: Partial<Response>
 
+  jest.spyOn(dummyDataUtils, 'getNameFromPersonObject').mockReturnValue('John Smith')
+  jest.spyOn(dummyDataUtils, 'getFormattedPerson').mockReturnValue({
+    delius_id: 'X123456',
+    date_of_birth: { year: 1990, month: 1, day: 1 },
+  } as unknown as FormattedPerson)
+
   beforeEach(() => {
     auditService = new AuditService(null) as jest.Mocked<AuditService>
-    req = { id: 'test-correlation-id' }
+
+    req = { id: 'test-correlation-id', params: { id: '1', highlight: null } }
     res = {
       locals: { user },
       render: jest.fn(),
@@ -36,8 +45,16 @@ describe('CasesController', () => {
       expect(res.render).toHaveBeenCalledWith('pages/casesOverview', {
         activeNav: 'cases',
         activeTab: 'overview',
-        popData: mockPopDetails,
+        popData: {
+          crn: 'X123456',
+          dateOfBirth: 'Monday, 1 January 1990',
+          tier: 'B3',
+        },
+        highlight: null,
+        id: undefined,
         alert: true,
+        fullName: 'John Smith',
+        person: { delius_id: 'X123456', date_of_birth: { year: 1990, month: 1, day: 1 } },
       })
     })
   })
@@ -54,6 +71,7 @@ describe('CasesController', () => {
         activeTab: 'curfew',
         popData: mockPopDetails,
         alert: true,
+        id: '1',
       })
     })
   })
@@ -68,6 +86,7 @@ describe('CasesController', () => {
       expect(res.render).toHaveBeenCalledWith('pages/casesNotes', {
         activeNav: 'cases',
         activeTab: 'notes',
+        id: '1',
       })
     })
   })

@@ -33,7 +33,7 @@ context('Cases', () => {
 
     // Overview tab (should be active by default)
     cy.get('[aria-current=page]').should('contain.text', 'Overview')
-    cy.contains('h1', 'Overview')
+    cy.contains('h1', 'Adam Collins')
 
     // Curfew activity tab
     cy.get('[data-qa=cases-sub-navigation]').contains('a', 'Curfew activity').click()
@@ -44,5 +44,66 @@ context('Cases', () => {
     cy.get('[data-qa=cases-sub-navigation]').contains('a', 'Case notes').click()
     cy.get('[aria-current=page]').should('contain.text', 'Case notes')
     cy.contains('h1', 'Notes')
+  })
+
+  it('should display all expected summary keys', () => {
+    cy.signIn()
+    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
+
+    const expectedKeys = [
+      'Name',
+      'Date of birth',
+      'Gender',
+      'Address',
+      'Aliases',
+      'Current circumstances',
+      'Disabilities',
+      'Adjustments',
+      'Approved address',
+      'Phone number',
+      'Mobile number',
+      'Email address',
+      'Responsible officer (RO)',
+      'Main offence',
+      'Email',
+      'Order',
+      'EM licence conditions',
+      'Start date',
+      'End date',
+      'Tag fitted',
+      'Days remaining',
+      'Released',
+      'Released from',
+      'Tag model',
+      'Tag serial number',
+      'Tag status',
+      'HMU model',
+      'HMU status',
+      'Monday to Friday',
+      'Saturday and Sunday',
+      'Monday to Sunday',
+    ]
+
+    cy.get('.govuk-summary-list__key').each($els => {
+      expect(expectedKeys).to.include($els.text().trim())
+    })
+  })
+
+  it('should display all expected summary card titles', () => {
+    cy.signIn()
+    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
+
+    const expectedTitles = [
+      'Personal details',
+      'Contact details',
+      'Responsible officer (RO)',
+      'Sentence',
+      'Curfew tag details',
+      'Help and support',
+    ]
+
+    cy.get('.govuk-summary-card__title').each($els => {
+      expect(expectedTitles).to.include($els.text().trim())
+    })
   })
 })

@@ -1,6 +1,10 @@
 import { Request, Response } from 'express'
 import AuditService, { Page } from '../../services/auditService'
 import mockPopDetails from '../mocks/popDetails'
+import mockAdamCollins from './mocks/adamCollins'
+import mockLeonelJames from './mocks/leonelJames'
+import mockSamJamesWalker from './mocks/samJamesWalker'
+import { getDateStringFromDateObject, getFormattedPerson, getNameFromPersonObject } from '../../utils/dummyDataUtils'
 
 export default class CasesController {
   constructor(private readonly auditService: AuditService) {}
@@ -10,11 +14,45 @@ export default class CasesController {
       who: res.locals.user.username,
       correlationId: req.id,
     })
+
+    const id = req.params.person_id
+    const { highlight } = req.params
+
+    let person
+    switch (id) {
+      case '1':
+        person = mockAdamCollins
+        break
+      case '2':
+        person = mockLeonelJames
+        break
+      case '3':
+        person = mockSamJamesWalker
+        break
+
+      default:
+        person = mockAdamCollins
+        break
+    }
+
+    const fullName = getNameFromPersonObject(person)
+    person = getFormattedPerson(person)
+
+    const popDetails = {
+      crn: person.delius_id,
+      dateOfBirth: getDateStringFromDateObject(person.date_of_birth),
+      tier: 'B3',
+    }
+
     res.render('pages/casesOverview', {
       activeNav: 'cases',
       activeTab: 'overview',
-      popData: mockPopDetails,
+      popData: popDetails,
       alert: true,
+      fullName,
+      person,
+      id,
+      highlight,
     })
   }
 
@@ -28,6 +66,7 @@ export default class CasesController {
       activeTab: 'curfew',
       popData: mockPopDetails,
       alert: true,
+      id: req.params.id,
     })
   }
 
@@ -36,6 +75,7 @@ export default class CasesController {
     res.render('pages/casesNotes', {
       activeNav: 'cases',
       activeTab: 'notes',
+      id: req.params.id,
     })
   }
 }

@@ -12,6 +12,7 @@ $govuk-page-width: $moj-page-width;
 @import './components/cases-header';
 @import './components/profile-info-header';
 @import './overrides/local';
+@import './overrides/overview';
 
 @import 'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/footer';
 @import 'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/header';
