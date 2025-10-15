@@ -15,6 +15,8 @@ context('PoP Alert', () => {
 
     Page.verifyOnPage(CasesPage)
 
+    cy.get('[data-qa=cases-sub-navigation]').contains('a', 'Curfew activity').click()
+
     PopAlert.getAlert().should('be.visible')
     PopAlert.getAlert().within(() => {
       cy.get('.moj-alert__heading').should(
