@@ -1,5 +1,7 @@
 {% extends "../partials/layout.njk" %}
 {% extends "moj/template.njk" %}
+{% from "components/moj-map/macro.njk" import mojMap %}
+
 
 {% set pageTitle = applicationName + " - Home" %}
 {% set mainClasses = "app-container govuk-body" %}
@@ -12,8 +14,16 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Richard Marks</h1>
-    {% include "partials/popAlert.njk" %}
+  <h1>Richard Marks</h1>
+  {% include "partials/popAlert.njk" %}
   <h1>This site is under construction... </h1>
   <p>Please check back later when there is content to view.</p>
 {% endblock %}
+
+
+{% from "components/moj-map/macro.njk" import mojMap %}
+
+{{ mojMap({
+  alerts: params.alerts,
+  cspNonce: params.cspNonce
+}) }}

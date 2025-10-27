@@ -25,8 +25,9 @@ export default function setUpWebSecurity(): Router {
           // This ensures only scripts we trust are loaded, and not anything injected into the
           // page by an attacker.
           scriptSrc: ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
-          styleSrc: ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
-          fontSrc: ["'self'"],
+          styleSrc: ["'self'", 'cdn.jsdelivr.net', (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
+          styleSrcAttr: ["'unsafe-inline'"],
+          fontSrc: ["'self'", 'cdn.jsdelivr.net'],
           formAction: [`'self' ${config.apis.hmppsAuth.externalUrl}`],
         },
       },

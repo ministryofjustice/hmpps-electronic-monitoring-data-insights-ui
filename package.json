@@ -93,6 +93,7 @@
     "express-session": "^1.18.1",
     "govuk-frontend": "^5.11.2",
     "helmet": "^8.1.0",
+    "hmpps-open-layers-map": "^0.8.7",
     "http-errors": "^2.0.0",
     "jwt-decode": "^4.0.0",
     "nocache": "^4.0.0",
