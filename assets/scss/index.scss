@@ -8,6 +8,7 @@ $govuk-page-width: $moj-page-width;
 @import "@ministryofjustice/frontend/moj/all";
 
 @import './components/header-bar';
+@import './components/date-time-picker';
 @import './components/primary-header';
 @import './components/cases-header';
 @import './components/profile-info-header';
@@ -16,3 +17,17 @@ $govuk-page-width: $moj-page-width;
 
 @import 'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/footer';
 @import 'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/header';
+
+.app-map {
+  height: 500px;
+  margin-bottom: 30px;
+}
+
+.map-search-form {
+  margin-top: 20px;
+  background: #F3F2F1;
+}
+
+// .map-search-form {
+//   display: flex;
+// }

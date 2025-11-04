@@ -44,6 +44,7 @@ export default function nunjucksSetup(app: express.Express): void {
       'node_modules/govuk-frontend/dist/',
       'node_modules/@ministryofjustice/frontend/',
       'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/',
+      'node_modules/hmpps-open-layers-map/nunjucks',
     ],
     {
       autoescape: true,

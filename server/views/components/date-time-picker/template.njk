@@ -1,0 +1,57 @@
+ {% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
+ {% from "govuk/components/input/macro.njk" import govukInput %}
+
+<div class="date-time-picker" id="{{params.id}}-component">
+    <fieldset class="govuk-fieldset" aria-describedby="{{ params.id }}-hint">
+        {{ mojDatePicker({
+            id: params.id + "-date",
+            name: params.name + "[date]",
+            label: {
+                text: params.labelText
+            },
+            value: params.value
+        }) }}
+
+    </fieldset>
+
+    {% if params.timeLabel %}
+        <div class="govuk-date-input__time-label">
+            <label class="govuk-label">{{ params.timeLabel }}</label>
+        </div>
+    {% endif %}
+
+    <div class="govuk-date-input">
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                {{
+                    govukInput({
+                        label: {
+                        text: "Hour"
+                        },
+                        classes: "govuk-date-input__input govuk-input--width-2",
+                        id: params.id + "-hour",
+                        name: params.name + "[hour]",
+                        value: params.value.hour
+                    })
+                }}
+            </div>
+        </div>
+
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                {{
+                govukInput({
+                    label: {
+                    text: "Minute"
+                    },
+                    classes: "govuk-date-input__input govuk-input--width-2",
+                    id: params.id + "-minute",
+                    name: params.name + "[minute]",
+                    value: params.value.minute
+                })
+                }}
+            </div>
+        </div>
+    </div>
+</div>
+  
