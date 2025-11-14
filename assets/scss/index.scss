@@ -8,7 +8,6 @@ $govuk-page-width: $moj-page-width;
 @import "@ministryofjustice/frontend/moj/all";
 
 @import './components/header-bar';
-@import './components/date-time-picker';
 @import './components/primary-header';
 @import './components/cases-header';
 @import './components/profile-info-header';
@@ -23,11 +22,14 @@ $govuk-page-width: $moj-page-width;
   margin-bottom: 30px;
 }
 
-.map-search-form {
+.map-search {
   margin-top: 20px;
   background: #F3F2F1;
+  & .map-search__form {
+    width: 90%;
+  }
+  
+  & .map-search__form-actions {
+    margin-top: 156px;
+  }
 }
-
-// .map-search-form {
-//   display: flex;
-// }

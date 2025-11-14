@@ -7,7 +7,8 @@
             id: params.id + "-date",
             name: params.name + "[date]",
             label: {
-                text: params.labelText
+                text: params.labelText,
+                classes: "govuk-label--s govuk-margin-bottom-2"
             },
             value: params.value
         }) }}
@@ -15,8 +16,8 @@
     </fieldset>
 
     {% if params.timeLabel %}
-        <div class="govuk-date-input__time-label">
-            <label class="govuk-label">{{ params.timeLabel }}</label>
+        <div class="govuk-date-input__time-label govuk-!-margin-bottom-2 govuk-!-margin-top-4">
+            <label class="govuk-label govuk-label--s">{{ params.timeLabel }}</label>
         </div>
     {% endif %}
 

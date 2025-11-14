@@ -1,7 +1,6 @@
 {% extends "../partials/layout.njk" %}
 {% extends "moj/template.njk" %}
-{% from "components/moj-map/macro.njk" import mojMap %}
-{% include "partials/mapSearchForm.njk" %}
+
 
 {% set pageTitle = applicationName + " - Home" %}
 {% set mainClasses = "app-container govuk-body" %}
@@ -18,27 +17,6 @@
   {% include "partials/popAlert.njk" %}
   <h1>This site is under construction... </h1>
   <p>Please check back later when there is content to view.</p>
-
-  <h2 class="govuk-heading-m">Location activity</h2>
-  <div class="date-time-picker">
-    <div class="govuk-grid-row">
-      {% include "partials/mapSearchForm.njk" %}
-    </div>
-  <div class="app-map">
-  {{
-    mojMap({
-      alerts:alerts,
-      cspNonce:cspNonce,
-      controls: {
-        scaleControl: 'bar',
-        locationDisplay: 'dms',
-        rotateControl: 'true',
-        zoomSlider: true
-      }
-    })
-  }}
-
-</div>
 {% endblock %}
 
 

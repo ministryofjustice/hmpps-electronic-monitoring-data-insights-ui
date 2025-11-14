@@ -1,7 +1,7 @@
 import express from 'express'
 import pdsComponents from '@ministryofjustice/hmpps-probation-frontend-components'
 import createError from 'http-errors'
-import { mojOrdnanceSurveyAuth } from 'hmpps-open-layers-map/ordnance-survey-auth'
+import { emOrdnanceSurveyAuth } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/ordnance-survey-auth'
 
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
@@ -30,7 +30,7 @@ export default function createApp(services: Services): express.Application {
   app.set('port', process.env.PORT || 3000)
 
   app.use(
-    mojOrdnanceSurveyAuth({
+    emOrdnanceSurveyAuth({
       apiKey: process.env.OS_MAPS_API_KEY!, // from Ordance Survey
       apiSecret: process.env.OS_MAPS_API_SECRET!, // from Ordnance Survey
       // Optional: Redis cache + expiry override

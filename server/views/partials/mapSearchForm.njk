@@ -1,13 +1,13 @@
 {% import "components/date-time-picker/macro.njk" as dtp %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 <div class="govuk-width-container">
-    <div class="govuk-grid-row govuk-!-margin-bottom-3">
+    <div class="govuk-grid-row govuk-!-margin-bottom-3 govuk-!-margin-right-0 govuk-!-margin-left-0">
         <h3 class="govuk-heading-s">Search map by date and time</h3>
-        <div class="map-search-form govuk-!-padding-4">
+        <div class="map-search govuk-!-padding-4">
             <form
-                class="govuk-form-group govuk-!-margin-bottom-0"
+                id="dateFilterForm"
+                class="map-search__form govuk-form-group govuk-!-margin-bottom-0"
                 method="get"
-                action="/map-search"
             >
                 <div class="govuk-grid-row">  
                     <div class="govuk-grid-column-one-third">
@@ -26,13 +26,13 @@
                             timeLabel: "Time to"
                         }) }}
                     </div>
-                     <div class="govuk-grid-column-one-third" style="display: flex; align-items: flex-end; border: 1px solid green; aligh-self: flex-end;">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
+                     <div class="govuk-grid-column-one-third">
+                        <div class="map-search__form-actions">
                             {{ govukButton({
                                 text: "Update map",
-                                classes: "govuk-!-margin-bottom-0"
+                                classes: "govuk-!-margin-right-2 govuk-!-margin-bottom-0"
                             }) }}
-                            <a href="#" class="govuk-link govuk-link--no-visited-state" style="white-space: nowrap;">Clear filters</a>
+                            <a href="#" class="govuk-link govuk-link--no-visited-state">Clear filters</a>
                         </div>
                     </div>
                 </div>
