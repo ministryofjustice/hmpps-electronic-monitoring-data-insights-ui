@@ -42,12 +42,12 @@ export default class TrailService {
     return this.cache
   }
 
-  filterByDate(positionJson: PositionData, filters: Filters): PositionData {
+  filterByDate(positionJson: PositionData, filters: Filters): Position[] {
     const { from, to } = filters
     
     if (!from && !to) {
       console.log("No date filters applied, returning full data set.");
-      return positionJson
+      return positionJson.data
     }
 
     const fromDate = from ? new Date(from) : null
@@ -67,6 +67,6 @@ export default class TrailService {
         
         return afterFrom && beforeTo
       })
-    }
+    }.data
  }
 }

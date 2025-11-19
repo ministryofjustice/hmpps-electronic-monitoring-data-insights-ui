@@ -11,28 +11,28 @@ import { queryElement } from '../../utils/utils'
 
 
 const initialiseLocationDataView = async () => {
-  const emMap = queryElement(document, 'em-map') as EmMap
+  const emMap = queryElement(document, 'em-map')
 
-  await new Promise<void>(resolve => {
+  await new Promise(resolve => {
     emMap.addEventListener('map:ready', () => resolve(), { once: true })
   })
 
-  const map = emMap.olMapInstance!
+  const map = emMap.olMapInstance
   const { positions } = emMap
   const locationsLayer = emMap.addLayer(
     new LocationsLayer({
       title: 'pointsLayer',
       positions,
     }),
-  )!
+  )
 
   const tracksLayer = emMap.addLayer(
     new TracksLayer({
       title: 'tracksLayer',
       positions,
-      visible: false,
+      visible: true,
     }),
-  )!
+  )
 
   const confidenceLayer = emMap.addLayer(
     new CirclesLayer({

@@ -19,7 +19,13 @@ export default function casesRoutes(
   })
 
   get('/cases/:person_id/location-activity', async (req, res) => {
+    console.log('Handling GET /cases/:person_id/location-activity')
     await casesController.location(req, res)
+  })
+
+  post('/cases/:person_id/location-activity', async (req, res) => {
+    console.log('Handling POST /cases/:person_id/location-activity')
+    await casesController.searchLocation(req, res)
   })
 
   get('/cases/:person_id/notes', async (req, res) => {

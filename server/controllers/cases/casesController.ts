@@ -1,175 +1,95 @@
 import { Request, Response } from 'express'
-import { map } from 'zod/v4'
 import AuditService, { Page } from '../../services/auditService'
 import mockPopDetails from '../mocks/popDetails'
 import mockAdamCollins from './mocks/adamCollins'
 import mockLeonelJames from './mocks/leonelJames'
 import mockSamJamesWalker from './mocks/samJamesWalker'
 import { getDateStringFromDateObject, getFormattedPerson, getNameFromPersonObject } from '../../utils/dummyDataUtils'
-import TrailService, { Filters } from '../../services/trailService'
+import TrailService, { Filters, Position } from '../../services/trailService'
 import DateSearchValidationService from '../../services/dateSearchValidtionService'
 import { searchLocationsQuerySchema } from '../../schemas/locationActivity/searchDateFormSchema'
-import { parseDateTimeFromISOString } from '../../utils/date'
-import e from 'connect-flash'
+import { getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
+import { ValidationResult } from '../../models/ValidationResult'
 import { convertZodErrorToValidationError } from '../../utils/errors'
-import { start } from 'repl'
 
-// const mapData = [
-//   {
-//     latitude: 53.4808,
-//     longitude: -2.2426,
-//     precision: 50,
-//     sequenceNumber: 1,
-//     speed: 5,
-//     direction: 1.57,
-//     geolocationMechanism: 'GPS',
-//     timestamp: '2025-01-01T12:00:00Z',
-//     overlayTitleTemplateId: 'overlay-title-test-location',
-//     overlayBodyTemplateId: 'overlay-body-test-location',
-//     personName: 'Jane Doe',
-//     personNomisId: 'A1234BC',
-//     displaySpeed: '5 km/h',
-//     displayDirection: '90°',
-//     displayGeolocationMechanism: 'GPS',
-//     displayTimestamp: '2025-01-01 12:00:00',
-//     displayConfidence: '50m',
-//     displayLatitude: '53.4808',
-//     displayLongitude: '-2.2426',
-//   },
-//   {
-//     latitude: 53.478,
-//     longitude: -2.25,
-//     precision: 400,
-//     sequenceNumber: 2,
-//     speed: 15,
-//     direction: 2.75,
-//     geolocationMechanism: 'GPS',
-//     timestamp: '2025-01-01T12:10:00Z',
-//     overlayTitleTemplateId: 'overlay-title-test-location',
-//     overlayBodyTemplateId: 'overlay-body-test-location',
-//     personName: 'Jane Doe',
-//     personNomisId: 'A1234BC',
-//     displaySpeed: '15 km/h',
-//     displayDirection: '158°',
-//     displayGeolocationMechanism: 'GPS',
-//     displayTimestamp: '2025-01-01 12:10:00',
-//     displayConfidence: '400m',
-//     displayLatitude: '53.478',
-//     displayLongitude: '-2.25',
-//   },
-//   {
-//     latitude: 53.483,
-//     longitude: -2.236,
-//     precision: 200,
-//     sequenceNumber: 3,
-//     speed: 9,
-//     direction: 0.52,
-//     geolocationMechanism: 'GPS',
-//     timestamp: '2025-01-01T12:20:00Z',
-//     overlayTitleTemplateId: 'overlay-title-test-location',
-//     overlayBodyTemplateId: 'overlay-body-test-location',
-//     personName: 'Jane Doe',
-//     personNomisId: 'A1234BC',
-//     displaySpeed: '9 km/h',
-//     displayDirection: '30°',
-//     displayGeolocationMechanism: 'GPS',
-//     displayTimestamp: '2025-01-01 12:20:00',
-//     displayConfidence: '200m',
-//     displayLatitude: '53.483',
-//     displayLongitude: '-2.236',
-//   },
-//   {
-//     latitude: 53.476,
-//     longitude: -2.229,
-//     precision: 500,
-//     sequenceNumber: 4,
-//     speed: 2,
-//     direction: 3.14,
-//     geolocationMechanism: 'GPS',
-//     timestamp: '2025-01-01T12:30:00Z',
-//     overlayTitleTemplateId: 'overlay-title-test-location',
-//     overlayBodyTemplateId: 'overlay-body-test-location',
-//     personName: 'Jane Doe',
-//     personNomisId: 'A1234BC',
-//     displaySpeed: '2 km/h',
-//     displayDirection: '180°',
-//     displayGeolocationMechanism: 'GPS',
-//     displayTimestamp: '2025-01-01 12:30:00',
-//     displayConfidence: '500m',
-//     displayLatitude: '53.476',
-//     displayLongitude: '-2.229',
-//   },
-//   {
-//     latitude: 53.485,
-//     longitude: -2.26,
-//     precision: 300,
-//     sequenceNumber: 5,
-//     speed: 4,
-//     direction: 4.71,
-//     geolocationMechanism: 'GPS',
-//     timestamp: '2025-01-01T12:40:00Z',
-//     overlayTitleTemplateId: 'overlay-title-test-location',
-//     overlayBodyTemplateId: 'overlay-body-test-location',
-//     personName: 'Jane Doe',
-//     personNomisId: 'A1234BC',
-//     displaySpeed: '4 km/h',
-//     displayDirection: '270°',
-//     displayGeolocationMechanism: 'GPS',
-//     displayTimestamp: '2025-01-01 12:40:00',
-//     displayConfidence: '300m',
-//     displayLatitude: '53.485',
-//     displayLongitude: '-2.26',
-//   },
-//   {
-//     latitude: 53.472,
-//     longitude: -2.245,
-//     precision: 100,
-//     sequenceNumber: 6,
-//     speed: 7,
-//     direction: 5.23,
-//     geolocationMechanism: 'GPS',
-//     timestamp: '2025-01-01T12:50:00Z',
-//     overlayTitleTemplateId: 'overlay-title-test-location',
-//     overlayBodyTemplateId: 'overlay-body-test-location',
-//     personName: 'Jane Doe',
-//     personNomisId: 'A1234BC',
-//     displaySpeed: '7 km/h',
-//     displayDirection: '300°',
-//     displayGeolocationMechanism: 'GPS',
-//     displayTimestamp: '2025-01-01 12:50:00',
-//     displayConfidence: '100m',
-//     displayLatitude: '53.472',
-//     displayLongitude: '-2.245',
-//   },
-//   {
-//     latitude: 53.49,
-//     longitude: -2.255,
-//     precision: 100,
-//     sequenceNumber: 7,
-//     speed: 3,
-//     direction: 6.28,
-//     geolocationMechanism: 'GPS',
-//     timestamp: '2025-01-01T13:00:00Z',
-//     overlayTitleTemplateId: 'overlay-title-test-location',
-//     overlayBodyTemplateId: 'overlay-body-test-location',
-//     personName: 'Jane Doe',
-//     personNomisId: 'A1234BC',
-//     displaySpeed: '3 km/h',
-//     displayDirection: '360°',
-//     displayGeolocationMechanism: 'GPS',
-//     displayTimestamp: '2025-01-01 13:00:00',
-//     displayConfidence: '100m',
-//     displayLatitude: '53.49',
-//     displayLongitude: '-2.255',
-//   },
-// ]
 
+interface LocationDateFilterFormData {
+  date: string
+  hour: string
+  minute: string
+}
+interface FilterStateProps {
+  errors: ValidationResult
+  formData: LocationBuildProps 
+}
+
+interface LocationBuildProps {
+  fromDate: LocationDateFilterFormData,
+  toDate: LocationDateFilterFormData,
+}
 export default class CasesController {
   constructor(
     private readonly auditService: AuditService,
     private readonly trailService: TrailService,
     private readonly dateSearchValidationService: DateSearchValidationService,
   ) {}
+
+  private conssumeDateFilterState(req: Request): FilterStateProps {
+    const validationErrors = req.session?.validationErrors || []
+    const formData = req.session?.formData as LocationBuildProps | undefined 
+    
+    delete req.session?.validationErrors
+    delete req.session?.formData  
+
+    return {
+      errors: validationErrors,
+      formData: formData,
+    }  
+  }
+
+  private normalizeDateFilterFormData(dateFilter: LocationDateFilterFormData): LocationDateFilterFormData {
+    const date = new Date(dateFilter.date)
+    const normalizedDate = date.toISOString().split('T')[0]
+
+    const hour = dateFilter.hour.padStart(2, '0')
+    const minute = dateFilter.minute.padStart(2, '0')
+
+    return {
+      date: normalizedDate,
+      hour,
+      minute,
+    }
+  }
+
+  private buildDateFilterFormValues(
+    sessionFormData: LocationBuildProps | undefined,
+    queryRange: { fromDate: string; toDate: string }
+  ): LocationBuildProps {
+    const defaultValues = {
+      date: '',
+      hour: '',
+      minute: '',
+    } 
+    
+    if (sessionFormData?.fromDate && sessionFormData?.toDate) {
+      return {
+        fromDate: this.normalizeDateFilterFormData(sessionFormData?.fromDate),
+        toDate: this.normalizeDateFilterFormData(sessionFormData.toDate),
+      }
+    }
+
+    const fromDateRabge = queryRange.fromDate ? parseDateTimeFromISOString(queryRange.fromDate) : null
+    const toDateRange = queryRange.toDate ? parseDateTimeFromISOString(queryRange.toDate) : null
+    return {
+        fromDate: fromDateRabge?.isValid() ? getDateComponents(fromDateRabge) : defaultValues,
+        toDate: toDateRange?.isValid() ? getDateComponents(toDateRange) : defaultValues,
+    }
+  } 
+
+ private persistFormState(req: Request, errors: ValidationResult, formData: LocationBuildProps): void {
+    req.session!.validationErrors = errors
+    req.session!.formData = formData
+  } 
 
   async overview(req: Request, res: Response): Promise<void> {
     await this.auditService.logPageView(Page.CASES_OVERVIEW_PAGE, {
@@ -237,37 +157,96 @@ export default class CasesController {
       who: res.locals.user.username,
       correlationId: req.id,
     })
+    
+    const personId = req.params.person_id
+    const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
+    const queryResult = searchLocationsQuerySchema.safeParse(req.query)
+    const queryRange = queryResult.success ? queryResult.data : { fromDate: '', toDate: '' }
+    
+    let positions: any[] = []
+    let validationErrors = sessionErrors
+    let hasSearched = false
 
-   const formData = searchLocationsQuerySchema.safeParse(req.query)
-   let mapDBData = [] as any[]
-
-    console.log('Form data parse result:', formData)
-
-    if (formData.success) {
-      const fromDate = parseDateTimeFromISOString(formData.data.fromDate)
-      const toDate = parseDateTimeFromISOString(formData.data.toDate)
+    if (queryResult.success) {
+      hasSearched = true
+      const fromDate = parseDateTimeFromISOString(queryResult.data.fromDate)
+      const toDate = parseDateTimeFromISOString(queryResult.data.toDate)
       
-     const validation = this.dateSearchValidationService.validateDateSearchRequest(fromDate, toDate)
-     console.log('>>>> Validation result in controller:', validation);
-      const trailJson = await this.trailService.getTrailJson()
-      const filters: Filters = { from: formData.data.fromDate, to: formData.data.toDate }
-      mapDBData = this.trailService.filterByDate(trailJson, filters).data
-    } 
-     console.log('query data to be sent to view:', req.query)
-    console.log('Map data to be sent to view:', mapDBData.length)
-    // console.log('Received query parameters:', req.query)
-    //console.log('Received query start :', start, ' end:', end)
-    // const mapDBData = [] as any[]
+      const validation = this.dateSearchValidationService.validateDateSearchRequest(fromDate, toDate)
+
+      if (validation.success) {
+        const trailJson = await this.trailService.getTrailJson()
+        
+        const filters: Filters = { from: queryResult.data.fromDate, to: queryResult.data.toDate }
+        positions = this.trailService.filterByDate(trailJson, filters) 
+      } else {
+        validationErrors = validation.errors || []
+      }
+    }
+
+    console.log('location >>> query data to be sent to view:', req.query)
+    console.log('Map data to be sent to view:', positions.length)
+
+    const formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
+    const locationAlert = hasSearched && positions.length === 0 
+      ? { text: 'No location data found for the selected date range.' } 
+      : null
+
     res.render('pages/casesLocation', {
       activeNav: 'Location activity',
       activeTab: 'location-activity',
       popData: mockPopDetails,
-      positions: mapDBData,
-      start: req?.query?.start || '',
-      end: req?.query?.end || '',
+      positions: positions,
       alert: true,
-      id: req.params.id,
+      id: personId,
+      dateFilterForm: {
+        action: `/cases/${personId}/location-activity`,
+        values: formValues,
+        errors: validationErrors,
+        errorSummary: validationErrors.map((err) => ({ text: err.message })),
+      },
+      hasSearched,
+      fromDate: queryRange.fromDate,
+      toDate: queryRange.toDate,
+      locationAlert,
+    }) 
+  }
+
+  async searchLocation(req: Request, res: Response): Promise<void> {
+    await this.auditService.logPageView(Page.CASES_LOCATION_PAGE, {
+      who: res.locals.user.username,
+      correlationId: req.id,
     })
+    
+    const personId = req.params.person_id
+    const { fromDate, toDate } = req.body
+    const formPayload = { fromDate, toDate }
+
+    const parsedform = searchLocationsQuerySchema.safeParse(formPayload)
+
+     console.log('searchLocation >>> query data to be sent to view:', req.query)
+
+    if (!parsedform.success) {
+      const errors = convertZodErrorToValidationError(parsedform.error)
+      this.persistFormState(req, errors, formPayload)
+      return res.redirect(`/cases/${personId}/location-activity`)
+    }
+
+    const fromDateTime = parseDateTimeFromISOString(parsedform.data.fromDate)
+    const toDateTime = parseDateTimeFromISOString(parsedform.data.toDate)
+    const validation = this.dateSearchValidationService.validateDateSearchRequest(fromDateTime, toDateTime)
+
+    if (!validation.success) {
+      this.persistFormState(req, validation.errors || [], formPayload)
+      return res.redirect(`/cases/${personId}/location-activity`)
+    }
+
+    const query = new URLSearchParams({
+      fromDate: parsedform.data.fromDate,
+      toDate: parsedform.data.toDate,
+    })
+
+    return res.redirect(`/cases/${personId}/location-activity?${query.toString()}`)
   }
 
   async notes(req: Request, res: Response): Promise<void> {

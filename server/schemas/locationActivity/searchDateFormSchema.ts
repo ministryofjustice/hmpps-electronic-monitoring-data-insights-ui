@@ -1,9 +1,10 @@
 import { z } from 'zod/v4'
+import { parseDateTimeFromComponents } from '../../utils/date'
 
 const dateTimeQuerySchema = z.object({
-  date: z.string(),
-  hour: z.string(), 
-  minute: z.string(), 
+  date: z.string().min(8, 'Date must be DD/MM/YYYY'),
+  hour: z.string().min(1, 'You must enter an hour'), 
+  minute: z.string().min(1, 'You must enter a minute'),
 })
 
 const searchLocationsQuerySchema = z
@@ -11,41 +12,39 @@ const searchLocationsQuerySchema = z
     start: dateTimeQuerySchema,
     end: dateTimeQuerySchema,
   })
-  .transform(data => {
-    const parseDateTime = (dt: { date: string; hour: string; minute: string }): Date => {
-      const [day, month, year] = dt.date.split('/')
-      return new Date(
-        parseInt(year, 10),
-        parseInt(month, 10) - 1, 
-        parseInt(day, 10),
-        parseInt(dt.hour, 10),
-        parseInt(dt.minute, 10)
-      )
+  .refine(
+    (data) => {
+      const fromParsed = parseDateTimeFromComponents(data.start.date, data.start.hour, data.start.minute)
+      return fromParsed.isValid()
+    },
+    {
+      message: 'You must enter a valid value for date',
+      path: ['start', 'date'],
     }
-
-    const startDate = parseDateTime(data.start)
-    const endDate = parseDateTime(data.end)
+  )
+  .refine(
+    (data) => {
+      const toParsed = parseDateTimeFromComponents(data.end.date, data.end.hour, data.end.minute)
+      return toParsed.isValid()
+    },
+    {
+      message: 'You must enter a valid value for date',
+      path: ['end', 'date'],
+    }
+  )
+  .transform((data) => {
+    const fromDate = parseDateTimeFromComponents(data.start.date, data.start.hour, data.start.minute)
+    const toDate = parseDateTimeFromComponents(data.end.date, data.end.hour, data.end.minute)
 
     return {
-      fromDate: startDate.toISOString(),
-      toDate: endDate.toISOString(),
+      fromDate: fromDate.toISOString(),
+      toDate: toDate.toISOString(),
     }
   })
 
-  // .refine(
-  //   data => {
-  //     const start = new Date(data.fromDate)
-  //     const end = new Date(data.toDate)
-  //     return start < end
-  //   },
-  //   {
-  //     message: 'Start date/time must be before end date/time',
-  //   }
-  // )
-
 const viewLocationsQueryParametersSchema = z.object({
-  from: z.string().default(''),
-  to: z.string().default(''),
+  fromDate: z.string().default(''),
+  toDate: z.string().default(''),
 })
 
 export { searchLocationsQuerySchema, viewLocationsQueryParametersSchema }
