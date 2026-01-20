@@ -1,4 +1,3 @@
-import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
 import {
   LocationsLayer,
   TracksLayer,
@@ -8,7 +7,6 @@ import {
 import { isEmpty } from 'ol/extent'
 import createLayerVisibilityToggle from './controls/layerVisibilityToggle'
 import { queryElement } from '../../utils/utils'
-
 
 const initialiseLocationDataView = async () => {
   const emMap = queryElement(document, 'em-map')
@@ -62,7 +60,7 @@ const initialiseLocationDataView = async () => {
     }),
   )
 
-  const locationSource = locationsLayer?.getSource()
+  const locationSource = locationsLayer ? locationsLayer.getSource() : null
 
   if (locationSource) {
     const extent = locationSource.getExtent()

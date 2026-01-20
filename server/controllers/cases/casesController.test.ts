@@ -6,7 +6,7 @@ import mockPopDetails from '../mocks/popDetails'
 import * as dummyDataUtils from '../../utils/dummyDataUtils'
 import { FormattedPerson } from '../../interfaces/dummyDataPerson'
 import TrailService from '../../services/trailService'
-import DateSearchValidtionService from '../../services/dateSearchValidtionService'  
+import DateSearchValidtionService from '../../services/dateSearchValidtionService'
 
 jest.mock('../../services/auditService')
 jest.mock('../../services/trailService')

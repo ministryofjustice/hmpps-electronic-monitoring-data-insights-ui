@@ -7,7 +7,6 @@ const MAX_SEARCH_WINDOW = 168 * 60 * 60 * 1000 // 168 hours in milliseconds = 7 
 const ERROR_DATES_EXCEED_MAX_SEARCH_WINDOW = 'The selected date range must be 7 days or less'
 
 class DateSearchValidationService {
-
   validateDateSearchRequest = (from: Dayjs, to: Dayjs) => {
     const errors: ValidationResult = []
 

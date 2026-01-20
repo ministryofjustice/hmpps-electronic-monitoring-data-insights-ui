@@ -11,7 +11,7 @@ import { searchLocationsQuerySchema } from '../../schemas/locationActivity/searc
 import { getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
 import { ValidationResult } from '../../models/ValidationResult'
 import { convertZodErrorToValidationError } from '../../utils/errors'
-
+import logger from '../../../logger'
 
 interface LocationDateFilterFormData {
   date: string
@@ -20,12 +20,12 @@ interface LocationDateFilterFormData {
 }
 interface FilterStateProps {
   errors: ValidationResult
-  formData: LocationBuildProps 
+  formData: LocationBuildProps
 }
 
 interface LocationBuildProps {
-  fromDate: LocationDateFilterFormData,
-  toDate: LocationDateFilterFormData,
+  fromDate: LocationDateFilterFormData
+  toDate: LocationDateFilterFormData
 }
 export default class CasesController {
   constructor(
@@ -36,15 +36,15 @@ export default class CasesController {
 
   private conssumeDateFilterState(req: Request): FilterStateProps {
     const validationErrors = req.session?.validationErrors || []
-    const formData = req.session?.formData as LocationBuildProps | undefined 
-    
+    const formData = req.session?.formData as LocationBuildProps | undefined
+
     delete req.session?.validationErrors
-    delete req.session?.formData  
+    delete req.session?.formData
 
     return {
       errors: validationErrors,
-      formData: formData,
-    }  
+      formData,
+    }
   }
 
   private normalizeDateFilterFormData(dateFilter: LocationDateFilterFormData): LocationDateFilterFormData {
@@ -63,14 +63,14 @@ export default class CasesController {
 
   private buildDateFilterFormValues(
     sessionFormData: LocationBuildProps | undefined,
-    queryRange: { fromDate: string; toDate: string }
+    queryRange: { fromDate: string; toDate: string },
   ): LocationBuildProps {
     const defaultValues = {
       date: '',
       hour: '',
       minute: '',
-    } 
-    
+    }
+
     if (sessionFormData?.fromDate && sessionFormData?.toDate) {
       return {
         fromDate: this.normalizeDateFilterFormData(sessionFormData?.fromDate),
@@ -81,15 +81,15 @@ export default class CasesController {
     const fromDateRabge = queryRange.fromDate ? parseDateTimeFromISOString(queryRange.fromDate) : null
     const toDateRange = queryRange.toDate ? parseDateTimeFromISOString(queryRange.toDate) : null
     return {
-        fromDate: fromDateRabge?.isValid() ? getDateComponents(fromDateRabge) : defaultValues,
-        toDate: toDateRange?.isValid() ? getDateComponents(toDateRange) : defaultValues,
+      fromDate: fromDateRabge?.isValid() ? getDateComponents(fromDateRabge) : defaultValues,
+      toDate: toDateRange?.isValid() ? getDateComponents(toDateRange) : defaultValues,
     }
-  } 
+  }
 
- private persistFormState(req: Request, errors: ValidationResult, formData: LocationBuildProps): void {
+  private persistFormState(req: Request, errors: ValidationResult, formData: LocationBuildProps): void {
     req.session!.validationErrors = errors
     req.session!.formData = formData
-  } 
+  }
 
   async overview(req: Request, res: Response): Promise<void> {
     await this.auditService.logPageView(Page.CASES_OVERVIEW_PAGE, {
@@ -157,13 +157,13 @@ export default class CasesController {
       who: res.locals.user.username,
       correlationId: req.id,
     })
-    
+
     const personId = req.params.person_id
     const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
     const queryResult = searchLocationsQuerySchema.safeParse(req.query)
     const queryRange = queryResult.success ? queryResult.data : { fromDate: '', toDate: '' }
-    
-    let positions: any[] = []
+
+    let positions: Position[] = []
     let validationErrors = sessionErrors
     let hasSearched = false
 
@@ -171,45 +171,44 @@ export default class CasesController {
       hasSearched = true
       const fromDate = parseDateTimeFromISOString(queryResult.data.fromDate)
       const toDate = parseDateTimeFromISOString(queryResult.data.toDate)
-      
+
       const validation = this.dateSearchValidationService.validateDateSearchRequest(fromDate, toDate)
 
       if (validation.success) {
         const trailJson = await this.trailService.getTrailJson()
-        
+
         const filters: Filters = { from: queryResult.data.fromDate, to: queryResult.data.toDate }
-        positions = this.trailService.filterByDate(trailJson, filters) 
+        positions = this.trailService.filterByDate(trailJson, filters)
       } else {
         validationErrors = validation.errors || []
       }
     }
 
-    console.log('location >>> query data to be sent to view:', req.query)
-    console.log('Map data to be sent to view:', positions.length)
+    logger.debug({ query: req.query }, 'location >>> query data to be sent to view')
+    logger.debug({ count: positions.length }, 'Map data to be sent to view')
 
     const formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
-    const locationAlert = hasSearched && positions.length === 0 
-      ? { text: 'No location data found for the selected date range.' } 
-      : null
+    const locationAlert =
+      hasSearched && positions.length === 0 ? { text: 'No location data found for the selected date range.' } : null
 
     res.render('pages/casesLocation', {
       activeNav: 'Location activity',
       activeTab: 'location-activity',
       popData: mockPopDetails,
-      positions: positions,
+      positions,
       alert: true,
       id: personId,
       dateFilterForm: {
         action: `/cases/${personId}/location-activity`,
         values: formValues,
         errors: validationErrors,
-        errorSummary: validationErrors.map((err) => ({ text: err.message })),
+        errorSummary: validationErrors.map(err => ({ text: err.message })),
       },
       hasSearched,
       fromDate: queryRange.fromDate,
       toDate: queryRange.toDate,
       locationAlert,
-    }) 
+    })
   }
 
   async searchLocation(req: Request, res: Response): Promise<void> {
@@ -217,14 +216,14 @@ export default class CasesController {
       who: res.locals.user.username,
       correlationId: req.id,
     })
-    
+
     const personId = req.params.person_id
     const { fromDate, toDate } = req.body
     const formPayload = { fromDate, toDate }
 
     const parsedform = searchLocationsQuerySchema.safeParse(formPayload)
 
-     console.log('searchLocation >>> query data to be sent to view:', req.query)
+    logger.debug({ query: req.query }, 'searchLocation >>> query data to be sent to view')
 
     if (!parsedform.success) {
       const errors = convertZodErrorToValidationError(parsedform.error)

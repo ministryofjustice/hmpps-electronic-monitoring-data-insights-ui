@@ -1,11 +1,12 @@
 import { type RequestHandler, Router } from 'express'
 import type { Services } from '../services'
 import CasesController from '../controllers/cases/casesController'
+import logger from '../../logger'
 
 export default function casesRoutes(
   { auditService, trailService, dateSearchValidationService }: Services,
   get: (path: string, handler: RequestHandler) => Router,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   post: (path: string, handler: RequestHandler) => Router,
 ): void {
   const casesController = new CasesController(auditService, trailService, dateSearchValidationService)
@@ -19,12 +20,12 @@ export default function casesRoutes(
   })
 
   get('/cases/:person_id/location-activity', async (req, res) => {
-    console.log('Handling GET /cases/:person_id/location-activity')
+    logger.debug('Handling GET /cases/:person_id/location-activity')
     await casesController.location(req, res)
   })
 
   post('/cases/:person_id/location-activity', async (req, res) => {
-    console.log('Handling POST /cases/:person_id/location-activity')
+    logger.debug('Handling POST /cases/:person_id/location-activity')
     await casesController.searchLocation(req, res)
   })
 

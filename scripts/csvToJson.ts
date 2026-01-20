@@ -17,30 +17,32 @@ const getGeolocationMechanism = (value: number): GeolocationMechanism | undefine
   return mapping[value]
 }
 
+type CsvRow = Record<string, string>
+
 async function start() {
   const data = fs.readFileSync(inPath, 'utf-8')
 
-  const parsed = Papa.parse(data, {
+  const parsed = Papa.parse<CsvRow>(data, {
     header: true,
     skipEmptyLines: true,
     dynamicTyping: false, // Keep as strings for now
     transformHeader: header => header.trim().replace(/"/g, ''),
   })
 
-  const rows: Position[] = parsed.data.map((row: any, index: number) => ({
-    positionId: parseInt(row.position_id),
+  const rows: Position[] = parsed.data.map((row, index) => ({
+    positionId: parseInt(row.position_id, 10),
     latitude: parseFloat(row.position_latitude),
     longitude: parseFloat(row.position_longitude),
     precision: parseFloat(row.position_precision),
     speed: parseFloat(row.position_speed),
     direction: parseFloat(row.position_direction),
     timestamp: row.position_gps_date,
-    geolocationMechanism: getGeolocationMechanism(parseInt(row.position_lbs)),
+    geolocationMechanism: getGeolocationMechanism(parseInt(row.position_lbs, 10)),
     sequenceNumber: index + 1,
   }))
 
   fs.writeFileSync(outPath, JSON.stringify({ data: rows }, null, 2))
-  console.log(`Wrote ${outPath} with ${rows.length} positions.`)
+  process.stdout.write(`Wrote ${outPath} with ${rows.length} positions.\n`)
 }
 
 start()
