@@ -21,11 +21,12 @@
     "int-test": "cypress run --config video=false",
     "int-test-ui": "cypress open --e2e --browser chrome",
     "clean": "rm -rf dist test_results",
-    "rebuild": "npm run clean && npm i && npm run build"
+    "rebuild": "npm run clean && npm i && npm run build",
+    "setup": "npm ci && hmpps-npm-script-run-allowlist"
   },
   "engines": {
     "node": "^22",
-    "npm": "^10"
+    "npm": "^11"
   },
   "jest": {
     "transform": {
@@ -106,6 +107,7 @@
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
     "@ministryofjustice/eslint-config-hmpps": "^0.0.1-beta.2",
+    "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.3",
     "@tsconfig/node22": "^22.0.1",
     "@types/bunyan": "^1.8.11",
     "@types/bunyan-format": "^0.2.9",
