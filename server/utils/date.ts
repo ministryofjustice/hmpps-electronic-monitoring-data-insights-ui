@@ -4,15 +4,17 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 
-
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(isSameOrBefore)
 
-const parseDateTimeFromComponents = (date: string, hour: string, minute: string) => {
-  const dateTimeString = `${date} ${hour}:${minute}`
-  const formats = ['D/M/YYYY H:m', 'DD/MM/YYYY H:m', 'D/M/YYYY HH:mm', 'DD/MM/YYYY HH:mm']
+const parseDateTimeFromComponents = (date: string, hour: string, minute: string, second?: string) => {
+  const hasSecond = second !== undefined && second !== ''
+  const dateTimeString = hasSecond ? `${date} ${hour}:${minute}:${second}` : `${date} ${hour}:${minute}`
+  const formats = hasSecond
+    ? ['D/M/YYYY H:m:s', 'DD/MM/YYYY H:m:s', 'D/M/YYYY HH:mm:ss', 'DD/MM/YYYY HH:mm:ss']
+    : ['D/M/YYYY H:m', 'DD/MM/YYYY H:m', 'D/M/YYYY HH:mm', 'DD/MM/YYYY HH:mm']
 
   const validationDate = dayjs(dateTimeString, formats, true)
 
@@ -33,14 +35,14 @@ const getDateComponents = (date: Dayjs) => {
     return {
       date: londonDate.format('DD/MM/YYYY'),
       hour: londonDate.format('HH'),
-      minute: londonDate.format('mm')
+      minute: londonDate.format('mm'),
     }
   }
 
   return {
     date: 'Invalid date',
     hour: '',
-    minute: ''
+    minute: '',
   }
 }
 

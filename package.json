@@ -24,7 +24,7 @@
     "rebuild": "npm run clean && npm i && npm run build"
   },
   "engines": {
-    "node": "^22",
+    "node": "^24",
     "npm": "^10"
   },
   "jest": {
@@ -100,6 +100,7 @@
     "jwt-decode": "^4.0.0",
     "nocache": "^4.0.0",
     "nunjucks": "^3.2.4",
+    "ol": "^10.7.0",
     "papaparse": "^5.5.3",
     "passport": "^0.7.0",
     "passport-oauth2": "^1.8.0",

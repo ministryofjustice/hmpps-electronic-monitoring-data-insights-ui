@@ -24,7 +24,8 @@ const DateTimeInputModel = z
     const formattedDateTime = parseDateTimeFromComponents(
       ctx.value.date,
       ctx.value.hour,
-      ctx.value.minute
+      ctx.value.minute,
+      ctx.value.second,
     )
 
     if (!formattedDateTime.isValid()) {
@@ -37,7 +38,7 @@ const DateTimeInputModel = z
     }
   })
   .transform(value => {
-    return parseDateTimeFromComponents(value.date, value.hour, value.minute)
+    return parseDateTimeFromComponents(value.date, value.hour, value.minute, value.second)
   })
 
 export default DateTimeInputModel
