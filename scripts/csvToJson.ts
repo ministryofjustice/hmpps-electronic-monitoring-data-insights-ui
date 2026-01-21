@@ -4,8 +4,9 @@ import Papa from 'papaparse'
 import Position from '../server/types/entities/position'
 import type GeolocationMechanism from '../server/types/entities/geolocationMechanism'
 
-const inPath = path.resolve(process.cwd(), './data/pop_trail.csv')
-const outPath = path.resolve(process.cwd(), './data/pop_trail.json')
+// scripts % npx ts-node csvToJson.ts
+const inPath = path.resolve(process.cwd(), './data/new_trail.csv')
+const outPath = path.resolve(process.cwd(), './data/new_trail.json')
 
 const getGeolocationMechanism = (value: number): GeolocationMechanism | undefined => {
   const mapping: Record<number, GeolocationMechanism> = {

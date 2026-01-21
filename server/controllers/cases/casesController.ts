@@ -11,7 +11,6 @@ import { searchLocationsQuerySchema } from '../../schemas/locationActivity/searc
 import { getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
 import { ValidationResult } from '../../models/ValidationResult'
 import { convertZodErrorToValidationError } from '../../utils/errors'
-import logger from '../../../logger'
 
 interface LocationDateFilterFormData {
   date: string
@@ -184,8 +183,8 @@ export default class CasesController {
       }
     }
 
-    logger.debug({ query: req.query }, 'location >>> query data to be sent to view')
-    logger.debug({ count: positions.length }, 'Map data to be sent to view')
+    console.log({ query: req.query }, 'location >>> query data to be sent to view')
+    console.log({ count: positions.length }, 'Map data to be sent to view')
 
     const formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
     const locationAlert =
@@ -223,7 +222,7 @@ export default class CasesController {
 
     const parsedform = searchLocationsQuerySchema.safeParse(formPayload)
 
-    logger.debug({ query: req.query }, 'searchLocation >>> query data to be sent to view')
+    console.log('searchLocation >>> query data to be sent to view:', req.query)
 
     if (!parsedform.success) {
       const errors = convertZodErrorToValidationError(parsedform.error)

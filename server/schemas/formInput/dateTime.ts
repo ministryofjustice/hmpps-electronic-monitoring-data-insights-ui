@@ -21,12 +21,7 @@ const DateTimeInputModel = z
       return
     }
 
-    const formattedDateTime = parseDateTimeFromComponents(
-      ctx.value.date,
-      ctx.value.hour,
-      ctx.value.minute,
-      ctx.value.second,
-    )
+    const formattedDateTime = parseDateTimeFromComponents(ctx.value.date, ctx.value.hour, ctx.value.minute)
 
     if (!formattedDateTime.isValid()) {
       ctx.issues.push({

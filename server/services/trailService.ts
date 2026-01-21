@@ -1,6 +1,5 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import logger from '../../logger'
 
 export interface Position {
   positionId: number
@@ -23,7 +22,7 @@ export interface Filters {
   to?: string
 }
 
-const ROWS_PATH = process.env.TRAIL_JSON_PATH ?? path.resolve(process.cwd(), './scripts/data/pop_trail.json')
+const ROWS_PATH = process.env.TRAIL_JSON_PATH ?? path.resolve(process.cwd(), './scripts/data/new_trail.json')
 
 export default class TrailService {
   private cache: PositionData | null = null
@@ -47,7 +46,7 @@ export default class TrailService {
     const { from, to } = filters
 
     if (!from && !to) {
-      logger.debug('No date filters applied, returning full data set.')
+      console.log('No date filters applied, returning full data set.')
       return positionJson.data
     }
 
