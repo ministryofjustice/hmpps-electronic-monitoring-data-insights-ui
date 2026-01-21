@@ -183,8 +183,8 @@ export default class CasesController {
       }
     }
 
-    console.log({ query: req.query }, 'location >>> query data to be sent to view')
-    console.log({ count: positions.length }, 'Map data to be sent to view')
+    // console.log({ query: req.query }, 'xxx location >>> query data to be sent to view')
+    // console.log({ count: positions.length }, 'xxx Map data to be sent to view')
 
     const formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
     const locationAlert =
@@ -222,7 +222,7 @@ export default class CasesController {
 
     const parsedform = searchLocationsQuerySchema.safeParse(formPayload)
 
-    console.log('searchLocation >>> query data to be sent to view:', req.query)
+    // console.log('xxx searchLocation >>> query data to be sent to view:', req.query)
 
     if (!parsedform.success) {
       const errors = convertZodErrorToValidationError(parsedform.error)
