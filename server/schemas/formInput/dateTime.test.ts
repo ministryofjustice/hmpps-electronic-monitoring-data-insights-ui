@@ -13,6 +13,10 @@ dayjs.extend(isSameOrAfter)
 dayjs.extend(isSameOrBefore)
 
 describe('DateTimeInputModel', () => {
+  beforeAll(() => {
+    process.env.TZ = 'UTC'
+  })
+
   it('should parse a valid GMT date time', () => {
     const result = DateTimeInputModel.safeParse({ date: '01/01/2025', hour: '0', minute: '0', second: '0' })
 
@@ -21,7 +25,6 @@ describe('DateTimeInputModel', () => {
   })
 
   it('should parse a valid BST date time', () => {
-    process.env.TZ = 'UTC'
     const result = DateTimeInputModel.safeParse({ date: '01/06/2025', hour: '10', minute: '0', second: '0' })
 
     expect(result.success).toBe(true)
