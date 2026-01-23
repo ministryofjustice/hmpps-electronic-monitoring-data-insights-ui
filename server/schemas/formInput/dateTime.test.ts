@@ -21,6 +21,7 @@ describe('DateTimeInputModel', () => {
   })
 
   it('should parse a valid BST date time', () => {
+    process.env.TZ = 'UTC'
     const result = DateTimeInputModel.safeParse({ date: '01/06/2025', hour: '10', minute: '0', second: '0' })
 
     expect(result.success).toBe(true)
