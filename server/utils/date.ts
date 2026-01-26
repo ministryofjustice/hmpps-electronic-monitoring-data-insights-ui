@@ -16,7 +16,7 @@ const parseDateTimeFromComponents = (date: string, hour: string, minute: string,
     ? ['D/M/YYYY H:m:s', 'DD/MM/YYYY H:m:s', 'D/M/YYYY HH:mm:ss', 'DD/MM/YYYY HH:mm:ss']
     : ['D/M/YYYY H:m', 'DD/MM/YYYY H:m', 'D/M/YYYY HH:mm', 'DD/MM/YYYY HH:mm']
 
-  const validationDate = dayjs(dateTimeString, formats, true)
+  const validationDate = dayjs(dateTimeString, formats, 'Europe/London', true)
 
   if (!validationDate.isValid()) {
     return dayjs(null)
