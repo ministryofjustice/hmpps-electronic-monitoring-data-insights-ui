@@ -38,7 +38,6 @@ export default class TrailService {
 
     const content = await fs.readFile(ROWS_PATH, 'utf-8')
     this.cache = JSON.parse(content) as PositionData
-    // console.log('xxx cache === ', this.cache)
     return this.cache
   }
 
@@ -46,7 +45,6 @@ export default class TrailService {
     const { from, to } = filters
 
     if (!from && !to) {
-      // console.log('xxx No date filters applied, returning full data set.')
       return positionJson.data
     }
 

@@ -1,4 +1,13 @@
 import dayjs, { Dayjs } from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(customParseFormat)
+dayjs.extend(isSameOrBefore)
 
 const parseDateTimeFromComponents = (date: string, hour: string, minute: string, second?: string) => {
   const dateTimeString = second ? `${date} ${hour}:${minute}:${second}` : `${date} ${hour}:${minute}`

@@ -183,9 +183,6 @@ export default class CasesController {
       }
     }
 
-    // console.log({ query: req.query }, 'xxx location >>> query data to be sent to view')
-    // console.log({ count: positions.length }, 'xxx Map data to be sent to view')
-
     const formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
     const locationAlert =
       hasSearched && positions.length === 0 ? { text: 'No location data found for the selected date range.' } : null
@@ -221,8 +218,6 @@ export default class CasesController {
     const formPayload = { fromDate, toDate }
 
     const parsedform = searchLocationsQuerySchema.safeParse(formPayload)
-
-    // console.log('xxx searchLocation >>> query data to be sent to view:', req.query)
 
     if (!parsedform.success) {
       const errors = convertZodErrorToValidationError(parsedform.error)
