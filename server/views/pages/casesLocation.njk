@@ -12,25 +12,27 @@
   {% include "partials/casesHeader.njk" %}
   {% include "partials/popAlert.njk" %}
   {% include "partials/casesSubNavigation.njk" %}
-
-  <h2 class="govuk-heading-m">Location activity</h2>
-  <div class="date-time-picker">
-    <div class="govuk-grid-row">
-      {% include "partials/mapSearchForm.njk" %}
+  <div>
+    <h2 class="govuk-heading-m">Location activity</h2>
+    <div class="date-time-picker">
+      <div class="govuk-grid-row">
+        {% include "partials/mapSearchForm.njk" %}
+      </div>
+    <div class="app-map">
+      {{
+        emMap({
+          alerts:alerts,
+          cspNonce:cspNonce,
+          positions: positions,
+          controls: {
+            scaleControl: 'bar',
+            locationDisplay: 'dms',
+            rotateControl: 'true',
+            zoomSlider: true
+          }
+        })
+      }}
     </div>
-  <div class="app-map">
-    {{
-      emMap({
-        alerts:alerts,
-        cspNonce:cspNonce,
-        positions: positions,
-        controls: {
-          scaleControl: 'bar',
-          locationDisplay: 'dms',
-          rotateControl: 'true',
-          zoomSlider: true
-        }
-      })
-    }}
   </div>
+
 {% endblock %}

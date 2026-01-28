@@ -21,10 +21,9 @@
                 id="dateFilterForm"
                 action="{{ form.action }}"
                 class="map-search__form govuk-form-group govuk-!-margin-bottom-0"
-                method="get"
-
-                <input type="hidden" name="_csrf" value="{{ csrftoken }}" /
-            >
+                method="get">
+                
+                <input type="hidden" name="_csrf" value="{{ csrftoken }}" />
                 <div class="govuk-grid-row">  
                     <div class="govuk-grid-column-one-third">
                         {{ dtp.date_time_picker({

@@ -131,6 +131,16 @@ These credentials are configured using the following env variables:
 - CLIENT_CREDS_CLIENT_ID
 - CLIENT_CREDS_CLIENT_SECRET
 
+### OS Map Credentials
+
+OS Map credentials are configured using the following env variables:
+
+
+- OS_MAPS_API_KEY
+- OS_MAPS_API_SECRET
+
+
+
 ### Dependencies
 
 ### HMPPS Auth
