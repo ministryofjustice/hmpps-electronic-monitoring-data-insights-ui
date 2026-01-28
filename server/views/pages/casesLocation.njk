@@ -18,11 +18,12 @@
       <div class="govuk-grid-row">
         {% include "partials/mapSearchForm.njk" %}
       </div>
+    </div>
     <div class="app-map">
       {{
         emMap({
-          alerts:alerts,
-          cspNonce:cspNonce,
+          alerts: alerts,
+          cspNonce: cspNonce,
           positions: positions,
           controls: {
             scaleControl: 'bar',
@@ -34,5 +35,4 @@
       }}
     </div>
   </div>
-
 {% endblock %}
