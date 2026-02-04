@@ -14,4 +14,4 @@ generic-service:
     COMPONENT_API_URL: "https://probation-frontend-components.hmpps.service.justice.gov.uk"
 
 generic-prometheus-alerts:
-  alertSeverity: hmpps_electronic_monitoring_data_insights_alerts
+  alertSeverity: hmpps-electronic-monitoring-data-insights-prod
