@@ -20,7 +20,6 @@ export interface Position {
 export interface PositionData {
   locations: Position[]
 }
-
 export interface Filters {
   from?: string
   to?: string
