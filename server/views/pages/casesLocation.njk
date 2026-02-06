@@ -1,0 +1,38 @@
+{% extends "partials/layout.njk" %}
+{% from "em-map/macro.njk" import emMap %}
+
+{% set pageTitle = applicationName + " - Cases" %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+  {% include "partials/primaryHeader.njk" %}
+{% endblock %}
+
+{% block content %}
+  {% include "partials/casesHeader.njk" %}
+  {% include "partials/popAlert.njk" %}
+  {% include "partials/casesSubNavigation.njk" %}
+  <div>
+    <h2 class="govuk-heading-m">Location activity</h2>
+    <div class="date-time-picker">
+      <div class="govuk-grid-row">
+        {% include "partials/mapSearchForm.njk" %}
+      </div>
+    </div>
+    <div class="app-map">
+      {{
+        emMap({
+          alerts: alerts,
+          cspNonce: cspNonce,
+          positions: positions,
+          controls: {
+            scaleControl: 'bar',
+            locationDisplay: 'dms',
+            rotateControl: 'true',
+            zoomSlider: true
+          }
+        })
+      }}
+    </div>
+  </div>
+{% endblock %}

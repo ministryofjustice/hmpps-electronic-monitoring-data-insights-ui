@@ -1,0 +1,63 @@
+{% import "components/date-time-picker/macro.njk" as dtp %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set form = dateFilterForm %}
+{% set errors = form.errors or {} %}
+
+{% if form.errorSummary and form.errorSummary | length %}
+    {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: form.errorSummary
+    }) }}
+{% endif %}
+
+
+<div class="govuk-width-container">
+    <div class="govuk-grid-row govuk-!-margin-bottom-3 govuk-!-margin-right-0 govuk-!-margin-left-0">
+        <h3 class="govuk-heading-s">Search map by date and time</h3>
+        <div class="map-search govuk-!-padding-4">
+            <form
+                id="dateFilterForm"
+                action="{{ form.action }}"
+                class="map-search__form govuk-form-group govuk-!-margin-bottom-0"
+                method="get">
+                
+                <input type="hidden" name="_csrf" value="{{ csrftoken }}" />
+                <div class="govuk-grid-row">  
+                    <div class="govuk-grid-column-one-third">
+                        {{ dtp.date_time_picker({
+                            id: "start",
+                            name: "start",
+                            labelText: "Date from",
+                            timeLabel: "Time from",
+                            value: form.values.fromDate.date,
+                            hour: form.values.fromDate.hour,
+                            minute: form.values.fromDate.minute 
+                        }) }}
+                    </div>
+                    <div class="govuk-grid-column-one-third">
+                        {{ dtp.date_time_picker({
+                            id: "end",
+                            name: "end",
+                            labelText: "Date to",
+                            timeLabel: "Time to",
+                            value: form.values.toDate.date,
+                            hour: form.values.toDate.hour,
+                            minute: form.values.toDate.minute   
+                        }) }}
+                    </div>
+                     <div class="govuk-grid-column-one-third">
+                        <div class="map-search__form-actions">
+                            {{ govukButton({
+                                text: "Update map",
+                                classes: "govuk-!-margin-right-2 govuk-!-margin-bottom-0"
+                            }) }}
+                            <a href="#" class="govuk-link govuk-link--no-visited-state">Clear filters</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

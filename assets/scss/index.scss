@@ -16,3 +16,20 @@ $govuk-page-width: $moj-page-width;
 
 @import 'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/footer';
 @import 'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/header';
+
+.app-map {
+  height: 500px;
+  margin-bottom: 30px;
+}
+
+.map-search {
+  margin-top: 20px;
+  background: #F3F2F1;
+  & .map-search__form {
+    width: 90%;
+  }
+  
+  & .map-search__form-actions {
+    margin-top: 156px;
+  }
+}

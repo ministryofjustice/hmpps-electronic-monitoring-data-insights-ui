@@ -16,4 +16,14 @@ const convertZodErrorToValidationError = (error: ZodError): ValidationResult => 
   }, [] as ValidationResult)
 }
 
-export { createGovUkErrorMessage, convertZodErrorToValidationError }
+const flattenErrorsToMap = (errors: ValidationResult) => {
+  return errors.reduce(
+    (acc, error) => {
+      acc[error.field] = createGovUkErrorMessage(error)
+      return acc
+    },
+    {} as Record<string, GovUkErrorMessage>,
+  )
+}
+
+export { createGovUkErrorMessage, convertZodErrorToValidationError, flattenErrorsToMap }

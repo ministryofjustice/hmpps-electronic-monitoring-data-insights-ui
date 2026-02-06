@@ -14,6 +14,8 @@ export default class HomeController {
       activeNav: '/',
       popData: mockPopDetails,
       alert: true,
+      cspNonce: res.locals.cspNonce,
+      apiKey: process.env.OS_MAPS_API_KEY,
     })
   }
 }
