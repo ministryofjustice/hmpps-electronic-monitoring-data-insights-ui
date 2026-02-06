@@ -63,7 +63,6 @@ export default class TrailService {
     if (queryParams.length > 0) {
       url += `?${queryParams.join('&')}`
     }
-
     try {
       const response = await fetch(url)
 
