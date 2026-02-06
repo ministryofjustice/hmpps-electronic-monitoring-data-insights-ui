@@ -1,5 +1,4 @@
-import fs from 'node:fs/promises'
-import path from 'node:path'
+import GeolocationMechanism from '../types/entities/geolocationMechanism'
 
 export interface Position {
   positionId: number
@@ -11,10 +10,15 @@ export interface Position {
   timestamp: string
   geolocationMechanism: string
   sequenceNumber: number
+  deviceId?: string
+  hdop?: number
+  geometry?: string
+  satellite?: number
+  lbs?: number
 }
 
 export interface PositionData {
-  data: Position[]
+  locations: Position[]
 }
 
 export interface Filters {
@@ -22,49 +26,65 @@ export interface Filters {
   to?: string
 }
 
-const ROWS_PATH = process.env.TRAIL_JSON_PATH ?? path.resolve(process.cwd(), './scripts/data/new_trail.json')
+const getGeolocationMechanism = (value: number): GeolocationMechanism | undefined => {
+  const mapping: Record<number, GeolocationMechanism> = {
+    1: 'GPS',
+    4: 'RF',
+    5: 'LBS',
+    6: 'WIFI',
+  }
+  return mapping[value]
+}
 
 export default class TrailService {
   private cache: PositionData | null = null
 
   private readonly rowsPath: string
 
-  constructor(rowsPath: string | null = null) {
-    this.rowsPath = rowsPath || ROWS_PATH
-  }
-
-  async getTrailJson(): Promise<PositionData> {
-    if (this.cache) return this.cache
-
-    const content = await fs.readFile(ROWS_PATH, 'utf-8')
-    this.cache = JSON.parse(content) as PositionData
-    return this.cache
-  }
-
-  filterByDate(positionJson: PositionData, filters: Filters): Position[] {
-    const { from, to } = filters
-
-    if (!from && !to) {
-      return positionJson.data
+  async filterByDate(crn: string, filters: Filters): Promise<Position[]> {
+    if (!process.env.TRAIL_DATA_BASE_URL) {
+      throw new Error('Trail Service - TRAIL_DATA_BASE_URL is not defined in environment variables')
     }
 
-    const fromDate = from ? new Date(from) : null
-    const toDate = to ? new Date(to) : null
+    const { from, to } = filters
+    let url = `${process.env.TRAIL_DATA_BASE_URL}/people/${crn}/locations`
 
-    return {
-      ...positionJson,
-      data: positionJson.data.filter(position => {
-        const date = new Date(position.timestamp)
+    const queryParams: string[] = []
 
-        if (Number.isNaN(date.getTime())) {
-          return false
+    if (from) {
+      const fromDate = new Date(from).toISOString()
+      queryParams.push(`from=${fromDate}`)
+    }
+
+    if (to) {
+      const toDate = new Date(to).toISOString()
+      queryParams.push(`to=${toDate}`)
+    }
+
+    if (queryParams.length > 0) {
+      url += `?${queryParams.join('&')}`
+    }
+
+    try {
+      const response = await fetch(url)
+
+      if (!response.ok) {
+        /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+        console.warn(`Trail Service - Network response was not ok: ${response.statusText}`)
+        return []
+      }
+
+      const data: PositionData = await response.json()
+      return data.locations.map(location => {
+        const { lbs, deviceId, hdop, geometry, satellite, ...cleanedLocation } = location
+        if (typeof lbs === 'number') {
+          cleanedLocation.geolocationMechanism = getGeolocationMechanism(lbs) || 'Unknown'
         }
-
-        const afterFrom = !fromDate || date >= fromDate
-        const beforeTo = !toDate || date <= toDate
-
-        return afterFrom && beforeTo
-      }),
-    }.data
+        return cleanedLocation
+      })
+    } catch (error) {
+      console.error('Trail Service - There was a problem with the fetch operation:', error)
+      return []
+    }
   }
 }

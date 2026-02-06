@@ -174,10 +174,10 @@ export default class CasesController {
       const validation = this.dateSearchValidationService.validateDateSearchRequest(fromDate, toDate)
 
       if (validation.success) {
-        const trailJson = await this.trailService.getTrailJson()
-
         const filters: Filters = { from: queryResult.data.fromDate, to: queryResult.data.toDate }
-        positions = this.trailService.filterByDate(trailJson, filters)
+        // TODO: pass personId when ready for now pass a test crn
+        const crn = '43025'
+        positions = await this.trailService.filterByDate(crn, filters)
       } else {
         validationErrors = validation.errors || []
       }
