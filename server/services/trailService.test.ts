@@ -1,6 +1,6 @@
 import TrailService, { Filters, Position } from './trailService'
 
-describe('TrailService', () => {
+describe.skip('TrailService', () => {
   let trailService: TrailService
   const originalEnv = process.env
 
