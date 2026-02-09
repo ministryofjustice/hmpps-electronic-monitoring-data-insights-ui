@@ -161,7 +161,7 @@ export default class CasesController {
     const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
     const queryResult = searchLocationsQuerySchema.safeParse(req.query)
     const queryRange = queryResult.success ? queryResult.data : { fromDate: '', toDate: '' }
-
+    const crn = req.query.crn as string
     let positions: Position[] = []
     let validationErrors = sessionErrors
     let hasSearched = false
@@ -174,10 +174,8 @@ export default class CasesController {
       const validation = this.dateSearchValidationService.validateDateSearchRequest(fromDate, toDate)
 
       if (validation.success) {
-        const trailJson = await this.trailService.getTrailJson()
-
         const filters: Filters = { from: queryResult.data.fromDate, to: queryResult.data.toDate }
-        positions = this.trailService.filterByDate(trailJson, filters)
+        positions = await this.trailService.filterByDate(crn, filters)
       } else {
         validationErrors = validation.errors || []
       }
@@ -197,6 +195,7 @@ export default class CasesController {
       dateFilterForm: {
         action: `/cases/${personId}/location-activity`,
         values: formValues,
+        crn,
         errors: validationErrors,
         errorSummary: validationErrors.map(err => ({ text: err.message })),
       },

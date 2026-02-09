@@ -1,6 +1,7 @@
 {% import "components/date-time-picker/macro.njk" as dtp %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+ {% from "govuk/components/input/macro.njk" import govukInput %}
 
 {% set form = dateFilterForm %}
 {% set errors = form.errors or {} %}
@@ -22,8 +23,22 @@
                 action="{{ form.action }}"
                 class="map-search__form govuk-form-group govuk-!-margin-bottom-0"
                 method="get">
-                
                 <input type="hidden" name="_csrf" value="{{ csrftoken }}" />
+
+                <div class="govuk-form-group">
+                {{
+                    govukInput({
+                        label: {
+                        text: "CRN",
+                        classes: "govuk-label--s"
+                        },
+                        classes: "govuk-date-input__input govuk-input--width-5",
+                        id: "crn",
+                        name: "crn",
+                        value: form.crn
+                    })
+                }}
+                </div>
                 <div class="govuk-grid-row">  
                     <div class="govuk-grid-column-one-third">
                         {{ dtp.date_time_picker({
