@@ -175,7 +175,7 @@ export default class CasesController {
 
       if (validation.success) {
         const filters: Filters = { from: queryResult.data.fromDate, to: queryResult.data.toDate }
-        positions = await this.trailService.filterByDate(crn, filters)
+        positions = await this.trailService.filterByDate(res.locals.user?.token, crn, filters)
       } else {
         validationErrors = validation.errors || []
       }
