@@ -40,7 +40,7 @@ export default class TrailService {
 
   private readonly rowsPath: string
 
-  async filterByDate(crn: string, filters: Filters): Promise<Position[]> {
+  async filterByDate(token: string | undefined, crn: string, filters: Filters): Promise<Position[]> {
     if (!process.env.TRAIL_DATA_BASE_URL) {
       throw new Error('Trail Service - TRAIL_DATA_BASE_URL is not defined in environment variables')
     }
@@ -64,7 +64,9 @@ export default class TrailService {
       url += `?${queryParams.join('&')}`
     }
     try {
-      const response = await fetch(url)
+      const response = await fetch(url, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      })
 
       if (!response.ok) {
         /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
