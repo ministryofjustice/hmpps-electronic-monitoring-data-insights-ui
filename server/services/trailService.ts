@@ -70,6 +70,7 @@ export default class TrailService {
         /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
         console.warn(`Trail Service - Network response was not ok: ${response.statusText}`)
         console.warn(`Trail Service - URL: ${url}`)
+        console.warn('Trail Service - respsonse:', response)
         return []
       }
 
