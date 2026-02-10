@@ -51,12 +51,12 @@ export default class TrailService {
     const queryParams: string[] = []
 
     if (from) {
-      const fromDate = new Date(from).toISOString()
+      const fromDate = from.endsWith('Z') ? new Date(from).toISOString() : new Date(`${from}Z`).toISOString()
       queryParams.push(`from=${fromDate}`)
     }
 
     if (to) {
-      const toDate = new Date(to).toISOString()
+      const toDate = to.endsWith('Z') ? new Date(to).toISOString() : new Date(`${to}Z`).toISOString()
       queryParams.push(`to=${toDate}`)
     }
 
