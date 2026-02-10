@@ -1,6 +1,6 @@
 import TrailService, { Filters, Position } from './trailService'
 
-describe.skip('TrailService', () => {
+describe('TrailService', () => {
   let trailService: TrailService
   const originalEnv = process.env
 
@@ -72,7 +72,7 @@ describe.skip('TrailService', () => {
       expect(global.fetch).toHaveBeenCalledWith(expectedUrl, { headers: undefined })
     })
 
-    it.skip('should handle fetch errors gracefully', async () => {
+    it('should handle fetch errors gracefully', async () => {
       ;(global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'))
       const filters: Filters = { from: '2025-12-01T00:00:00Z', to: '2025-12-31T23:59:59Z' }
       const positions = await trailService.filterByDate(undefined, crn, filters)
