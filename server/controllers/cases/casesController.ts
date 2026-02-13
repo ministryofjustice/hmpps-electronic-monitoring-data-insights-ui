@@ -179,6 +179,8 @@ export default class CasesController {
           positions = await this.trailService.filterByDate(res.locals.user?.token, crn, filters)
         } catch (error) {
           locationAlert = { text: 'Unable to fetch location data. Please try again later.' }
+          /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+          console.error('Error fetching location data:', error)
         }
       } else {
         validationErrors = validation.errors || []
