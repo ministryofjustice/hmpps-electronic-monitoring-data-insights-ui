@@ -74,8 +74,8 @@ describe('TrailService', () => {
     it('should handle fetch errors gracefully', async () => {
       ;(global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'))
       const filters: Filters = { from: '2026-10-01T10:00:00Z', to: '2026-10-01T11:00:00Z' }
-      const positions = await trailService.filterByDate(undefined, crn, filters)
-      expect(positions).toEqual([])
+
+      await expect(trailService.filterByDate(undefined, crn, filters)).rejects.toThrow('Network error')
     })
   })
 })

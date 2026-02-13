@@ -165,6 +165,7 @@ export default class CasesController {
     let positions: Position[] = []
     let validationErrors = sessionErrors
     let hasSearched = false
+    let locationAlert: { text: string } | null = null
 
     if (queryResult.success) {
       hasSearched = true
@@ -172,18 +173,23 @@ export default class CasesController {
       const toDate = parseDateTimeFromISOString(queryResult.data.toDate)
 
       const validation = this.dateSearchValidationService.validateDateSearchRequest(fromDate, toDate)
-
       if (validation.success) {
         const filters: Filters = { from: queryResult.data.fromDate, to: queryResult.data.toDate }
-        positions = await this.trailService.filterByDate(res.locals.user?.token, crn, filters)
+        try {
+          positions = await this.trailService.filterByDate(res.locals.user?.token, crn, filters)
+        } catch (error) {
+          locationAlert = { text: 'Unable to fetch location data. Please try again later.' }
+        }
       } else {
         validationErrors = validation.errors || []
       }
     }
 
     const formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
-    const locationAlert =
-      hasSearched && positions.length === 0 ? { text: 'No location data found for the selected date range.' } : null
+    locationAlert =
+      hasSearched && positions.length === 0 && !locationAlert
+        ? { text: 'No location data found for the selected date range.' }
+        : locationAlert
 
     res.render('pages/casesLocation', {
       activeNav: 'Location activity',

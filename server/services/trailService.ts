@@ -36,10 +36,6 @@ const getGeolocationMechanism = (value: number): GeolocationMechanism | undefine
 }
 
 export default class TrailService {
-  private cache: PositionData | null = null
-
-  private readonly rowsPath: string
-
   async filterByDate(token: string | undefined, crn: string, filters: Filters): Promise<Position[]> {
     if (!process.env.TRAIL_DATA_BASE_URL) {
       throw new Error('Trail Service - TRAIL_DATA_BASE_URL is not defined in environment variables')
@@ -86,7 +82,7 @@ export default class TrailService {
       })
     } catch (error) {
       console.error('Trail Service - There was a problem with the fetch operation:', error)
-      return []
+      throw error
     }
   }
 }
