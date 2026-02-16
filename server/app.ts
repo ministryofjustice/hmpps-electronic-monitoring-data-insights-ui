@@ -1,6 +1,7 @@
 import express from 'express'
 import pdsComponents from '@ministryofjustice/hmpps-probation-frontend-components'
 import createError from 'http-errors'
+import { emOrdnanceSurveyAuth } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/ordnance-survey-auth'
 
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
@@ -28,6 +29,15 @@ export default function createApp(services: Services): express.Application {
   app.set('trust proxy', 1)
   app.set('port', process.env.PORT || 3000)
 
+  app.use(
+    emOrdnanceSurveyAuth({
+      apiKey: process.env.OS_MAPS_API_KEY!, // from Ordance Survey
+      apiSecret: process.env.OS_MAPS_API_SECRET!, // from Ordnance Survey
+      // Optional: Redis cache + expiry override
+      // redisClient, // connected redis client
+      // cacheExpiry: 3600, // seconds; default is 7 days in production, 0 in dev
+    }),
+  )
   app.use(appInsightsMiddleware())
   app.use(setUpHealthChecks(services.applicationInfo))
   app.use(setUpWebSecurity())
@@ -39,6 +49,7 @@ export default function createApp(services: Services): express.Application {
   app.use(authorisationMiddleware())
   app.use(setUpCsrf())
   app.use(setUpCurrentUser())
+
   app.use(
     '*',
     pdsComponents.getPageComponents({
@@ -46,6 +57,7 @@ export default function createApp(services: Services): express.Application {
       logger,
     }),
   )
+
   app.use(routes(services))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))
