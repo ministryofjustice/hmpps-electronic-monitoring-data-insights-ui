@@ -6,8 +6,13 @@ const ERROR_TO_BEFORE_FROM = 'To date must be after From date'
 const MAX_SEARCH_WINDOW = 168 * 60 * 60 * 1000 // 168 hours in milliseconds = 7 days
 const ERROR_DATES_EXCEED_MAX_SEARCH_WINDOW = 'The selected date range must be 7 days or less'
 
+export type DateSearchValidationResult = {
+  success: boolean
+  errors: ValidationResult
+}
+
 class DateSearchValidationService {
-  validateDateSearchRequest = (from: Dayjs, to: Dayjs) => {
+  validateDateSearchRequest = (from: Dayjs, to: Dayjs): DateSearchValidationResult => {
     const errors: ValidationResult = []
 
     if (!from.isValid()) {

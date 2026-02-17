@@ -7,12 +7,18 @@ import * as dummyDataUtils from '../../utils/dummyDataUtils'
 import { FormattedPerson } from '../../interfaces/dummyDataPerson'
 import TrailService from '../../services/trailService'
 import DateSearchValidtionService from '../../services/dateSearchValidtionService'
+import { ValidationError } from '../../models/ValidationResult'
+import {
+  buildLocationPageInitialState,
+  buildLocationPageWithServiceError,
+  buildLocationPageWithValidationErrors,
+} from '../../testutils/factories/locationPage.factory'
 
 jest.mock('../../services/auditService')
 jest.mock('../../services/trailService')
 jest.mock('../../services/dateSearchValidtionService')
 
-describe.skip('CasesController', () => {
+describe('CasesController', () => {
   let auditService: jest.Mocked<AuditService>
   let trailService: jest.Mocked<TrailService>
   let dateSearchValidtionService: jest.Mocked<DateSearchValidtionService>
@@ -29,7 +35,12 @@ describe.skip('CasesController', () => {
   beforeEach(() => {
     auditService = new AuditService(null) as jest.Mocked<AuditService>
     trailService = new TrailService() as jest.Mocked<TrailService>
-    dateSearchValidtionService = new DateSearchValidtionService() as jest.Mocked<DateSearchValidtionService>
+
+    dateSearchValidtionService = {
+      validateDateSearchRequest: jest.fn().mockReturnValue({ success: true }),
+    } as jest.Mocked<DateSearchValidtionService>
+
+    trailService = { filterByDate: jest.fn() } as jest.Mocked<TrailService>
 
     req = { id: 'test-correlation-id', params: { id: '1', highlight: null } }
     res = {
@@ -81,6 +92,115 @@ describe.skip('CasesController', () => {
         alert: true,
         id: '1',
       })
+    })
+  })
+
+  describe('locationActivity', () => {
+    it('should log page view and render location activity tab', async () => {
+      req.query = { crn: 'X172591' }
+      await controller.location(req as Request, res as Response)
+      expect(auditService.logPageView).toHaveBeenCalledWith(Page.CASES_LOCATION_PAGE, {
+        who: 'user1',
+        correlationId: 'test-correlation-id',
+      })
+
+      const expected = buildLocationPageInitialState('X172591', {
+        popData: mockPopDetails,
+      })
+
+      expect(res.render).toHaveBeenCalledWith('pages/casesLocation', expected)
+    })
+
+    it('should handle validation errors and render location activity tab with errors', async () => {
+      const validationErrors = [{ field: 'fromDate', message: 'Invalid date' }] as ValidationError[]
+      dateSearchValidtionService.validateDateSearchRequest.mockReturnValue({ success: false, errors: validationErrors })
+
+      const queryData = {
+        crn: 'X172591',
+        start: {
+          date: '12/01/2026',
+          hour: '10',
+          minute: '00',
+          second: '00',
+        },
+        end: {
+          date: '14/1/2026',
+          hour: '11',
+          minute: '00',
+          second: '00',
+        },
+      }
+
+      req.query = queryData
+
+      await controller.location(req as Request, res as Response)
+
+      const expected = buildLocationPageWithValidationErrors(validationErrors, queryData.crn, {
+        popData: mockPopDetails,
+      })
+
+      expect(res.render).toHaveBeenCalledWith('pages/casesLocation', expected)
+    })
+
+    it('should show alert when no location data found for valid search', async () => {
+      trailService.filterByDate.mockResolvedValue([])
+
+      const queryData = {
+        crn: 'X172591',
+        start: {
+          date: '12/01/2026',
+          hour: '10',
+          minute: '00',
+          second: '00',
+        },
+        end: {
+          date: '14/1/2026',
+          hour: '11',
+          minute: '00',
+          second: '00',
+        },
+      }
+
+      req.query = queryData
+
+      await controller.location(req as Request, res as Response)
+
+      const expected = buildLocationPageWithValidationErrors([], queryData.crn, {
+        popData: mockPopDetails,
+        locationAlert: { text: 'No location data found for the selected date range.' },
+      })
+
+      expect(res.render).toHaveBeenCalledWith('pages/casesLocation', expected)
+    })
+
+    it('should handle when search service has an exception', async () => {
+      ;(trailService.filterByDate as jest.Mock).mockRejectedValue(new Error('Search service error'))
+
+      const queryData = {
+        crn: 'X172591',
+        start: {
+          date: '12/01/2026',
+          hour: '10',
+          minute: '00',
+          second: '00',
+        },
+        end: {
+          date: '14/01/2026',
+          hour: '11',
+          minute: '00',
+          second: '00',
+        },
+      }
+
+      req.query = queryData
+
+      await controller.location(req as Request, res as Response)
+
+      const expected = buildLocationPageWithServiceError(queryData.crn, queryData.start.date, queryData.end.date, {
+        popData: mockPopDetails,
+      })
+
+      expect(res.render).toHaveBeenCalledWith('pages/casesLocation', expected)
     })
   })
 
