@@ -24,7 +24,7 @@ const parseDateTimeFromComponents = (date: string, hour: string, minute: string,
   ]
   const validationDate = dayjs(dateTimeString, formats, true)
 
-  if (!validationDate.isValid()) {
+  if (!validationDate?.isValid()) {
     return dayjs(null)
   }
 
@@ -36,7 +36,7 @@ const parseDateTimeFromISOString = (dateString: string) => {
 }
 
 const getDateComponents = (date: Dayjs) => {
-  if (date.isValid()) {
+  if (date?.isValid()) {
     const londonDate = date.tz('Europe/London')
     return {
       date: londonDate.format('DD/MM/YYYY'),
@@ -61,7 +61,7 @@ const formatDate = (datetime?: string | null): string => {
 
   const date = dayjs(datetime)
 
-  if (!date.isValid()) {
+  if (!date?.isValid()) {
     return ''
   }
 
@@ -72,7 +72,7 @@ const formatDob = (dateString?: string | null): string => {
   if (!dateString) return ''
 
   const date = dayjs(dateString)
-  return date.isValid() ? date.format('DD/MM/YYYY') : ''
+  return date?.isValid() ? date.format('DD/MM/YYYY') : ''
 }
 
 export { parseDateTimeFromComponents, parseDateTimeFromISOString, getDateComponents, formatDate, formatDob }
