@@ -6,7 +6,7 @@ import mockPopDetails from '../mocks/popDetails'
 import * as dummyDataUtils from '../../utils/dummyDataUtils'
 import { FormattedPerson } from '../../interfaces/dummyDataPerson'
 import TrailService from '../../services/trailService'
-import DateSearchValidtionService from '../../services/dateSearchValidtionService'
+import DateSearchValidationService from '../../services/dateSearchValidationService'
 import { ValidationError } from '../../models/ValidationResult'
 import {
   buildLocationPageInitialState,
@@ -16,12 +16,12 @@ import {
 
 jest.mock('../../services/auditService')
 jest.mock('../../services/trailService')
-jest.mock('../../services/dateSearchValidtionService')
+jest.mock('../../services/dateSearchValidationService')
 
 describe('CasesController', () => {
   let auditService: jest.Mocked<AuditService>
   let trailService: jest.Mocked<TrailService>
-  let dateSearchValidtionService: jest.Mocked<DateSearchValidtionService>
+  let dateSearchValidationService: jest.Mocked<DateSearchValidationService>
   let controller: CasesController
   let req: Partial<Request>
   let res: Partial<Response>
@@ -36,9 +36,9 @@ describe('CasesController', () => {
     auditService = new AuditService(null) as jest.Mocked<AuditService>
     trailService = new TrailService() as jest.Mocked<TrailService>
 
-    dateSearchValidtionService = {
+    dateSearchValidationService = {
       validateDateSearchRequest: jest.fn().mockReturnValue({ success: true }),
-    } as jest.Mocked<DateSearchValidtionService>
+    } as jest.Mocked<DateSearchValidationService>
 
     trailService = { filterByDate: jest.fn() } as jest.Mocked<TrailService>
 
@@ -47,7 +47,7 @@ describe('CasesController', () => {
       locals: { user },
       render: jest.fn(),
     }
-    controller = new CasesController(auditService, trailService, dateSearchValidtionService)
+    controller = new CasesController(auditService, trailService, dateSearchValidationService)
   })
 
   afterEach(() => {
@@ -113,7 +113,10 @@ describe('CasesController', () => {
 
     it('should handle validation errors and render location activity tab with errors', async () => {
       const validationErrors = [{ field: 'fromDate', message: 'Invalid date' }] as ValidationError[]
-      dateSearchValidtionService.validateDateSearchRequest.mockReturnValue({ success: false, errors: validationErrors })
+      dateSearchValidationService.validateDateSearchRequest.mockReturnValue({
+        success: false,
+        errors: validationErrors,
+      })
 
       const queryData = {
         crn: 'X172591',
@@ -138,7 +141,6 @@ describe('CasesController', () => {
       const expected = buildLocationPageWithValidationErrors(validationErrors, queryData.crn, {
         popData: mockPopDetails,
       })
-
       expect(res.render).toHaveBeenCalledWith('pages/casesLocation', expected)
     })
 

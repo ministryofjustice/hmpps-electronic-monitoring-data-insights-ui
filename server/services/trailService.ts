@@ -82,7 +82,7 @@ export default class TrailService {
       })
     } catch (error) {
       console.error('Trail Service - There was a problem with the fetch operation:', error)
-      throw error
+      throw new Error('Unable to fetch location data. Please try again later.')
     }
   }
 }

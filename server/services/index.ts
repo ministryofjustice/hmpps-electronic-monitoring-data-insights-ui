@@ -1,6 +1,6 @@
 import { dataAccess } from '../data'
 import AuditService from './auditService'
-import DateSearchValidationService from './dateSearchValidtionService'
+import DateSearchValidationService from './dateSearchValidationService'
 import EmdiService from './emdiService'
 import TrailService from './trailService'
 

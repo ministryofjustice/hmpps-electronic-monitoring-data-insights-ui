@@ -6,7 +6,7 @@ import mockLeonelJames from './mocks/leonelJames'
 import mockSamJamesWalker from './mocks/samJamesWalker'
 import { getDateStringFromDateObject, getFormattedPerson, getNameFromPersonObject } from '../../utils/dummyDataUtils'
 import TrailService, { Filters, Position } from '../../services/trailService'
-import DateSearchValidationService from '../../services/dateSearchValidtionService'
+import DateSearchValidationService from '../../services/dateSearchValidationService'
 import { searchLocationsQuerySchema } from '../../schemas/locationActivity/searchDateFormSchema'
 import { getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
 import { ValidationResult } from '../../models/ValidationResult'
@@ -26,6 +26,21 @@ interface LocationBuildProps {
   fromDate: LocationDateFilterFormData
   toDate: LocationDateFilterFormData
 }
+
+interface QueryParams {
+  start?: {
+    date?: string
+    hour?: string
+    minute?: string
+  }
+  end?: {
+    date?: string
+    hour?: string
+    minute?: string
+  }
+  crn?: string
+}
+
 export default class CasesController {
   constructor(
     private readonly auditService: AuditService,
@@ -52,7 +67,6 @@ export default class CasesController {
 
     const hour = dateFilter.hour.padStart(2, '0')
     const minute = dateFilter.minute.padStart(2, '0')
-
     return {
       date: normalizedDate,
       hour,
@@ -77,10 +91,10 @@ export default class CasesController {
       }
     }
 
-    const fromDateRabge = queryRange.fromDate ? parseDateTimeFromISOString(queryRange.fromDate) : null
+    const fromDateRange = queryRange.fromDate ? parseDateTimeFromISOString(queryRange.fromDate) : null
     const toDateRange = queryRange.toDate ? parseDateTimeFromISOString(queryRange.toDate) : null
     return {
-      fromDate: fromDateRabge?.isValid() ? getDateComponents(fromDateRabge) : defaultValues,
+      fromDate: fromDateRange?.isValid() ? getDateComponents(fromDateRange) : defaultValues,
       toDate: toDateRange?.isValid() ? getDateComponents(toDateRange) : defaultValues,
     }
   }
@@ -159,40 +173,71 @@ export default class CasesController {
 
     const personId = req.params.person_id
     const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
-    const queryResult = searchLocationsQuerySchema.safeParse(req.query)
-    const queryRange = queryResult.success ? queryResult.data : { fromDate: '', toDate: '' }
     const crn = req.query.crn as string
     let positions: Position[] = []
     let validationErrors = sessionErrors
     let hasSearched = false
     let locationAlert: { text: string } | null = null
+    let queryRange = { fromDate: '', toDate: '' }
+    let formValues: LocationBuildProps
 
-    if (queryResult.success) {
+    const hasQueryParams = req.query.start !== undefined || req.query.end !== undefined
+
+    if (hasQueryParams) {
       hasSearched = true
-      const fromDate = parseDateTimeFromISOString(queryResult.data.fromDate)
-      const toDate = parseDateTimeFromISOString(queryResult.data.toDate)
+      const queryResult = searchLocationsQuerySchema.safeParse(req.query)
 
-      const validation = this.dateSearchValidationService.validateDateSearchRequest(fromDate, toDate)
-      if (validation.success) {
-        const filters: Filters = { from: queryResult.data.fromDate, to: queryResult.data.toDate }
-        try {
-          positions = await this.trailService.filterByDate(res.locals.user?.token, crn, filters)
-        } catch (error) {
-          locationAlert = { text: 'Unable to fetch location data. Please try again later.' }
-          /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-          console.error('Error fetching location data:', error)
+      if (!queryResult.success) {
+        const rawQuery = req.query as QueryParams
+
+        formValues = {
+          fromDate: {
+            date: rawQuery?.start?.date ?? '',
+            hour: rawQuery?.start?.hour ?? '',
+            minute: rawQuery?.start?.minute ?? '',
+          },
+          toDate: {
+            date: rawQuery?.end?.date ?? '',
+            hour: rawQuery?.end?.hour ?? '',
+            minute: rawQuery?.end?.minute ?? '',
+          },
         }
+        validationErrors = queryResult.error.issues.map(issue => ({
+          field: issue.path.join('.'),
+          message: issue.message,
+        }))
       } else {
-        validationErrors = validation.errors || []
+        queryRange = queryResult.data
+
+        const fromDate = parseDateTimeFromISOString(queryResult.data.fromDate)
+        const toDate = parseDateTimeFromISOString(queryResult.data.toDate)
+
+        const validation = this.dateSearchValidationService.validateDateSearchRequest(fromDate, toDate)
+        if (validation.success) {
+          const filters: Filters = {
+            from: queryResult.data.fromDate,
+            to: queryResult.data.toDate,
+          }
+
+          try {
+            positions = await this.trailService.filterByDate(res.locals.user?.token, crn, filters)
+          } catch (error) {
+            /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+            console.error('Error fetching locations:', error)
+            locationAlert = { text: 'Unable to fetch location data. Please try again later.' }
+          }
+        } else {
+          validationErrors = validation.errors || []
+        }
+
+        formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
       }
+    } else {
+      formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
     }
-
-    const formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
-    locationAlert =
-      hasSearched && positions.length === 0 && !locationAlert
-        ? { text: 'No location data found for the selected date range.' }
-        : locationAlert
-
+    if (!locationAlert && hasSearched && positions.length === 0) {
+      locationAlert = { text: 'No location data found for the selected date range.' }
+    }
     res.render('pages/casesLocation', {
       activeNav: 'Location activity',
       activeTab: 'location-activity',

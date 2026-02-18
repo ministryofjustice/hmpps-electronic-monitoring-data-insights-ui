@@ -75,7 +75,9 @@ describe('TrailService', () => {
       ;(global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'))
       const filters: Filters = { from: '2026-10-01T10:00:00Z', to: '2026-10-01T11:00:00Z' }
 
-      await expect(trailService.filterByDate(undefined, crn, filters)).rejects.toThrow('Network error')
+      await expect(trailService.filterByDate(undefined, crn, filters)).rejects.toThrow(
+        'Unable to fetch location data. Please try again later.',
+      )
     })
   })
 })
