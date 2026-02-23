@@ -7,6 +7,19 @@ context('Cases', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubExampleTime')
+    cy.intercept('GET', '**/os-map/vector/style', {
+      statusCode: 200,
+      fixture: 'vectorStyle.json',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).as('getStyle')
+
+    cy.intercept('GET', '**/os-map/vector/tiles/**', {
+      statusCode: 200,
+      body: '',
+      headers: { 'Content-Type': 'application/x-protobuf' },
+    }).as('getTiles')
   })
 
   describe('Location Activity Page', () => {

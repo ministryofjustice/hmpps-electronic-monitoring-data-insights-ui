@@ -1,0 +1,36 @@
+{
+  "version": 8,
+  "name": "OS Vector Map",
+  "metadata": {
+    "serviceItemId": "76bd6acb0efd4484bbac091a2a7514bb",
+    "currentVersion": 10.81
+  },
+  "sources": {
+    "esri": {
+      "type": "vector",
+      "tiles": ["http://localhost:8090/os-map/vector/tiles/{z}/{y}/{x}.pbf?srs=3857"],
+      "minzoom": 0,
+      "maxzoom": 18,
+      "scheme": "xyz"
+    }
+  },
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": {
+        "background-color": "#f8f8f8"
+      }
+    },
+    {
+      "id": "os-data-layer",
+      "type": "fill",
+      "source": "esri",
+      "source-layer": "default",
+      "paint": {
+        "fill-color": "#000000",
+        "fill-opacity": 0.5
+      }
+    }
+  ]
+}

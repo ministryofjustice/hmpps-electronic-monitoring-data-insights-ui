@@ -27,5 +27,5 @@ export default class LocationActivityPage extends Page {
 
   submitButton = (): PageElement => cy.get('button[type="submit"]')
 
-  emMap = (): PageElement => cy.get('em-map, #map, [data-testid="map"]')
+  emMap = (): PageElement => cy.get('[data-qa=em-map]')
 }
