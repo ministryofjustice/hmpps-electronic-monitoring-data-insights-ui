@@ -1,10 +1,13 @@
 const childProcess = require('node:child_process')
 const path = require('node:path')
+const { globSync } = require('node:fs')
 
 const { glob } = require('glob')
 const chokidar = require('chokidar')
 const buildAssets = require('./assets.config')
 const buildApp = require('./app.config')
+
+const isWatchMode = process.argv.includes('--watch')
 
 const cwd = process.cwd()
 
@@ -45,14 +48,15 @@ const buildConfig = {
 
   assets: {
     outDir: path.join(cwd, 'dist/assets'),
-    entryPoints: glob.sync([path.join(cwd, 'assets/js/*.js'), path.join(cwd, 'assets/scss/*.scss')]),
+    entryPoints: globSync([path.join(cwd, 'assets/js/*.ts'), path.join(cwd, 'assets/scss/*.scss')]),
     copy: [
       {
         from: path.join(cwd, 'assets/images/**/*'),
         to: path.join(cwd, 'dist/assets/images'),
+        watch: isWatchMode,
       },
     ],
-    clear: glob.sync([path.join(cwd, 'dist/assets/{css,js}')]),
+    clear: globSync([path.join(cwd, 'dist/assets/{css,js}')]),
   },
 }
 

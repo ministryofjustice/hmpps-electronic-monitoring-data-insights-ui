@@ -32,7 +32,10 @@
                         classes: "govuk-date-input__input govuk-input--width-2",
                         id: params.id + "-hour",
                         name: params.name + "[hour]",
-                        value: params.hour
+                        value: params.hour,
+                        attributes: {
+                            "data-qa": params.id + "-hour"
+                        }   
                     })
                 }}
             </div>
@@ -48,7 +51,10 @@
                     classes: "govuk-date-input__input govuk-input--width-2",
                     id: params.id + "-minute",
                     name: params.name + "[minute]",
-                    value: params.minute
+                    value: params.minute,
+                    attributes: {
+                        "data-qa": params.id + "-minute"
+                    }
                 })
                 }}
             </div>

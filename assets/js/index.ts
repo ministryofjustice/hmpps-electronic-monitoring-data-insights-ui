@@ -6,4 +6,6 @@ import initialiseLocationDataView from './views/cases/index'
 govukFrontend.initAll()
 mojFrontend.initAll()
 
-initialiseLocationDataView()
+if (document.querySelector('.location-activity')) {
+  initialiseLocationDataView()
+}

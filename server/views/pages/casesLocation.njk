@@ -12,14 +12,14 @@
   {% include "partials/casesHeader.njk" %}
   {% include "partials/popAlert.njk" %}
   {% include "partials/casesSubNavigation.njk" %}
-  <div>
+  <div class="location-activity">
     <h2 class="govuk-heading-m">Location activity</h2>
     <div class="date-time-picker">
       <div class="govuk-grid-row">
         {% include "partials/mapSearchForm.njk" %}
       </div>
     </div>
-    <div class="app-map">
+    <div class="em-map" data-qa="em-map">
       {{
         emMap({
           alerts: alerts,
