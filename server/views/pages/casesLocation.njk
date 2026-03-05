@@ -13,7 +13,7 @@
 
   {% if locationAlert and locationAlert.text %}
     {{ mojApiError({
-      text: "Unable to retrieve location data. Try again later.",
+      text: locationAlert.text,
       attributes: {
         "data-qa": "location-data-error"
       }

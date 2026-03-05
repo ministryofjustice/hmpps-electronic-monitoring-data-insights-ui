@@ -68,7 +68,7 @@ export default class TrailService {
         console.warn(`Trail Service - Network response was not ok: ${response.statusText}`)
         console.warn(`Trail Service - URL: ${url}`)
         console.warn('Trail Service - respsonse:', response)
-        return []
+        throw new Error('Unable to fetch location data. Please try again later.')
       }
 
       const data: PositionData = await response.json()
