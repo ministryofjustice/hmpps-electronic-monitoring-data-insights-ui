@@ -1,28 +1,29 @@
 import { z } from 'zod'
 import { parseDateTimeFromComponents } from '../../utils/date'
 
-const dateTimeQuerySchema = z.object({
-  date: z.string().min(8, 'Date must be DD/MM/YYYY'),
-  hour: z
-    .string()
-    .trim()
-    .min(1, 'You must enter an hour')
-    .refine(val => !Number.isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 23, {
-      message: 'Hour must be between 00 and 23',
-    }),
-  minute: z
-    .string()
-    .trim()
-    .min(1, 'You must enter a minute')
-    .refine(val => !Number.isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 59, {
-      message: 'Minute must be between 00 and 59',
-    }),
-})
+const createDateTimeSchema = (label: 'From' | 'To') =>
+  z.object({
+    date: z.string().min(8, `${label} date must be DD/MM/YYYY`),
+    hour: z
+      .string()
+      .trim()
+      .min(1, `You must enter a ${label.toLowerCase()} hour`)
+      .refine(val => !Number.isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 23, {
+        message: `${label} hour must be between 00 and 23`,
+      }),
+    minute: z
+      .string()
+      .trim()
+      .min(1, `You must enter a ${label.toLowerCase()} minute`)
+      .refine(val => !Number.isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 59, {
+        message: `${label} minute must be between 00 and 59`,
+      }),
+  })
 
 const searchLocationsQueryValidationSchema = z
   .object({
-    start: dateTimeQuerySchema,
-    end: dateTimeQuerySchema,
+    start: createDateTimeSchema('From'),
+    end: createDateTimeSchema('To'),
   })
   .refine(
     data => {
@@ -33,7 +34,7 @@ const searchLocationsQueryValidationSchema = z
       return fromParsed.isValid()
     },
     {
-      message: 'You must enter a valid start date and time',
+      message: 'You must enter a valid From date and time',
       path: ['start', 'date'],
     },
   )
@@ -46,7 +47,7 @@ const searchLocationsQueryValidationSchema = z
       return toParsed.isValid()
     },
     {
-      message: 'You must enter a valid end date and time',
+      message: 'You must enter a valid to date and time',
       path: ['end', 'date'],
     },
   )
@@ -71,7 +72,7 @@ const searchLocationsQueryValidationSchema = z
       return toParsed.valueOf() > fromParsed.valueOf()
     },
     {
-      message: 'End date and time must be after start date and time',
+      message: 'To date and time must be after the from date and time',
       path: ['end', 'date'],
     },
   )
@@ -79,8 +80,8 @@ const searchLocationsQueryValidationSchema = z
 const searchLocationsQuerySchema = searchLocationsQueryValidationSchema.pipe(
   z
     .object({
-      start: dateTimeQuerySchema,
-      end: dateTimeQuerySchema,
+      start: z.any(),
+      end: z.any(),
     })
     .transform(data => {
       const fromDate = parseDateTimeFromComponents(data.start.date, data.start.hour, data.start.minute)

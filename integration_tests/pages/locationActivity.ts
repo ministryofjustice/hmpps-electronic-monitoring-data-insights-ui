@@ -28,4 +28,44 @@ export default class LocationActivityPage extends Page {
   submitButton = (): PageElement => cy.get('button[type="submit"]')
 
   emMap = (): PageElement => cy.get('[data-qa=em-map]')
+
+  fillSearchForm = ({
+    crn = '',
+    startDate = '',
+    startHour = '',
+    startMinute = '',
+    endDate = '',
+    endHour = '',
+    endMinute = '',
+  }: {
+    crn?: string
+    startDate?: string
+    startHour?: string
+    startMinute?: string
+    endDate?: string
+    endHour?: string
+    endMinute?: string
+  }): void => {
+    if (crn) {
+      this.crnInput().type(crn)
+    }
+    if (startDate) {
+      this.startDateInput().type(startDate)
+    }
+    if (startHour) {
+      this.startHourInput().type(startHour)
+    }
+    if (startMinute) {
+      this.startMinuteInput().type(startMinute)
+    }
+    if (endDate) {
+      this.endDateInput().type(endDate)
+    }
+    if (endHour) {
+      this.endHourInput().type(endHour)
+    }
+    if (endMinute) {
+      this.endMinuteInput().type(endMinute)
+    }
+  }
 }

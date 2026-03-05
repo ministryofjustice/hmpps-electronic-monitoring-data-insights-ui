@@ -1,5 +1,6 @@
 {% extends "partials/layout.njk" %}
 {% from "em-map/macro.njk" import emMap %}
+{% from "components/moj-api-error/macro.njk" import mojApiError %}
 
 {% set pageTitle = applicationName + " - Cases" %}
 {% set mainClasses = "app-container govuk-body" %}
@@ -9,6 +10,16 @@
 {% endblock %}
 
 {% block content %}
+
+  {% if locationAlert and locationAlert.text %}
+    {{ mojApiError({
+      text: "Unable to retrieve location data. Try again later.",
+      attributes: {
+        "data-qa": "location-data-error"
+      }
+    }) }}    
+  {% endif %}
+    
   {% include "partials/casesHeader.njk" %}
   {% include "partials/popAlert.njk" %}
   {% include "partials/casesSubNavigation.njk" %}

@@ -63,7 +63,6 @@ export default class TrailService {
       const response = await fetch(url, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       })
-
       if (!response.ok) {
         /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
         console.warn(`Trail Service - Network response was not ok: ${response.statusText}`)

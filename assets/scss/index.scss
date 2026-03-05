@@ -11,6 +11,7 @@ $govuk-page-width: $moj-page-width;
 @import './components/primary-header';
 @import './components/cases-header';
 @import './components/profile-info-header';
+@import './components/api-error';
 @import './overrides/local';
 @import './overrides/overview';
 
