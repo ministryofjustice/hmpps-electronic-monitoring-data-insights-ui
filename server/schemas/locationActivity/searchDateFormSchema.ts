@@ -20,6 +20,12 @@ const createDateTimeSchema = (label: 'From' | 'To') =>
       }),
   })
 
+const dateTimeQuerySchema = z.object({
+  date: z.string(),
+  hour: z.string(),
+  minute: z.string(),
+})
+
 const searchLocationsQueryValidationSchema = z
   .object({
     start: createDateTimeSchema('From'),
@@ -80,8 +86,8 @@ const searchLocationsQueryValidationSchema = z
 const searchLocationsQuerySchema = searchLocationsQueryValidationSchema.pipe(
   z
     .object({
-      start: z.any(),
-      end: z.any(),
+      start: dateTimeQuerySchema,
+      end: dateTimeQuerySchema,
     })
     .transform(data => {
       const fromDate = parseDateTimeFromComponents(data.start.date, data.start.hour, data.start.minute)

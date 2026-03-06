@@ -3,6 +3,8 @@ import LocationActivityPage from '../pages/locationActivity'
 import Page from '../pages/page'
 
 context('Cases', () => {
+  const locatioActivitySessionid = 'location-activity-session-id'
+
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -21,7 +23,10 @@ context('Cases', () => {
       headers: { 'Content-Type': 'application/x-protobuf' },
     }).as('getTiles')
 
-    cy.signIn()
+    cy.session(locatioActivitySessionid, () => {
+      cy.signIn()
+    })
+    cy.visit('/')
     cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
 
     const casesPage = Page.verifyOnPage(CasesPage)
@@ -222,7 +227,7 @@ context('Cases', () => {
       cy.get('.govuk-error-summary').should('not.exist')
     })
 
-    it.skip('should display "no location data" message when no results found', () => {
+    it('should display "no location data" message when no results found', () => {
       const locationPage = Page.verifyOnPage(LocationActivityPage)
 
       cy.task('stubGetLocationsEmpty', 'X123456')
@@ -272,13 +277,11 @@ context('Cases', () => {
   })
 
   describe('API error handling', () => {
-    it.skip('should display error message when API call fails', () => {
+    it('should display error message when API call fails', () => {
       const locationPage = Page.verifyOnPage(LocationActivityPage)
 
-      cy.intercept('GET', '**/people/X123456/locations', {
-        statusCode: 500,
-        body: { error: 'Internal server error' },
-      }).as('getLocationDataError')
+      cy.task('stubGetLocationsError', 'X123456')
+      cy.intercept('GET', '/cases/*/location-activity?*').as('getLocationDataError')
 
       locationPage.fillSearchForm({
         crn: 'X123456',
@@ -293,7 +296,7 @@ context('Cases', () => {
       locationPage.submitButton().click()
 
       cy.wait('@getLocationDataError')
-      cy.contains('Unable to retrieve location data. Try again later').should('exist')
+      cy.contains('Unable to fetch location data. Please try again later.').should('exist')
     })
   })
 })
