@@ -77,7 +77,7 @@ const initialiseLocationDataView = async () => {
     const extent = locationSource.getExtent()
     if (isEmpty(extent) === false) {
       map.getView().fit(extent, {
-        maxZoom: 16,
+        maxZoom: 20,
         padding: [30, 30, 30, 30],
         size: map.getSize(),
       })
