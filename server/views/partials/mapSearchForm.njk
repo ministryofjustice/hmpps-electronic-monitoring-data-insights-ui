@@ -14,17 +14,18 @@
     }) }}
 {% endif %}
 
-{% if locationAlert and locationAlert.text %}
-    {{ mojAlert({
-        variant: "error",
-        title: "Unable to retrieve location data",
-        showTitleAsHeading: true,
-        dismissible: true,
-        text: locationAlert.text,
-        classes: 'govuk-!-static-margin-top-6'
-    }) }}
-{% endif %}
+{% set hasStartErrors = false %}
+{% set hasEndErrors = false %}
 
+{% for error in errors %}
+  {% if "start" in error.field %}
+    {% set hasStartErrors = true %}
+  {% endif %}
+  
+  {% if "end" in error.field %}
+    {% set hasEndErrors = true %}
+  {% endif %}
+{% endfor %}
 
 <div class="govuk-width-container">
     <div class="govuk-grid-row govuk-!-margin-bottom-3 govuk-!-margin-right-0 govuk-!-margin-left-0">
@@ -61,7 +62,8 @@
                             timeLabel: "Time from",
                             value: form.values.fromDate.date,
                             hour: form.values.fromDate.hour,
-                            minute: form.values.fromDate.minute 
+                            minute: form.values.fromDate.minute,
+                            errors: errors if hasStartErrors else []
                         }) }}
                     </div>
                     <div class="govuk-grid-column-one-third">
@@ -72,7 +74,8 @@
                             timeLabel: "Time to",
                             value: form.values.toDate.date,
                             hour: form.values.toDate.hour,
-                            minute: form.values.toDate.minute   
+                            minute: form.values.toDate.minute,
+                            errors: errors if hasEndErrors else []
                         }) }}
                     </div>
                      <div class="govuk-grid-column-one-third">

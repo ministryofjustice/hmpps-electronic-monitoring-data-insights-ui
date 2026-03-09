@@ -23,25 +23,25 @@ describe('searchLocationsQuerySchema', () => {
 
       expect(issues[0]).toMatchObject({
         code: 'too_small',
-        message: 'You must enter an hour',
+        message: 'You must enter a from hour',
         path: ['start', 'hour'],
       })
 
       expect(issues[1]).toMatchObject({
         code: 'too_small',
-        message: 'You must enter a minute',
+        message: 'You must enter a from minute',
         path: ['start', 'minute'],
       })
 
       expect(issues[2]).toMatchObject({
         code: 'too_small',
-        message: 'You must enter an hour',
+        message: 'You must enter a to hour',
         path: ['end', 'hour'],
       })
 
       expect(issues[3]).toMatchObject({
         code: 'too_small',
-        message: 'You must enter a minute',
+        message: 'You must enter a to minute',
         path: ['end', 'minute'],
       })
     }
@@ -68,12 +68,12 @@ describe('searchLocationsQuerySchema', () => {
 
       expect(issues[0]).toMatchObject({
         code: 'custom',
-        message: 'You must enter a valid start date and time',
+        message: 'You must enter a valid From date and time',
       })
 
       expect(issues[1]).toMatchObject({
         code: 'custom',
-        message: 'You must enter a valid end date and time',
+        message: 'You must enter a valid to date and time',
       })
     }
   })
@@ -130,7 +130,7 @@ describe('searchLocationsQuerySchema', () => {
 
       expect(issues[0]).toMatchObject({
         code: 'custom',
-        message: 'End date and time must be after start date and time',
+        message: 'To date and time must be after the from date and time',
       })
     }
   })

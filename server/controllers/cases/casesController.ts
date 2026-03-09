@@ -41,6 +41,12 @@ interface QueryParams {
   crn?: string
 }
 
+interface ValidationError {
+  field: string
+  message: string
+  href?: string
+}
+
 export default class CasesController {
   constructor(
     private readonly auditService: AuditService,
@@ -175,7 +181,7 @@ export default class CasesController {
     const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
     const crn = req.query.crn as string
     let positions: Position[] = []
-    let validationErrors = sessionErrors
+    let validationErrors: ValidationError[] = sessionErrors
     let hasSearched = false
     let locationAlert: { text: string } | null = null
     let queryRange = { fromDate: '', toDate: '' }
@@ -202,10 +208,16 @@ export default class CasesController {
             minute: rawQuery?.end?.minute ?? '',
           },
         }
-        validationErrors = queryResult.error.issues.map(issue => ({
-          field: issue.path.join('.'),
-          message: issue.message,
-        }))
+        validationErrors = queryResult.error.issues.map(issue => {
+          const field = issue.path.join('.')
+
+          const href = `#${issue.path.join('-')}`
+          return {
+            field,
+            message: issue.message,
+            href,
+          }
+        })
       } else {
         queryRange = queryResult.data
 
@@ -250,7 +262,7 @@ export default class CasesController {
         values: formValues,
         crn,
         errors: validationErrors,
-        errorSummary: validationErrors.map(err => ({ text: err.message })),
+        errorSummary: validationErrors.map(err => ({ text: err.message, href: err?.href })),
       },
       hasSearched,
       fromDate: queryRange.fromDate,

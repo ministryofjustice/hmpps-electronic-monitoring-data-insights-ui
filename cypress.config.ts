@@ -3,6 +3,7 @@ import { resetStubs } from './integration_tests/mockApis/wiremock'
 import auth from './integration_tests/mockApis/auth'
 import tokenVerification from './integration_tests/mockApis/tokenVerification'
 import emdiApi from './integration_tests/mockApis/emdiApi'
+import locationActivity from './integration_tests/mockApis/locationActivity'
 
 export default defineConfig({
   chromeWebSecurity: false,
@@ -21,6 +22,7 @@ export default defineConfig({
         ...auth,
         ...tokenVerification,
         ...emdiApi,
+        ...locationActivity,
       })
     },
     baseUrl: 'http://localhost:3007',

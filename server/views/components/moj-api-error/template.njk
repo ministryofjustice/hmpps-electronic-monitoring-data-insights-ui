@@ -1,0 +1,24 @@
+{%- from "govuk/macros/attributes.njk" import govukAttributes -%}
+
+{%- if params.inset %}
+    <p class="moj-inset-api-error" {{ govukAttributes(params.attributes) }}>
+    {%- if params.html %}
+        {{- params.html | safe -}}
+    {%- elif params.text %}
+        {{- params.text -}}
+    {%- else %}
+        This information is currently unavailable. Try again later.
+    {% endif -%}
+    </p>
+{%- else %}
+    <div class="moj-api-error {% if params.errors %}govuk-form-group--error{% endif %}" {{ govukAttributes(params.attributes) }}>
+    {%- if params.html %}
+        {{- params.html | safe -}}
+    {%- elif params.text %}
+        {{- params.text -}}
+    {%- else %}
+        <p>Sorry, there is a problem with the service</p>
+        <p>Some information on this page may be unavailable. Try again later.</p>
+    {% endif -%}
+    </div>
+{%- endif %}
