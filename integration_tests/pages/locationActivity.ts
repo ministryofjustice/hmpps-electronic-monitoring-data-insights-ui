@@ -70,10 +70,6 @@ export default class LocationActivityPage extends Page {
     }
   }
 
-  get mapComponent(): PageElement {
-    return cy.get('em-map')
-  }
-
   get mapInstance(): Cypress.Chainable<Map> {
     return cy.get('em-map').then($el => {
       const el = $el[0] as HTMLElement & { olMapInstance?: Map }
