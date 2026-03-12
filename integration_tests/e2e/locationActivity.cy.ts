@@ -299,4 +299,15 @@ context('Cases', () => {
       cy.contains('Unable to fetch location data. Please try again later.').should('exist')
     })
   })
+  describe('Map display', () => {
+    it('should add TracksLayer to the map and be visible by default', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+
+      return locationPage.mapInstance.then(map => {
+        const layers = map.getLayers().getArray()
+        const tracksLayer = layers.find(l => l.get('title') === 'tracksLayer')
+        cy.wrap(tracksLayer?.getVisible()).should('eq', true)
+      })
+    })
+  })
 })

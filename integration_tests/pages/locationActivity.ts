@@ -1,3 +1,4 @@
+import Map from 'ol/Map'
 import Page, { PageElement } from './page'
 
 export default class LocationActivityPage extends Page {
@@ -67,5 +68,30 @@ export default class LocationActivityPage extends Page {
     if (endMinute) {
       this.endMinuteInput().type(endMinute)
     }
+  }
+
+  get mapInstance(): Cypress.Chainable<Map> {
+    return cy.get('em-map').then($el => {
+      const el = $el[0] as HTMLElement & { olMapInstance?: Map }
+
+      return new Cypress.Promise<Map>(resolve => {
+        const handler = () => {
+          if (el.olMapInstance) {
+            // app:map:layers:ready may have fired before we added the event listener
+            resolve(el.olMapInstance)
+          } else {
+            el.addEventListener(
+              'map:render:complete',
+              (e: CustomEvent<{ mapInstance: Map }>) => {
+                resolve(e.detail.mapInstance)
+              },
+              { once: true },
+            )
+          }
+        }
+
+        el.addEventListener('app:map:layers:ready', handler, { once: true })
+      })
+    })
   }
 }

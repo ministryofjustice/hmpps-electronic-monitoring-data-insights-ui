@@ -30,7 +30,7 @@ const initialiseLocationDataView = async () => {
     new TracksLayer({
       title: 'tracksLayer',
       positions,
-      visible: false,
+      visible: true,
       zIndex: 1,
     }),
   )!
