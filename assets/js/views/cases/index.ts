@@ -1,5 +1,4 @@
 import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
-import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
 import {
   LocationsLayer,
   TracksLayer,
