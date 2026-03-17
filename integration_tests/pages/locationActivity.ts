@@ -75,22 +75,20 @@ export default class LocationActivityPage extends Page {
       const el = $el[0] as HTMLElement & { olMapInstance?: Map }
 
       return new Cypress.Promise<Map>(resolve => {
-        const handler = () => {
-          if (el.olMapInstance) {
-            // app:map:layers:ready may have fired before we added the event listener
-            resolve(el.olMapInstance)
-          } else {
-            el.addEventListener(
-              'map:render:complete',
-              (e: CustomEvent<{ mapInstance: Map }>) => {
-                resolve(e.detail.mapInstance)
-              },
-              { once: true },
-            )
-          }
+        // Check if olMapInstance already exists
+        if (el.olMapInstance) {
+          resolve(el.olMapInstance)
+          return
         }
 
-        el.addEventListener('app:map:layers:ready', handler, { once: true })
+        // If not, wait for map:render:complete event
+        el.addEventListener(
+          'map:render:complete',
+          (e: CustomEvent<{ mapInstance: Map }>) => {
+            resolve(e.detail.mapInstance)
+          },
+          { once: true },
+        )
       })
     })
   }
