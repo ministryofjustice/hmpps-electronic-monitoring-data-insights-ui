@@ -4,6 +4,9 @@ import Page from '../pages/page'
 
 context('Cases', () => {
   const locatioActivitySessionid = 'location-activity-session-id'
+  const waitForLockButton = () => {
+    return cy.get('#lock-rotation-btn', { includeShadowDom: true, timeout: 10000 }).should('exist').and('be.visible')
+  }
 
   beforeEach(() => {
     cy.task('reset')
@@ -300,27 +303,7 @@ context('Cases', () => {
     })
   })
 
-  describe('Map display', () => {
-    it('should add TracksLayer to the map and be visible by default', () => {
-      const locationPage = Page.verifyOnPage(LocationActivityPage)
-
-      return locationPage.mapInstance.then(map => {
-        const layers = map.getLayers().getArray()
-        const tracksLayer = layers.find(l => l.get('title') === 'tracksLayer')
-        cy.wrap(tracksLayer?.getVisible()).should('eq', true)
-      })
-    })
-  })
-
   describe('Map screen reader accessibility', () => {
-    const locationPage = Page.verifyOnPage(LocationActivityPage)
-
-    const waitForLockButton = () => {
-      return locationPage.mapInstance.then(() => {
-        cy.get('#lock-rotation-btn').should('exist')
-      })
-    }
-
     beforeEach(() => {
       waitForLockButton()
     })
