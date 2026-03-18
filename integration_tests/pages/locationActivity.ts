@@ -1,4 +1,4 @@
-import Map from 'ol/Map'
+import OlMap from 'ol/Map'
 import Page, { PageElement } from './page'
 
 export default class LocationActivityPage extends Page {
@@ -70,26 +70,15 @@ export default class LocationActivityPage extends Page {
     }
   }
 
-  get mapInstance(): Cypress.Chainable<Map> {
-    return cy.get('em-map').then($el => {
-      const el = $el[0] as HTMLElement & { olMapInstance?: Map }
-
-      return new Cypress.Promise<Map>(resolve => {
-        // Check if olMapInstance already exists
-        if (el.olMapInstance) {
-          resolve(el.olMapInstance)
-          return
-        }
-
-        // If not, wait for map:render:complete event
-        el.addEventListener(
-          'map:render:complete',
-          (e: CustomEvent<{ mapInstance: Map }>) => {
-            resolve(e.detail.mapInstance)
-          },
-          { once: true },
-        )
+  get mapInstance() {
+    return cy
+      .get('[data-qa=em-map]')
+      .should($el => {
+        const map = ($el[0] as HTMLElement & { olMapInstance: OlMap }).olMapInstance
+        assert.isDefined(map, 'Map instance should be initialized')
       })
-    })
+      .then($el => {
+        return ($el[0] as HTMLElement & { olMapInstance: OlMap }).olMapInstance
+      })
   }
 }
