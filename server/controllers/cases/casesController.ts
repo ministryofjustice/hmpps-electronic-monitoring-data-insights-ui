@@ -177,6 +177,12 @@ export default class CasesController {
       correlationId: req.id,
     })
 
+    const today = new Date().toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+    })
+
     const personId = req.params.person_id
     const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
     const crn = req.query.crn as string
@@ -184,6 +190,7 @@ export default class CasesController {
     let validationErrors: ValidationError[] = sessionErrors
     let hasSearched = false
     let locationAlert: { text: string } | null = null
+    let searchAlert: { text: string } | null = null
     let queryRange = { fromDate: '', toDate: '' }
     let formValues: LocationBuildProps
 
@@ -247,8 +254,8 @@ export default class CasesController {
     } else {
       formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
     }
-    if (!locationAlert && hasSearched && positions.length === 0) {
-      locationAlert = { text: 'No location data found for the selected date range.' }
+    if (hasSearched && positions.length === 0) {
+      searchAlert = { text: 'No location data found for the selected date range.' }
     }
     res.render('pages/casesLocation', {
       activeNav: 'Location activity',
@@ -268,6 +275,8 @@ export default class CasesController {
       fromDate: queryRange.fromDate,
       toDate: queryRange.toDate,
       locationAlert,
+      searchAlert,
+      todayDate: today,
     })
   }
 
