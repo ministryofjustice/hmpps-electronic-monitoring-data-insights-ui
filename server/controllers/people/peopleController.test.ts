@@ -60,6 +60,13 @@ describe('PeopleController', () => {
     expect(peopleService.searchPeople).toHaveBeenCalledWith(user.token, 'X31092')
     expect(res.render).toHaveBeenCalledWith('pages/person', {
       activeNav: 'people',
+      fullName: firstPerson.name,
+      popData: {
+        crn: firstPerson.deliusId,
+        dateOfBirth: firstPerson.dateOfBirth,
+        tier: 'B3',
+      },
+      showComplianceBadge: false,
       person: firstPerson,
     })
   })

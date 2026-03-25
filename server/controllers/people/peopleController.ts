@@ -8,10 +8,20 @@ export default class PeopleController {
     const { delius_id: deliusId } = req.params
     const { token } = res.locals.user
     const result = await this.peopleService.searchPeople(token, deliusId)
+    const person = result.people[0] ?? null
 
     res.render('pages/person', {
       activeNav: 'people',
-      person: result.people[0] ?? null,
+      fullName: person?.name ?? 'Person not found',
+      popData: person
+        ? {
+            crn: person.deliusId,
+            dateOfBirth: person.dateOfBirth,
+            tier: 'B3',
+          }
+        : null,
+      showComplianceBadge: false,
+      person,
     })
   }
 }
