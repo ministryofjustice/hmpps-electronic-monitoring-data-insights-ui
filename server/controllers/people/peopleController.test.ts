@@ -39,7 +39,7 @@ describe('PeopleController', () => {
 
     res = {
       locals: { user },
-      json: jest.fn(),
+      render: jest.fn(),
     }
 
     controller = new PeopleController(peopleService)
@@ -49,7 +49,7 @@ describe('PeopleController', () => {
     jest.resetAllMocks()
   })
 
-  it('returns the first person for the supplied delius id', async () => {
+  it('renders the first person for the supplied delius id', async () => {
     peopleService.searchPeople.mockResolvedValue({
       people: [firstPerson],
       nextToken: null,
@@ -58,6 +58,9 @@ describe('PeopleController', () => {
     await controller.getPersonByDeliusId(req as Request, res as Response)
 
     expect(peopleService.searchPeople).toHaveBeenCalledWith(user.token, 'X31092')
-    expect(res.json).toHaveBeenCalledWith(firstPerson)
+    expect(res.render).toHaveBeenCalledWith('pages/person', {
+      activeNav: 'people',
+      person: firstPerson,
+    })
   })
 })
