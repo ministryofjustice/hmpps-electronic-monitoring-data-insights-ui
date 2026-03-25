@@ -1,4 +1,5 @@
 import type PeopleApiClient from '../data/peopleApiClient'
+import type { ApiPerson } from '../data/peopleApiClient'
 
 export type Person = {
   id: string | null
@@ -26,11 +27,37 @@ export type PeopleSearchResult = {
 export default class PeopleService {
   constructor(private readonly peopleApiClient: PeopleApiClient) {}
 
-  async searchPeople(_token: string, _deliusId: string): Promise<PeopleSearchResult> {
-    throw new Error('Not implemented')
+  async searchPeople(token: string, deliusId: string): Promise<PeopleSearchResult> {
+    const response = await this.peopleApiClient.searchPeople(token, deliusId)
+
+    return {
+      people: response.persons.map(person => this.mapPerson(person)),
+      nextToken: response.nextToken,
+    }
   }
 
-  async getPerson(_token: string, _personId: string): Promise<Person> {
-    throw new Error('Not implemented')
+  async getPerson(token: string, personId: string): Promise<Person> {
+    const person = await this.peopleApiClient.getPerson(token, personId)
+    return this.mapPerson(person)
+  }
+
+  private mapPerson(person: ApiPerson): Person {
+    return {
+      id: person.personId,
+      consumerId: person.consumerId,
+      name: person.personName,
+      nomisId: person.nomisId,
+      pncId: person.pncId,
+      deliusId: person.deliusId,
+      horId: person.horId,
+      ceprId: person.ceprId,
+      prisonId: person.prisonId,
+      dateOfBirth: person.dob,
+      address: {
+        postcode: person.zip,
+        city: person.city,
+        street: person.street,
+      },
+    }
   }
 }

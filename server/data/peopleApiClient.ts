@@ -1,4 +1,4 @@
-import { RestClient } from '@ministryofjustice/hmpps-rest-client'
+import { asUser, RestClient } from '@ministryofjustice/hmpps-rest-client'
 import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
 import logger from '../../logger'
@@ -29,11 +29,22 @@ export default class PeopleApiClient extends RestClient {
     super('People API', config.apis.emdiApi, logger, authenticationClient)
   }
 
-  async searchPeople(_token: string, _deliusId: string): Promise<ApiPeopleResponse> {
-    throw new Error('Not implemented')
+  async searchPeople(token: string, deliusId: string): Promise<ApiPeopleResponse> {
+    return this.get<ApiPeopleResponse>(
+      {
+        path: '/people',
+        query: { deliusId },
+      },
+      asUser(token),
+    )
   }
 
-  async getPerson(_token: string, _personId: string): Promise<ApiPerson> {
-    throw new Error('Not implemented')
+  async getPerson(token: string, personId: string): Promise<ApiPerson> {
+    return this.get<ApiPerson>(
+      {
+        path: `/people/${personId}`,
+      },
+      asUser(token),
+    )
   }
 }
