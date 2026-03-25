@@ -6,6 +6,7 @@
 
 {% set form = dateFilterForm %}
 {% set errors = form.errors or {} %}
+{% set maxDate = todayDate %}
 
 {% if form.errorSummary and form.errorSummary | length %}
     {{ govukErrorSummary({
@@ -13,6 +14,14 @@
         errorList: form.errorSummary
     }) }}
 {% endif %}
+
+{% if searchAlert and searchAlert.text | length %}
+    {{ govukErrorSummary({
+        titleText: searchAlert.text
+    }) }}
+{% endif %}
+
+
 
 {% set hasStartErrors = false %}
 {% set hasEndErrors = false %}
@@ -63,7 +72,8 @@
                             value: form.values.fromDate.date,
                             hour: form.values.fromDate.hour,
                             minute: form.values.fromDate.minute,
-                            errors: errors if hasStartErrors else []
+                            errors: errors if hasStartErrors else [],
+                            maxDate: maxDate
                         }) }}
                     </div>
                     <div class="govuk-grid-column-one-third">
@@ -75,7 +85,8 @@
                             value: form.values.toDate.date,
                             hour: form.values.toDate.hour,
                             minute: form.values.toDate.minute,
-                            errors: errors if hasEndErrors else []
+                            errors: errors if hasEndErrors else [],
+                            maxDate: maxDate
                         }) }}
                     </div>
                      <div class="govuk-grid-column-one-third">
@@ -84,7 +95,7 @@
                                 text: "Update map",
                                 classes: "govuk-!-margin-right-2 govuk-!-margin-bottom-0"
                             }) }}
-                            <a href="#" class="govuk-link govuk-link--no-visited-state">Clear filters</a>
+                            <a href="#" id="clearFilters" class="govuk-link govuk-link--no-visited-state">Clear filters</a>
                         </div>
                     </div>
                 </div>

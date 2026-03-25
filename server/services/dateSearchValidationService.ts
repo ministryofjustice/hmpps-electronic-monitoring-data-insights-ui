@@ -3,8 +3,8 @@ import { ValidationResult } from '../models/ValidationResult'
 
 const ERROR_INVALID_DATE = 'You must enter a valid value for date'
 const ERROR_TO_BEFORE_FROM = 'To date must be after From date'
-const MAX_SEARCH_WINDOW = 168 * 60 * 60 * 1000 // 168 hours in milliseconds = 7 days
-const ERROR_DATES_EXCEED_MAX_SEARCH_WINDOW = 'The selected date range must be 7 days or less'
+const MAX_SEARCH_WINDOW = 336 * 60 * 60 * 1000 // 336 hours in milliseconds = 14 days
+const ERROR_DATES_EXCEED_MAX_SEARCH_WINDOW = 'The selected date range must be 14 days or less'
 
 export type DateSearchValidationResult = {
   success: boolean
