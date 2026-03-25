@@ -13,6 +13,7 @@ export default class HomeController {
     res.render('pages/index', {
       activeNav: '/',
       popData: mockPopDetails,
+      showComplianceBadge: true,
       alert: true,
       cspNonce: res.locals.cspNonce,
       apiKey: process.env.OS_MAPS_API_KEY,
