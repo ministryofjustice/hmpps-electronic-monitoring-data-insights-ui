@@ -41,6 +41,8 @@ const createLockRotationControl = (emMap: EmMap): Control => {
   btn.addEventListener('click', () => {
     isLocked = !isLocked
     btn.setAttribute('aria-pressed', String(isLocked))
+    btn.setAttribute('aria-label', isLocked ? 'Unlock map rotation' : 'Lock map rotation')
+    btn.setAttribute('title', isLocked ? 'Unlock rotation' : 'Lock rotation')
     btn.textContent = isLocked ? '🔒' : '🔓'
     btn.style.backgroundColor = isLocked ? 'rgba(0, 60, 136, 0.7)' : 'rgba(255, 255, 255, 1)'
 
