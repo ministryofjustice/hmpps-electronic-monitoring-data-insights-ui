@@ -15,7 +15,9 @@ const initialiseDirectionScreenReader = () => {
   const emMap = queryElement(document, 'em-map') as EmMap
   const panAnnounce = queryElement(document, '#map-pan-announce') as HTMLElement
 
-  document.addEventListener('keydown', (e: KeyboardEvent) => {
+  const viewport = emMap.olMapInstance?.getViewport()
+
+  viewport?.addEventListener('keydown', (e: KeyboardEvent) => {
     const rotation = emMap.olMapInstance?.getView().getRotation() ?? 0
     const label = getRotatedDirection(e.key, rotation)
     if (label && panAnnounce) {
