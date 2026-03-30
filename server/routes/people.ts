@@ -11,4 +11,8 @@ export default function peopleRoutes(
   get('/people/:delius_id', async (req, res) => {
     await peopleController.getPersonByDeliusId(req, res)
   })
+
+  get('/people/:delius_id/location', async (req, res) => {
+    await peopleController.location(req, res)
+  })
 }

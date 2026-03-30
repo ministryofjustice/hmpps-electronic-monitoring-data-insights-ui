@@ -13,4 +13,15 @@ describe('peopleRoutes', () => {
 
     expect(get).toHaveBeenCalledWith('/people/:delius_id', expect.any(Function))
   })
+
+  it('registers GET /people/:delius_id/location', () => {
+    const get = jest.fn()
+    const services = {
+      peopleService: {},
+    } as Services
+
+    peopleRoutes(services, get)
+
+    expect(get).toHaveBeenCalledWith('/people/:delius_id/location', expect.any(Function))
+  })
 })
