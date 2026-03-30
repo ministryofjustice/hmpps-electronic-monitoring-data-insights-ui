@@ -8,9 +8,7 @@ import {
 import { isEmpty } from 'ol/extent'
 import createLayerVisibilityToggle from './controls/layerVisibilityToggle'
 import { queryElement } from '../../utils/utils'
-import { initialiseClearFilters } from './controls/initialiseClearFilters'
-// import { initialiseDatePickerConstraints } from './controls/initialiseDatePickerConstraints'
-                                                                                                                           
+
 const initialiseLocationDataView = async () => {
   const emMap = queryElement(document, 'em-map') as EmMap
 
@@ -64,9 +62,6 @@ const initialiseLocationDataView = async () => {
       zIndex: 3,
     }),
   )
-  
-  initialiseClearFilters()
-  // initialiseDatePickerConstraints()
 
   emMap.dispatchEvent(
     new CustomEvent('app:map:layers:ready', {
@@ -81,7 +76,6 @@ const initialiseLocationDataView = async () => {
   if (locationSource) {
     const extent = locationSource.getExtent()
     if (isEmpty(extent) === false) {
-      console.log('Fitting map to extent:', extent)                                                           
       map.getView().fit(extent, {
         maxZoom: 20,
         padding: [30, 30, 30, 30],
