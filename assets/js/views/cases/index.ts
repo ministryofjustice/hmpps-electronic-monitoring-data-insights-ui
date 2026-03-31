@@ -25,7 +25,7 @@ const initialiseDirectionScreenReader = () => {
     }
   })
 
-  emMap.olMapInstance?.getViewport().addEventListener('mouseup', () => {
+  viewport?.addEventListener('mouseup', () => {
     const rotation = emMap.olMapInstance?.getView().getRotation() ?? 0
     const label = getRotatedDirection('ArrowUp', rotation)
     if (label && panAnnounce) {
@@ -36,6 +36,7 @@ const initialiseDirectionScreenReader = () => {
 
 const initialiseLocationDataView = () => {
   const emMap = queryElement(document, 'em-map') as EmMap
+  
   const setupMap = () => {
     const map = emMap.olMapInstance
     if (!map) {
@@ -44,16 +45,20 @@ const initialiseLocationDataView = () => {
     }
 
     const { positions } = emMap
+
     const locationsLayer = emMap.addLayer(
       new LocationsLayer({
         title: 'pointsLayer',
         positions,
         zIndex: 4,
+        style: {
+          fill: 'rgba(76, 128, 182, 1)',
+          stroke: {
+            color: 'rgba(76, 128, 182, 1)',
+          },
+        },
       }),
     )!
-
-    const lockControl = createLockRotationControl(emMap)
-    map.addControl(lockControl)
 
     const tracksLayer = emMap.addLayer(
       new TracksLayer({
@@ -69,13 +74,12 @@ const initialiseLocationDataView = () => {
         positions,
         id: 'confidence',
         title: 'confidenceLayer',
-        visible: false,
+        visible: true,
         zIndex: 3,
         style: {
-          fill: null,
+          fill: 'rgba(76, 128, 182, 0.1)',
           stroke: {
-            color: 'rgba(242, 201, 76, 1)',
-            lineDash: [8, 8],
+            color: 'rgba(76, 128, 182, 1)',
             width: 2,
           },
         },
@@ -92,6 +96,9 @@ const initialiseLocationDataView = () => {
       }),
     )
 
+    const lockControl = createLockRotationControl(emMap)
+    map.addControl(lockControl)
+
     emMap.dispatchEvent(
       new CustomEvent('app:map:layers:ready', {
         bubbles: true,
@@ -101,10 +108,9 @@ const initialiseLocationDataView = () => {
     )
 
     const locationSource = locationsLayer?.getSource()
-
     if (locationSource) {
       const extent = locationSource.getExtent()
-      if (isEmpty(extent) === false) {
+      if (!isEmpty(extent)) {
         map.getView().fit(extent, {
           maxZoom: 20,
           padding: [30, 30, 30, 30],
@@ -116,11 +122,11 @@ const initialiseLocationDataView = () => {
     if (document.querySelector('#map-pan-announce')) {
       initialiseDirectionScreenReader()
     }
-    // Add controls
+
     if (locationsLayer) createLayerVisibilityToggle('#locations', locationsLayer, emMap)
     if (tracksLayer) createLayerVisibilityToggle('#tracks', tracksLayer, emMap)
-    if (confidenceLayer) createLayerVisibilityToggle('#confidence', confidenceLayer)
-    if (numbersLayer) createLayerVisibilityToggle('#numbering', numbersLayer)
+    if (confidenceLayer) createLayerVisibilityToggle('#confidence', confidenceLayer, emMap)
+    if (numbersLayer) createLayerVisibilityToggle('#numbering', numbersLayer, emMap)
   }
 
   setupMap()
