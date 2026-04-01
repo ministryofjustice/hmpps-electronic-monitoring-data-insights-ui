@@ -354,7 +354,7 @@ context('Cases', () => {
       })
     })
   })
-  
+
   describe('Map display', () => {
     it('should add TracksLayer to the map and be visible by default', () => {
       const locationPage = Page.verifyOnPage(LocationActivityPage)
