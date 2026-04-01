@@ -30,20 +30,30 @@
         {% include "partials/mapSearchForm.njk" %}
       </div>
     </div>
-    <div class="em-map" data-qa="em-map">
-      {{
-        emMap({
-          alerts: alerts,
-          cspNonce: cspNonce,
-          positions: positions,
-          controls: {
-            scaleControl: 'bar',
-            locationDisplay: 'dms',
-            rotateControl: 'true',
-            zoomSlider: true
-          }
-        })
-      }}
+    <div class="em-map" 
+        data-qa="em-map" 
+        role="region" 
+        aria-label="Interactive map" aria-describedby="map-instructions"
+        tabindex="0">
+
+        <span id="map-instructions" class="govuk-visually-hidden">
+          Use arrow keys to pan, plus and minus to zoom.
+        </span>
+        <div id="map-pan-announce" aria-live="polite" aria-atomic="true" class="govuk-visually-hidden"></div>
+        <div id="map-rotation-status" aria-live="polite" aria-atomic="true" class="govuk-visually-hidden"></div>
+        {{
+          emMap({
+            alerts: alerts,
+            cspNonce: cspNonce,
+            positions: positions,
+            controls: {
+              scaleControl: 'bar',
+              locationDisplay: 'dms',
+              rotateControl: 'true',
+              zoomSlider: true
+            }
+          })
+        }}
     </div>
   </div>
 {% endblock %}

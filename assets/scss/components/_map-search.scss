@@ -1,0 +1,11 @@
+.map-search {
+  margin-top: 20px;
+  background: #F3F2F1;
+  & .map-search__form {
+    width: 90%;
+  }
+  
+  & .map-search__form-actions {
+    margin-top: 156px;
+  }
+}

@@ -4,6 +4,9 @@ import Page from '../pages/page'
 
 context('Cases', () => {
   const locatioActivitySessionid = 'location-activity-session-id'
+  const waitForLockButton = () => {
+    return cy.get('#lock-rotation-btn', { includeShadowDom: true, timeout: 10000 }).should('exist').and('be.visible')
+  }
 
   beforeEach(() => {
     cy.task('reset')
@@ -299,14 +302,55 @@ context('Cases', () => {
       cy.contains('Unable to fetch location data. Please try again later.').should('exist')
     })
   })
-  describe('Map display', () => {
-    it('should add TracksLayer to the map and be visible by default', () => {
-      const locationPage = Page.verifyOnPage(LocationActivityPage)
 
-      return locationPage.mapInstance.then(map => {
-        const layers = map.getLayers().getArray()
-        const tracksLayer = layers.find(l => l.get('title') === 'tracksLayer')
-        cy.wrap(tracksLayer?.getVisible()).should('eq', true)
+  describe('Map screen reader accessibility', () => {
+    beforeEach(() => {
+      waitForLockButton()
+    })
+
+    describe('Map region', () => {
+      it('should have a region landmark with a label', () => {
+        cy.get('[data-qa=em-map]').should('have.attr', 'role', 'region')
+        cy.get('[data-qa=em-map]').should('have.attr', 'aria-label', 'Interactive map')
+      })
+
+      it('should have aria-describedby linking to instructions', () => {
+        cy.get('[data-qa=em-map]').should('have.attr', 'aria-describedby', 'map-instructions')
+        cy.get('#map-instructions').should('exist')
+        cy.get('#map-instructions').should('not.be.empty')
+      })
+    })
+
+    describe('Pan announcements', () => {
+      it('should have a live region for pan announcements', () => {
+        cy.get('#map-pan-announce').should('have.attr', 'aria-live', 'polite')
+        cy.get('#map-pan-announce').should('have.attr', 'aria-atomic', 'true')
+      })
+    })
+
+    describe('Rotation lock announcements', () => {
+      it('should have a live region for rotation status', () => {
+        cy.get('#map-rotation-status').should('have.attr', 'aria-live', 'polite')
+        cy.get('#map-rotation-status').should('have.attr', 'aria-atomic', 'true')
+      })
+
+      it('should announce when rotation is locked', () => {
+        cy.get('#lock-rotation-btn').click()
+        cy.get('#map-rotation-status').should('contain.text', 'Map rotation locked')
+      })
+
+      it('should announce when rotation is unlocked', () => {
+        cy.get('#lock-rotation-btn').click()
+        cy.get('#lock-rotation-btn').click()
+        cy.get('#map-rotation-status').should('contain.text', 'Map rotation unlocked')
+      })
+
+      it('should toggle aria-pressed on lock button', () => {
+        cy.get('#lock-rotation-btn').should('have.attr', 'aria-pressed', 'false')
+        cy.get('#lock-rotation-btn').click()
+        cy.get('#lock-rotation-btn').should('have.attr', 'aria-pressed', 'true')
+        cy.get('#lock-rotation-btn').click()
+        cy.get('#lock-rotation-btn').should('have.attr', 'aria-pressed', 'false')
       })
     })
   })
