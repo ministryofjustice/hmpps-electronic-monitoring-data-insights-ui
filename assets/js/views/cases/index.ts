@@ -36,7 +36,7 @@ const initialiseDirectionScreenReader = () => {
 
 const initialiseLocationDataView = () => {
   const emMap = queryElement(document, 'em-map') as EmMap
-  
+
   const setupMap = () => {
     const map = emMap.olMapInstance
     if (!map) {
