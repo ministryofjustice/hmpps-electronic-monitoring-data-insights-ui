@@ -89,7 +89,7 @@ describe('initialiseLocationDataView', () => {
 
   it('should add a CirclesLayer to the map', () => {
     initialiseLocationDataView()
-    expect(CirclesLayer).toHaveBeenCalled()
+    expect(CirclesLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: true }))
   })
 
   it('should add a TextLayer to the map', () => {
