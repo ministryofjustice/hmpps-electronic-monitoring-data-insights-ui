@@ -6,10 +6,11 @@ import {
   TextLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import { isEmpty } from 'ol/extent'
-import createLayerVisibilityToggle from './controls/layerVisibilityToggle'
+// import createLayerVisibilityToggle from './controls/layerVisibilityToggle'
 import getRotatedDirection from './controls/getRotatedDirection'
 import createLockRotationControl from './controls/createLockRotationControl'
 import { queryElement } from '../../utils/utils'
+import MapLayersControl from './controls/mapLayersControl'
 
 const initialiseDirectionScreenReader = () => {
   const emMap = queryElement(document, 'em-map') as EmMap
@@ -123,10 +124,18 @@ const initialiseLocationDataView = () => {
       initialiseDirectionScreenReader()
     }
 
-    if (locationsLayer) createLayerVisibilityToggle('#locations', locationsLayer, emMap)
-    if (tracksLayer) createLayerVisibilityToggle('#tracks', tracksLayer, emMap)
-    if (confidenceLayer) createLayerVisibilityToggle('#confidence', confidenceLayer, emMap)
-    if (numbersLayer) createLayerVisibilityToggle('#numbering', numbersLayer, emMap)
+    // if (locationsLayer) createLayerVisibilityToggle('#locations', locationsLayer, emMap)
+    // if (tracksLayer) createLayerVisibilityToggle('#tracks', tracksLayer, emMap)
+    // if (confidenceLayer) createLayerVisibilityToggle('#confidence', confidenceLayer, emMap)
+    // if (numbersLayer) createLayerVisibilityToggle('#numbering', numbersLayer, emMap)
+
+    const layersControl = new MapLayersControl({
+      tracksLayer,
+      confidenceLayer,
+      numbersLayer,
+    })
+    map.addControl(layersControl)
+
   }
 
   setupMap()
