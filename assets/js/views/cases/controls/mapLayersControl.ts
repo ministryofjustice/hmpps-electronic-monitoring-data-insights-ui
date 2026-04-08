@@ -24,7 +24,7 @@ export default class MapLayersControl extends Control {
         position: 'absolute',
         top: '0.5em',
         right: '0.5em',
-        background: 'white',
+        background: 'red',
         border: '1px solid #ccc',
         borderRadius: '4px',
         padding: '10px 14px',
@@ -32,6 +32,8 @@ export default class MapLayersControl extends Control {
         minWidth: '180px',
         zIndex: '1000',
     })
+
+
 
     el.innerHTML = `
       <div class="mlc-panel">
