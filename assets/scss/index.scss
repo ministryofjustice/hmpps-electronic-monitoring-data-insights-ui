@@ -14,6 +14,7 @@ $govuk-page-width: $moj-page-width;
 @import './components/api-error';
 @import './components/map';
 @import './components//map-search';
+@import './components/map-layers-control';
 @import './overrides/local';
 @import './overrides/overview';
 

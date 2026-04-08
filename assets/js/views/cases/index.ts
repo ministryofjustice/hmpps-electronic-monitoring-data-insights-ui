@@ -6,7 +6,6 @@ import {
   TextLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import { isEmpty } from 'ol/extent'
-// import createLayerVisibilityToggle from './controls/layerVisibilityToggle'
 import getRotatedDirection from './controls/getRotatedDirection'
 import createLockRotationControl from './controls/createLockRotationControl'
 import { queryElement } from '../../utils/utils'
@@ -123,11 +122,6 @@ const initialiseLocationDataView = () => {
     if (document.querySelector('#map-pan-announce')) {
       initialiseDirectionScreenReader()
     }
-
-    // if (locationsLayer) createLayerVisibilityToggle('#locations', locationsLayer, emMap)
-    // if (tracksLayer) createLayerVisibilityToggle('#tracks', tracksLayer, emMap)
-    // if (confidenceLayer) createLayerVisibilityToggle('#confidence', confidenceLayer, emMap)
-    // if (numbersLayer) createLayerVisibilityToggle('#numbering', numbersLayer, emMap)
 
     const layersControl = new MapLayersControl({
       tracksLayer,

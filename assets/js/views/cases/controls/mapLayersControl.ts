@@ -19,6 +19,20 @@ export default class MapLayersControl extends Control {
   }
 
   private renderControl(el: HTMLElement, opts: MapLayersControlOptions) {
+    
+    Object.assign(el.style, {
+        position: 'absolute',
+        top: '0.5em',
+        right: '0.5em',
+        background: 'white',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        padding: '10px 14px',
+        fontSize: '14px',
+        minWidth: '180px',
+        zIndex: '1000',
+    })
+
     el.innerHTML = `
       <div class="mlc-panel">
         <div class="mlc-header">
