@@ -52,7 +52,7 @@ const initialiseLocationDataView = () => {
         positions,
         zIndex: 4,
         style: {
-          fill: 'rgba(0, 0, 0, 0)',
+          fill: 'rgba(76, 128, 182, 1)',
           stroke: {
             color: 'rgba(76, 128, 182, 1)',
           },
@@ -77,7 +77,7 @@ const initialiseLocationDataView = () => {
         visible: true,
         zIndex: 3,
         style: {
-          fill: 'rgba(76, 128, 182, 0.1)',
+          fill: 'rgba(0, 0, 0, 0)',
           stroke: {
             color: 'rgba(76, 128, 182, 1)',
             width: 2,
