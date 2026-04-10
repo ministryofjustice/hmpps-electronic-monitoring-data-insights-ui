@@ -24,8 +24,11 @@ interface MockEmMapElement {
   positions: unknown[]
   addLayer: jest.Mock
   dispatchEvent: jest.Mock
+  fitToAllLayers: jest.Mock
+  getNativeLayer: jest.Mock
 }
 
+jest.mock('./controls/mapLayersControl', () => jest.fn().mockImplementation(() => ({})))
 jest.mock('@ministryofjustice/hmpps-electronic-monitoring-components/map', () => ({}))
 jest.mock('@ministryofjustice/hmpps-electronic-monitoring-components/map/layers', () => ({
   LocationsLayer: jest.fn().mockImplementation(() => ({
@@ -66,6 +69,8 @@ describe('initialiseLocationDataView', () => {
       positions: [],
       addLayer: jest.fn((layer: unknown) => layer),
       dispatchEvent: jest.fn(),
+      fitToAllLayers: jest.fn(),
+      getNativeLayer: jest.fn(),
     }
 
     const emMapStub = mockEmMap as unknown as EmMap

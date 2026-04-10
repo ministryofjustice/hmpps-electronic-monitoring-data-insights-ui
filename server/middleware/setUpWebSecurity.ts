@@ -18,6 +18,7 @@ export default function setUpWebSecurity(): Router {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
+          workerSrc: ["'self'", 'blob:'],
           // This nonce allows us to use scripts with the use of the `cspNonce` local, e.g (in a Nunjucks template):
           // <script nonce="{{ cspNonce }}">
           // or

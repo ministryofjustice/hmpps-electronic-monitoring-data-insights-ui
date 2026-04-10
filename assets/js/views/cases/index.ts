@@ -5,7 +5,6 @@ import {
   CirclesLayer,
   TextLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
-import { isEmpty } from 'ol/extent'
 import getRotatedDirection from './controls/getRotatedDirection'
 import createLockRotationControl from './controls/createLockRotationControl'
 import { queryElement } from '../../utils/utils'
@@ -60,42 +59,45 @@ const initialiseLocationDataView = () => {
       }),
     )!
 
-    const tracksLayer = emMap.addLayer(
-      new TracksLayer({
-        title: 'tracksLayer',
-        positions,
-        visible: true,
-        zIndex: 1,
-      }),
-    )!
+    const tracksLayer = new TracksLayer({
+      id: 'tracksLayer',
+      positions,
+      visible: true,
+      zIndex: 1,
+    })
 
-    const confidenceLayer = emMap.addLayer(
-      new CirclesLayer({
-        positions,
-        id: 'confidence',
-        title: 'confidenceLayer',
-        visible: true,
-        zIndex: 3,
-        style: {
-          fill: 'rgba(76, 128, 182, 0.1)',
-          stroke: {
-            color: 'rgba(76, 128, 182, 1)',
-            width: 2,
-          },
+    const confidenceLayer = new CirclesLayer({
+      positions,
+      id: 'confidenceLayer',
+      title: 'confidenceLayer',
+      visible: true,
+      zIndex: 3,
+      style: {
+        fill: 'rgba(76, 128, 182, 0.1)',
+        stroke: {
+          color: 'rgba(76, 128, 182, 1)',
+          width: 2,
         },
-      }),
-    )
+      },
+    })
 
-    const numbersLayer = emMap.addLayer(
-      new TextLayer({
-        positions,
-        textProperty: 'sequenceNumber',
-        title: 'numberingLayer',
-        visible: false,
-        zIndex: 3,
-      }),
-    )
+    const numbersLayer = new TextLayer({
+      positions,
+      textProperty: 'precision',
+      id: 'numbersLayer',
+      title: 'numbersLayer',
+      visible: true,
+      zIndex: 3,
+      style: {
+        offset: { x: 0, y: 30 },
+        textAlign: 'center',
+      },
+    })
 
+    emMap.addLayer(locationsLayer)
+    emMap.addLayer(tracksLayer)
+    emMap.addLayer(confidenceLayer)
+    emMap.addLayer(numbersLayer)
     const lockControl = createLockRotationControl(emMap)
     map.addControl(lockControl)
 
@@ -107,29 +109,22 @@ const initialiseLocationDataView = () => {
       }),
     )
 
-    const locationSource = locationsLayer?.getSource()
-    if (locationSource) {
-      const extent = locationSource.getExtent()
-      if (!isEmpty(extent)) {
-        map.getView().fit(extent, {
-          maxZoom: 20,
-          padding: [30, 30, 30, 30],
-          size: map.getSize(),
-        })
-      }
-    }
+    emMap.fitToAllLayers({ padding: 80 })
 
     if (document.querySelector('#map-pan-announce')) {
       initialiseDirectionScreenReader()
     }
 
+    const mapContainer = queryElement(document, '.em-map') as HTMLElement
+
     const layersControl = new MapLayersControl({
       tracksLayer,
-      confidenceLayer,
-      numbersLayer,
+      confidenceLayer: confidenceLayer ?? undefined,
+      numbersLayer: numbersLayer ?? undefined,
+      mapContainer,
+      map: emMap,
     })
     map.addControl(layersControl)
-
   }
 
   setupMap()

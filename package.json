@@ -30,7 +30,7 @@
   },
   "jest": {
     "transform": {
-      "^.+\\.tsx?$": [
+      "^.+\\.[tj]sx?$": [
         "ts-jest"
       ]
     },
@@ -80,7 +80,7 @@
     "@aws-sdk/client-sqs": "^3.803.0",
     "@ministryofjustice/frontend": "^5.1.5",
     "@ministryofjustice/hmpps-auth-clients": "^0.0.1-alpha.4",
-    "@ministryofjustice/hmpps-electronic-monitoring-components": "^0.0.10-beta.1",
+    "@ministryofjustice/hmpps-electronic-monitoring-components": "0.2.6-beta.1",
     "@ministryofjustice/hmpps-monitoring": "^0.0.1-beta.2",
     "@ministryofjustice/hmpps-probation-frontend-components": "^1.0.0",
     "@ministryofjustice/hmpps-rest-client": "^0.0.1-alpha.9",
