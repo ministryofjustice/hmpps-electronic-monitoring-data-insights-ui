@@ -31,7 +31,7 @@ jobs:
   # main node build workflow
   node_build:
     name: node build
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@d79e83be2cc392b981dd92c8f6f85007d18032e9 #v2 WORKFLOW_VERSION
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@b74c1336dede62686c46e93458e2ef197ca579ca # v2 WORKFLOW_VERSION
     secrets: inherit
   # generic node unit tests - feel free to override with local tests if required
   node_unit_tests:
