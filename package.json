@@ -34,11 +34,14 @@
         "ts-jest"
       ]
     },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(ol|@ministryofjustice/hmpps-electronic-monitoring-components)/)"
+    ],
     "collectCoverageFrom": [
       "server/**/*.{ts,js,jsx,mjs}"
     ],
     "testMatch": [
-      "<rootDir>/(server|job)/**/?(*.)(cy|test).{ts,js,jsx,mjs}"
+      "<rootDir>/(server|job|assets)/**/?(*.)(cy|test).{ts,js,jsx,mjs}"
     ],
     "testEnvironment": "node",
     "reporters": [
@@ -143,6 +146,7 @@
     "glob": "^11.0.2",
     "husky": "^9.1.7",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "29.7.0",
     "jest-html-reporter": "^4.1.0",
     "jest-junit": "^16.0.0",
     "jsonwebtoken": "^9.0.2",
