@@ -6,6 +6,7 @@ import populateSessionData from '../middleware/populateSessionData'
 import SearchController from '../controllers/search/searchController'
 import casesRoutes from './cases'
 import homeRoutes from './home'
+import staticRoutes from './static'
 
 export default function routes(services: Services): Router {
   const router = Router()
@@ -14,6 +15,7 @@ export default function routes(services: Services): Router {
   const post = (path: string | string[], handler: RequestHandler) => router.post(path, asyncMiddleware(handler))
 
   homeRoutes(services, get)
+  staticRoutes(services, get)
   casesRoutes(services, get, post)
   const searchController = new SearchController(auditService)
   router.use(populateSessionData)
