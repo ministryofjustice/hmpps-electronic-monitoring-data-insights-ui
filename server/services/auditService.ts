@@ -7,6 +7,7 @@ export enum Page {
   CASES_LOCATION_PAGE = 'CASES_LOCATION_PAGE',
   CASES_NOTES_PAGE = 'CASES_NOTES_PAGE',
   SEARCH_PAGE = 'SEARCH_PAGE',
+  MAP_HELP_PAGE = 'MAP_HELP_PAGE',
 }
 
 export interface PageViewEventDetails {
