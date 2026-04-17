@@ -1,0 +1,84 @@
+{% extends "../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - Help with the map" %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+
+  <a href="javascript:history.back()" class="govuk-back-link">Back</a>
+
+  <h2 class="govuk-heading-l">{{locale.title}}</h2>
+
+  {% if locale and locale.content %}
+    {% for _, section in locale.content %}
+      {% if section %}
+        {% set firstParagraphs = section['first-pagaraphs'] or [] %}
+        {% set lastParagraphs = section['last-pagaraphs'] or [] %}
+        {% set bulletPoints = section.bulletPoints or [] %}
+        {% set firstBulletPoints = section.firstBulletPoints or [] %}
+        {% set lastBulletPoints = section.lastBulletPoints or [] %}
+        {% set image = section.image %}
+
+        <div class="govuk-!-margin-bottom-6">
+          {% if section.title %}
+            <h2 class="govuk-heading-m">{{ section.title }}</h2>
+          {% endif %}
+
+          <div style="overflow: hidden;">
+            {% if image and image.src %}
+              <img
+                src="{{ image.src }}"
+                alt="{{ image.alt or '' }}"
+                class="govuk-!-margin-left-4 govuk-!-margin-bottom-2"
+                style="float: right; max-width: 200px; height: auto;"
+              >
+            {% endif %}
+
+            {% for paragraph in firstParagraphs %}
+              {% if paragraph %}
+                <p class="govuk-body">{{ paragraph }}</p>
+              {% endif %}
+            {% endfor %}
+
+            {% if bulletPoints.length %}
+              <ul class="govuk-list govuk-list--bullet">
+                {% for bulletPoint in bulletPoints %}
+                  {% if bulletPoint %}
+                    <li>{{ bulletPoint }}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            {% endif %}
+
+            {% if firstBulletPoints.length %}
+              <ul class="govuk-list govuk-list--bullet">
+                {% for bulletPoint in firstBulletPoints %}
+                  {% if bulletPoint %}
+                    <li>{{ bulletPoint }}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            {% endif %}
+
+            {% for paragraph in lastParagraphs %}
+              {% if paragraph %}
+                <p class="govuk-body">{{ paragraph }}</p>
+              {% endif %}
+            {% endfor %}
+
+            {% if lastBulletPoints.length %}
+              <ul class="govuk-list govuk-list--bullet">
+                {% for bulletPoint in lastBulletPoints %}
+                  {% if bulletPoint %}
+                    <li>{{ bulletPoint }}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+{% endblock %}
