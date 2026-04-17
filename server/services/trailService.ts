@@ -1,4 +1,6 @@
+import { convertRadiansToDegrees, formatDisplayValue } from '../presenters/helpers/formatters'
 import GeolocationMechanism from '../types/entities/geolocationMechanism'
+import { formatGpsDate } from '../utils/date'
 
 export interface Position {
   positionId: number
@@ -36,6 +38,23 @@ const getGeolocationMechanism = (value: number): GeolocationMechanism | undefine
 }
 
 export default class TrailService {
+  annotatePositionsWithDisplayProperties(positions: Array<Position>): Array<Position> {
+    return positions.map(position => ({
+      ...position,
+
+      // Overlay template
+      overlayTitleTemplateId: 'overlay-title-mdss-location',
+      overlayBodyTemplateId: 'overlay-body-mdss-location',
+
+      // Display values
+      displayGpsDate: formatGpsDate(position.timestamp),
+      displayAccuracy: formatDisplayValue(position.precision, '', 'N/A'),
+      displayTimestamp: formatDisplayValue(position.timestamp, '', 'N/A'),
+      displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
+      displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
+    }))
+  }
+
   async filterByDate(token: string | undefined, crn: string, filters: Filters): Promise<Position[]> {
     if (!process.env.TRAIL_DATA_BASE_URL) {
       throw new Error('Trail Service - TRAIL_DATA_BASE_URL is not defined in environment variables')

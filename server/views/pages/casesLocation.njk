@@ -46,6 +46,7 @@
             alerts: alerts,
             cspNonce: cspNonce,
             positions: positions,
+            usesInternalOverlays: true,
             controls: {
               scaleControl: 'bar',
               locationDisplay: 'dms',
@@ -54,6 +55,36 @@
             }
           })
         }}
+
+        {% raw %}
+      <template id="overlay-title-mdss-location">
+        <div><strong>Point {{ subjectNomisId }}</strong></div>
+      </template>
+
+      <template id="overlay-body-mdss-location">
+        <div class="app-map__overlay-row">
+          <span class="app-map__overlay-label">Accuracy:</span>
+          <span class="app-map__overlay-value">{{ precision }} meters</span>
+        </div>
+        <div class="app-map__overlay-row">
+          <span class="app-map__overlay-label">Date / Time:</span>
+          <span class="app-map__overlay-value">{{ gpsDate}}</span>
+        </div>
+        <div class="app-map__overlay-row">
+          <span class="app-map__overlay-label">Lat / Lng:</span>
+          <span class="app-map__overlay-value">{{ latitude }}, {{ longitude }}</span>
+        </div>
+         <div class="app-map__overlay-row">
+          <span class="app-map__overlay-label">Location:</span>
+          <span class="app-map__overlay-value">
+            <a href="#" class="govuk-link">
+               Save the location
+            </a>
+          </span>
+        </div>
+
+      </template>
+      {% endraw %}
     </div>
     <p class="govuk-body-m"><a href="/map-help">Help with the map</a></p>
   </div>
