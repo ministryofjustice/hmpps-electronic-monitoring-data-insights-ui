@@ -1,0 +1,86 @@
+name: Node Integration Tests
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  node_integration_tests:
+    name: node integration tests
+    runs-on: ubuntu-latest
+    services:
+      wiremock:
+        image: wiremock/wiremock
+        ports:
+          - 9091:8080
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Restore Cypress binary cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            cypress-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install and verify Cypress binary
+        run: |
+          npx cypress install
+          npx cypress verify
+
+      - name: Build application
+        run: npm run build
+
+      - name: Wait for WireMock
+        run: |
+          for i in {1..30}; do
+            if curl --silent --fail http://127.0.0.1:9091/__admin/ >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "WireMock did not become ready"
+          exit 1
+
+      - name: Start application
+        run: npm run start-feature > app.log 2>&1 &
+
+      - name: Wait for application
+        run: |
+          for i in {1..30}; do
+            if curl --silent --fail http://127.0.0.1:3007/ >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Application did not become ready"
+          cat app.log
+          exit 1
+
+      - name: Run integration tests
+        run: npm run int-test
+
+      - name: Upload integration test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-integration-test-artifacts
+          path: |
+            app.log
+            test_results
+            integration_tests/screenshots
+            integration_tests/videos
+          if-no-files-found: ignore
