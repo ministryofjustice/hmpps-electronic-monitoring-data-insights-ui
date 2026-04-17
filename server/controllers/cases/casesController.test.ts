@@ -40,7 +40,10 @@ describe('CasesController', () => {
       validateDateSearchRequest: jest.fn().mockReturnValue({ success: true }),
     } as jest.Mocked<DateSearchValidationService>
 
-    trailService = { filterByDate: jest.fn() } as jest.Mocked<TrailService>
+    trailService = {
+      filterByDate: jest.fn(),
+      annotatePositionsWithDisplayProperties: jest.fn(),
+    } as jest.Mocked<TrailService>
 
     req = { id: 'test-correlation-id', params: { id: '1', highlight: null } }
     res = {
