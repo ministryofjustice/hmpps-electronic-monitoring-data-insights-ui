@@ -83,11 +83,14 @@ describe('Routes', () => {
       .expect(200)
       .expect(res => {
         expect(res.text).toContain('Help with the map')
-        expect(res.text).toContain('Confidence circles')
-        expect(res.text).toContain('GPS delay')
-        expect(res.text).toContain('Locations of interest')
+        expect(res.text).toContain('Location accuracy')
+        expect(res.text).toContain('Direction of travel')
+        expect(res.text).toContain('Missing trail data')
         expect(res.text).toContain('/assets/images/help-coc.png')
-        expect(res.text).toContain('smaller circles = more confidence about a location')
+        expect(res.text).toContain(
+          'Map data is around 95% accurate. The map may sometimes show a ping in the wrong location.',
+        )
+        expect(res.text).toContain('The trail shown may not reflect the actual route taken.')
         expect(auditService.logPageView).toHaveBeenCalledWith(Page.MAP_HELP_PAGE, {
           who: user.username,
           correlationId: expect.any(String),
