@@ -31,10 +31,11 @@ describe('mapHelp template', () => {
         confidenceCircles: {
           title: 'Confidence circles',
           image: {
-            src: '/assets/images/help-coc.png',
+            src: '/assets/images/confidence-circles.png',
             alt: 'Confidence circles map',
           },
           'first-pagaraphs': ['First paragraph', 'Second paragraph'],
+          insert: 'Inset paragraph',
           bulletPoints: ['Shared bullet'],
           firstBulletPoints: ['First bullet'],
           'last-pagaraphs': ['Last paragraph'],
@@ -45,10 +46,11 @@ describe('mapHelp template', () => {
 
     expect(html).toContain('Help with the map')
     expect(html).toContain('Confidence circles')
-    expect(html).toContain('src="/assets/images/help-coc.png"')
+    expect(html).toContain('src="/assets/images/confidence-circles.png"')
     expect(html).toContain('alt="Confidence circles map"')
     expect(html).toContain('First paragraph')
     expect(html).toContain('Second paragraph')
+    expect(html).toContain('<p class="govuk-inset-text">Inset paragraph</p>')
     expect(html).toContain('Shared bullet')
     expect(html).toContain('First bullet')
     expect(html).toContain('Last paragraph')
@@ -85,6 +87,7 @@ describe('mapHelp template', () => {
         partialSection: {
           title: 'Partial section',
           'first-pagaraphs': ['', null, 'Renderable paragraph'],
+          insert: '',
           bulletPoints: ['', null, 'Renderable bullet'],
           lastBulletPoints: [null, 'Final bullet'],
         },
@@ -96,5 +99,6 @@ describe('mapHelp template', () => {
     expect(html).toContain('Renderable bullet')
     expect(html).toContain('Final bullet')
     expect(html).not.toContain('<li></li>')
+    expect(html).not.toContain('govuk-inset-text')
   })
 })
