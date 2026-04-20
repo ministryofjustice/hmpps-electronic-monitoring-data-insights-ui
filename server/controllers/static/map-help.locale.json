@@ -15,8 +15,8 @@
     "locationAccuracy": {
       "title": "Location accuracy",
       "image": {
-        "src": "/assets/images/help-loi.png",
-        "alt": "Map showing a location of interest"
+        "src": "/assets/images/confidence-circles.png",
+        "alt": ""
       },
       "first-pagaraphs": [
         "Location accuracy can vary, and may be reduced if, for example, satellite signals are blocked or the tag battery is low.",
@@ -29,8 +29,8 @@
     "timeAndDate": {
       "title": "Time and date of activity",
       "image": {
-        "src": "/assets/images/help-coc.png",
-        "alt": "Map showing a confidence circles"
+        "src": "/assets/images/ping-card.png",
+        "alt": ""
       },
       "first-pagaraphs": [
         "Each point has a timestamp that shows when the tag pinged in that location.",
@@ -42,8 +42,8 @@
     "directionOfTravel": {
       "title": "Direction of travel",
       "image": {
-        "src": "/assets/images/help-lines.png",
-        "alt": "Map showing lines and arrows"
+        "src": "/assets/images/direction-information.png",
+        "alt": ""
       },
       "first-pagaraphs": [
         "The lines on maps show the likely path a person on probation took between locations and do not represent a confirmed route."
@@ -57,8 +57,8 @@
     "missingTrailData": {
       "title": "Time and date of activity",
       "image": {
-        "src": "/assets/images/help-coc.png",
-        "alt": "Map showing a confidence circles"
+        "src": "/assets/images/missing-data.png",
+        "alt": ""
       },
       "first-pagaraphs": [
         "Missing trail data usually means that either the tag is not working or that it cannot get a signal.",
