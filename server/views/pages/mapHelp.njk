@@ -17,6 +17,7 @@
         {% set bulletPoints = section.bulletPoints or [] %}
         {% set firstBulletPoints = section.firstBulletPoints or [] %}
         {% set lastBulletPoints = section.lastBulletPoints or [] %}
+        {% set insert = section.insert %}
         {% set image = section.image %}
 
         <div class="govuk-!-margin-bottom-6">
@@ -39,6 +40,10 @@
                 <p class="govuk-body">{{ paragraph }}</p>
               {% endif %}
             {% endfor %}
+
+            {% if insert %}
+              <p class="govuk-inset-text">{{ insert }}</p>
+            {% endif %}
 
             {% if bulletPoints.length %}
               <ul class="govuk-list govuk-list--bullet">
