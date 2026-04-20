@@ -86,7 +86,7 @@ describe('Routes', () => {
         expect(res.text).toContain('Location accuracy')
         expect(res.text).toContain('Direction of travel')
         expect(res.text).toContain('Missing trail data')
-        expect(res.text).toContain('/assets/images/help-coc.png')
+        expect(res.text).toContain('/assets/images/confidence-circles.png')
         expect(res.text).toContain(
           'Map data is around 95% accurate. The map may sometimes show a ping in the wrong location.',
         )

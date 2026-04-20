@@ -31,7 +31,7 @@ describe('mapHelp template', () => {
         confidenceCircles: {
           title: 'Confidence circles',
           image: {
-            src: '/assets/images/help-coc.png',
+            src: '/assets/images/confidence-circles.png',
             alt: 'Confidence circles map',
           },
           'first-pagaraphs': ['First paragraph', 'Second paragraph'],
@@ -46,7 +46,7 @@ describe('mapHelp template', () => {
 
     expect(html).toContain('Help with the map')
     expect(html).toContain('Confidence circles')
-    expect(html).toContain('src="/assets/images/help-coc.png"')
+    expect(html).toContain('src="/assets/images/confidence-circles.png"')
     expect(html).toContain('alt="Confidence circles map"')
     expect(html).toContain('First paragraph')
     expect(html).toContain('Second paragraph')
