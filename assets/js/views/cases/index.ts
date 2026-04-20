@@ -6,7 +6,8 @@ import {
   TextLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import { isEmpty } from 'ol/extent'
-import createLayerVisibilityToggle from './controls/layerVisibilityToggle'
+import type VectorLayer from 'ol/layer/Vector'
+import MapLayersControl from './controls/mapLayersControls'
 import getRotatedDirection from './controls/getRotatedDirection'
 import createLockRotationControl from './controls/createLockRotationControl'
 import { queryElement } from '../../utils/utils'
@@ -35,7 +36,8 @@ const initialiseDirectionScreenReader = () => {
 }
 
 const initialiseLocationDataView = () => {
-  const emMap = queryElement(document, 'em-map') as EmMap
+  const mapContainer = queryElement(document, '[data-qa="em-map"]') as HTMLElement
+  const emMap = queryElement(mapContainer, 'em-map') as unknown as EmMap
 
   const setupMap = () => {
     const map = emMap.olMapInstance
@@ -60,44 +62,59 @@ const initialiseLocationDataView = () => {
       }),
     )!
 
-    const tracksLayer = emMap.addLayer(
-      new TracksLayer({
-        title: 'tracksLayer',
-        positions,
-        visible: true,
-        zIndex: 1,
-      }),
-    )!
+    const tracksLayer = new TracksLayer({
+      id: 'tracksLayer',
+      positions,
+      visible: true,
+      zIndex: 1,
+    })
 
-    const confidenceLayer = emMap.addLayer(
-      new CirclesLayer({
-        positions,
-        id: 'confidence',
-        title: 'confidenceLayer',
-        visible: true,
-        zIndex: 3,
-        style: {
-          fill: 'rgba(0, 0, 0, 0)',
-          stroke: {
-            color: 'rgba(76, 128, 182, 1)',
-            width: 2,
-          },
+    const confidenceLayer = new CirclesLayer({
+      positions,
+      id: 'confidenceLayer',
+      title: 'confidenceLayer',
+      visible: true,
+      zIndex: 3,
+      style: {
+        fill: 'rgba(0, 0, 0, 0)',
+        stroke: {
+          color: 'rgba(76, 128, 182, 1)',
+          width: 2,
         },
-      }),
-    )
+      },
+    })
 
-    const numbersLayer = emMap.addLayer(
-      new TextLayer({
-        positions,
-        textProperty: 'sequenceNumber',
-        title: 'numberingLayer',
-        visible: false,
-        zIndex: 3,
-      }),
-    )
+    const numbersLayer = new TextLayer({
+      positions,
+      textProperty: 'precision',
+      id: 'numbersLayer',
+      title: 'numbersLayer',
+      visible: true,
+      zIndex: 3,
+      style: {
+        offset: { x: 0, y: 30 },
+        textAlign: 'center',
+      },
+    })
+
+    emMap.addLayer(locationsLayer)
+    emMap.addLayer(tracksLayer)
+    emMap.addLayer(confidenceLayer)
+    emMap.addLayer(numbersLayer)
+
+    emMap.fitToAllLayers({ padding: 80 })
 
     const lockControl = createLockRotationControl(emMap)
     map.addControl(lockControl)
+
+    const mapLayersControl = new MapLayersControl({
+      mapContainer,
+      map: emMap,
+      tracksLayer,
+      confidenceLayer,
+      numbersLayer,
+    })
+    map.addControl(mapLayersControl)
 
     emMap.dispatchEvent(
       new CustomEvent('app:map:layers:ready', {
@@ -107,26 +124,25 @@ const initialiseLocationDataView = () => {
       }),
     )
 
-    const locationSource = locationsLayer?.getSource()
-    if (locationSource) {
-      const extent = locationSource.getExtent()
-      if (!isEmpty(extent)) {
-        map.getView().fit(extent, {
-          maxZoom: 20,
-          padding: [30, 30, 30, 30],
-          size: map.getSize(),
-        })
+    const nativeLayer = locationsLayer.getNativeLayer()
+    if (nativeLayer && Array.isArray(nativeLayer)) {
+      const layer = nativeLayer[0] as VectorLayer
+      const locationSource = layer?.getSource?.()
+      if (locationSource) {
+        const extent = locationSource.getExtent()
+        if (!isEmpty(extent)) {
+          map.getView().fit(extent, {
+            maxZoom: 20,
+            padding: [30, 30, 30, 30],
+            size: map.getSize(),
+          })
+        }
       }
     }
 
     if (document.querySelector('#map-pan-announce')) {
       initialiseDirectionScreenReader()
     }
-
-    if (locationsLayer) createLayerVisibilityToggle('#locations', locationsLayer, emMap)
-    if (tracksLayer) createLayerVisibilityToggle('#tracks', tracksLayer, emMap)
-    if (confidenceLayer) createLayerVisibilityToggle('#confidence', confidenceLayer, emMap)
-    if (numbersLayer) createLayerVisibilityToggle('#numbering', numbersLayer, emMap)
   }
 
   setupMap()
