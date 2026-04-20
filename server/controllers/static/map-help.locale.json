@@ -1,63 +1,78 @@
 {
   "title": "Help with the map",
   "content": {
-    "gps": {
-      "title": "GPS delay",
+    "guide": {
       "first-pagaraphs": [
-        "The information shown on maps is based on the GPS data received from tags which is usually subject to delays of around 10 to 15 minutes. ",
-        "Delays vary depending on network coverage and how often tags upload GPS data.",
-        "Use timestamps to find out when and how long a person on probation visited a location."
+        "The map shows where the person on probation has been, using signals (‘pings’) sent from their GPS tag.",
+        "The tag uses satellite signals to record its location. It pings around once a minute, sending this location information to the Electronic Monitoring Service.",
+        "Each ping appears as a point on the map that indicates the person’s most likely location."
+      ],
+      "insert": "Map data is around 95% accurate. The map may sometimes show a ping in the wrong location.",
+      "last-pagaraphs": [
+        "You can filter the map to view the person’s movements for specific dates and times. The most recent activity shown is about 5 minutes behind real time."
       ]
     },
-    "loi": {
-      "title": "Locations of interest",
+    "locationAccuracy": {
+      "title": "Location accuracy",
       "image": {
         "src": "/assets/images/help-loi.png",
         "alt": "Map showing a location of interest"
       },
       "first-pagaraphs": [
-        "As a person on probation enters or leaves a location of interest this movement is recorded in their location history and on their map.",
-        "Locations of interest have defined boundaries which reflect the real-world and include:"
-      ],
-      "bulletPoints": [
-        "places of interest - for example, pubs",
-        "required locations - for example, places of work and training providers"
-      ],
-      "last-pagaraphs": [
-        "When you view a location of interest on the map, you’ll be able to check where the person was before and after they visited the location.",
-        "The map will include the person’s GPS trail from around 10 minutes before to around 10 minutes after they were detected at that location.",
-        "If you want to view more of their GPS trail, you can adjust the timings using the filter above the map."
+        "Location accuracy can vary, and may be reduced if, for example, satellite signals are blocked or the tag battery is low.",
+        "Map points are surrounded by ‘confidence circles’ that show how confident the system is that the tag pinged at or near to each location.",
+        "Confidence circles cover the area the person may have been in when their tag pinged. The smaller the circle, the more confidence there is about the location.",
+        "To check a circle’s exact size, select its point to open a ‘ping card’ (pop-up box). This shows the distance from the centre to the edge of the circle in metres.",
+        "You can turn confidence circles off using the option in the top-right menu."
       ]
     },
-    "confidenceCircles": {
-      "title": "Confidence circles",
+    "timeAndDate": {
+      "title": "Time and date of activity",
       "image": {
         "src": "/assets/images/help-coc.png",
         "alt": "Map showing a confidence circles"
       },
       "first-pagaraphs": [
-        "The centre of a circle shows a person on probation’s most likely location.",
-        "Circle size reflects the accuracy of GPS data and our level of confidence about the person on probation’s exact location. For example:"
-      ],
-      "firstBulletPoints": [
-        "smaller circles = more confidence about a location",
-        "larger circles = less confidence about a location"
-      ],
-      "last-pagaraphs": [
-        "Various factors affect the accuracy of GPS data and the size of confidence circles including:"
-      ],
-      "lastBulletPoints": ["building density", "GPS drift", "GPS satellite availability", "signal obstruction"]
+        "Each point has a timestamp that shows when the tag pinged in that location.",
+        "To check the timestamp, select the point and open its ping card.",
+        "To work out how long the person spent at the location, compare the point’s timestamp with that of the next point in the sequence.",
+        "You can check the order of location points by turning on ‘point numbers’ in the top right-hand menu."
+      ]
     },
-    "linesAndArrows": {
-      "title": "Lines and arrows",
+    "directionOfTravel": {
+      "title": "Direction of travel",
       "image": {
         "src": "/assets/images/help-lines.png",
         "alt": "Map showing lines and arrows"
       },
       "first-pagaraphs": [
-        "The lines on maps show the likely path a person on probation took between locations and do not represent a confirmed route.",
-        "They only estimate and give a general sense of the person on probation's movement over time.",
-        "The arrows on lines show a person on probation's direction of travel."
+        "The lines on maps show the likely path a person on probation took between locations and do not represent a confirmed route."
+      ],
+      "insert": "The trail shown may not reflect the actual route taken.",
+      "last-pagaraphs": [
+        "Arrows along the trail show the estimated direction of travel, based on the order of the points.",
+        "You can hide the arrows using the option in the top right-hand menu."
+      ]
+    },
+    "missingTrailData": {
+      "title": "Time and date of activity",
+      "image": {
+        "src": "/assets/images/help-coc.png",
+        "alt": "Map showing a confidence circles"
+      },
+      "first-pagaraphs": [
+        "Missing trail data usually means that either the tag is not working or that it cannot get a signal.",
+        "This could be because:"
+      ],
+      "firstBulletPoints": [
+        "the person has gone somewhere with no signal, for example, in a lift or on the underground",
+        "the tag has been damaged or removed",
+        "the tag battery has run out"
+      ],
+      "last-pagaraphs": ["Missing data will result in either:"],
+      "lastBulletPoints": [
+        "few or no location points on the map",
+        "a gap of more than 5 minutes between two location points in a sequence"
       ]
     }
   }
