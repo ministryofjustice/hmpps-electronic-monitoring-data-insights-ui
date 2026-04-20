@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "sourceMap": false,
+    "types": ["node", "jest", "@testing-library/jest-dom"],
     "typeRoots": ["../../node_modules/@types", "./@types"]
   },
   "exclude": [],
