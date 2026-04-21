@@ -98,6 +98,29 @@ describe('PeopleController', () => {
     expect(res.render).not.toHaveBeenCalled()
   })
 
+  it('does not redirect to an unrecognised redirectTo path', async () => {
+    peopleService.searchPeople.mockResolvedValue({
+      people: [firstPerson],
+      nextToken: null,
+    })
+    req.query = { redirectTo: 'https://example.com' }
+
+    await controller.getPersonByDeliusId(req as Request, res as Response)
+
+    expect(res.redirect).not.toHaveBeenCalled()
+    expect(res.render).toHaveBeenCalledWith('pages/person', {
+      activeNav: 'people',
+      fullName: firstPerson.name,
+      popData: {
+        crn: firstPerson.deliusId,
+        dateOfBirth: firstPerson.dateOfBirth,
+        tier: 'B3',
+      },
+      showComplianceBadge: false,
+      person: firstPerson,
+    })
+  })
+
   it('renders the location page when state exists in session for the delius id', async () => {
     req.session = {
       peopleSelection: {

@@ -22,7 +22,7 @@ export default class PeopleController {
       })
     }
 
-    const redirectTo = typeof req.query.redirectTo === 'string' ? req.query.redirectTo : null
+    const redirectTo = this.getAllowedRedirectTo(req, deliusId)
 
     if (redirectTo) {
       res.redirect(redirectTo)
@@ -69,6 +69,13 @@ export default class PeopleController {
 
   private getSelectedPerson(req: Request, deliusId: string): SelectedPersonContext | null {
     return req.session.peopleSelection?.[deliusId] ?? null
+  }
+
+  private getAllowedRedirectTo(req: Request, deliusId: string): string | null {
+    const redirectTo = typeof req.query.redirectTo === 'string' ? req.query.redirectTo : null
+    const allowedRedirectTo = `/people/${deliusId}/location`
+
+    return redirectTo === allowedRedirectTo ? redirectTo : null
   }
 
   private setSelectedPerson(req: Request, deliusId: string, personContext: SelectedPersonContext): void {
