@@ -17,6 +17,7 @@ export interface Position {
   geometry?: string
   satellite?: number
   lbs?: number
+  gpsDate?: string
 }
 
 export interface PositionData {
@@ -39,7 +40,7 @@ const getGeolocationMechanism = (value: number): GeolocationMechanism | undefine
 
 export default class TrailService {
   annotatePositionsWithDisplayProperties(positions: Array<Position>): Array<Position> {
-    return positions.map(position => ({
+    return positions.map((position, index) => ({
       ...position,
 
       // Overlay template
@@ -47,9 +48,9 @@ export default class TrailService {
       overlayBodyTemplateId: 'overlay-body-mdss-location',
 
       // Display values
-      displayGpsDate: formatGpsDate(position.timestamp),
+      displayPointNumber: index + 1, 
+      displayGpsDate: formatGpsDate(position.gpsDate),
       displayAccuracy: formatDisplayValue(position.precision, '', 'N/A'),
-      displayTimestamp: formatDisplayValue(position.timestamp, '', 'N/A'),
       displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
       displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
     }))

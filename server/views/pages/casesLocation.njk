@@ -56,35 +56,124 @@
           })
         }}
 
-        {% raw %}
-      <template id="overlay-title-mdss-location">
-        <div><strong>Point {{ subjectNomisId }}</strong></div>
-      </template>
+       {% raw %}
+  <template id="overlay-title-mdss-location">
+    <div><strong>Point {{ displayPointNumber }}</strong></div>
+  </template>
 
-      <template id="overlay-body-mdss-location">
-        <div class="app-map__overlay-row">
-          <span class="app-map__overlay-label">Accuracy:</span>
-          <span class="app-map__overlay-value">{{ precision }} meters</span>
-        </div>
-        <div class="app-map__overlay-row">
-          <span class="app-map__overlay-label">Date / Time:</span>
-          <span class="app-map__overlay-value">{{ gpsDate}}</span>
-        </div>
-        <div class="app-map__overlay-row">
-          <span class="app-map__overlay-label">Lat / Lng:</span>
-          <span class="app-map__overlay-value">{{ latitude }}, {{ longitude }}</span>
-        </div>
-         <div class="app-map__overlay-row">
-          <span class="app-map__overlay-label">Location:</span>
-          <span class="app-map__overlay-value">
-            <a href="#" class="govuk-link">
-               Save the location
-            </a>
-          </span>
-        </div>
+  <template id="overlay-body-mdss-location">
+    <div class="app-map__overlay-row">
+      <span class="app-map__overlay-label">Accuracy</span>
+      <span class="app-map__overlay-value">{{ precision }} meters</span>
+    </div>
+    <div class="app-map__overlay-row">
+      <span class="app-map__overlay-label">Date / time</span>
+      <span class="app-map__overlay-value">{{ displayGpsDate }}</span>
+    </div>
+    <div class="app-map__overlay-row">
+      <span class="app-map__overlay-label">Lat / Lng</span>
+      <span class="app-map__overlay-value app-map__overlay-value--coords">{{ latitude }}, {{ longitude }}</span>
+    </div>
+    <div class="app-map__overlay-row">
+      <span class="app-map__overlay-label">Location</span>
+      <span class="app-map__overlay-value">
+        <a href="#">Save this location</a>
+      </span>
+    </div>
+  </template>
+{% endraw %}
 
-      </template>
-      {% endraw %}
+        <script nonce="{{ cspNonce }}">
+          document.addEventListener('DOMContentLoaded', () => {
+            const emMap = document.querySelector('em-map')
+            if (!emMap) return
+
+            const applyStyles = () => {
+              const shadowRoot = emMap.shadowRoot
+              if (!shadowRoot) return false
+
+              const sheet = new CSSStyleSheet()
+              
+sheet.replaceSync(`
+  .app-map__overlay {
+    border-radius: 16px !important;
+    /* Removed overflow: hidden to allow the triangle pointer to show */
+    min-width: 315px !important;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15)) !important;
+  }
+  
+  /* Ensure the header still respects the border radius since we removed overflow:hidden */
+  .app-map__overlay-header {
+    border-radius: 16px 16px 0 0 !important;
+  }
+
+  .app-map__overlay-body {
+    padding: 0 !important;
+    background: white !important;
+    border-radius: 0 0 16px 16px !important;
+  }
+
+  .app-map__overlay-row {
+    background-color: transparent !important;
+    border-top: none !important;
+    border-bottom: 0.5px solid #d9d9d9 !important;
+    padding: 5px 10px !important; /* Increased slightly for better look */
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    /* Gap controls the space between label and value */
+    gap: 15px !important; 
+  }
+
+  .app-map__overlay-row:last-of-type {
+    border-bottom: none !important;
+  }
+
+  .app-map__overlay-label {
+    /* Changed from 25% to auto to reduce the purple gap */
+    flex: 0 0 auto !important;
+    min-width: 85px !important; 
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    color: #0b0c0c !important;
+  }
+
+  .app-map__overlay-value {
+    font-size: 14px !important;
+    color: #0b0c0c !important;
+    flex: 1 !important; /* Allows value to take up remaining space */
+  }
+
+  .app-map__overlay-value--coords {
+    background: #f3f2f1 !important;
+    border-radius: 4px !important;
+    padding: 4px 10px !important;
+    font-size: 13px !important;
+    display: inline-block !important;
+
+    white-space: nowrap !important;  
+    width: max-content !important;  
+  }
+
+  a, a:visited, a:link {
+    color: #1d70b8 !important;
+    text-decoration: underline !important;
+    font-size: 14px !important;
+  }
+`)
+              shadowRoot.adoptedStyleSheets = [...shadowRoot.adoptedStyleSheets, sheet]
+              return true
+            }
+
+            if (!applyStyles()) {
+              const observer = new MutationObserver(() => {
+                if (applyStyles()) observer.disconnect()
+              })
+              observer.observe(emMap, { childList: true, subtree: true })
+            }
+          })
+        </script>
+     
     </div>
     <p class="govuk-body-m"><a href="/map-help">Help with the map</a></p>
   </div>

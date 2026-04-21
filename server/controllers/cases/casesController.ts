@@ -235,7 +235,7 @@ export default class CasesController {
           try {
             positions = await this.trailService.filterByDate(res.locals.user?.token, crn, filters)
             positionCardData = this.trailService.annotatePositionsWithDisplayProperties(positions)
-            //  console.log('xxx Fetched position cards:', positionCardData)
+             console.log('xxx Fetched position cards:', positionCardData)
           } catch (error) {
             /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
             console.error('Error fetching locations:', error)

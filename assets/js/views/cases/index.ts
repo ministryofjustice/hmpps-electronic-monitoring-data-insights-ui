@@ -86,15 +86,25 @@ const initialiseLocationDataView = () => {
       }),
     )
 
-    const numbersLayer = emMap.addLayer(
-      new TextLayer({
-        positions,
-        textProperty: 'sequenceNumber',
-        title: 'numberingLayer',
-        visible: false,
-        zIndex: 3,
-      }),
-    )
+    const numbersLayer = new TextLayer({
+      positions,
+      textProperty: 'displayPointNumber',
+      id: 'numbersLayer',
+      title: 'numbersLayer',
+      visible: true,
+      zIndex: 3,
+      style: {
+        offset: { x: 0, y: 30 },
+        textAlign: 'center',
+      },
+    })
+
+    emMap.addLayer(locationsLayer)
+    emMap.addLayer(tracksLayer)
+    emMap.addLayer(confidenceLayer)
+    emMap.addLayer(numbersLayer)
+
+    emMap.fitToAllLayers({ padding: 80 })
 
     const lockControl = createLockRotationControl(emMap)
     map.addControl(lockControl)

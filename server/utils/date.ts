@@ -32,7 +32,9 @@ const parseDateTimeFromComponents = (date: string, hour: string, minute: string,
 }
 
 const parseDateTimeFromISOString = (dateString: string) => {
-  return dayjs(dateString)
+  if (!dateString) return dayjs(null)
+  const date = dayjs(dateString)
+  return date.isValid() ? date : dayjs(null)
 }
 
 const getDateComponents = (date: Dayjs) => {
@@ -69,7 +71,7 @@ const formatDate = (datetime?: string | null): string => {
 }
 
 const formatGpsDate = (datetime?: string | null): string => {
-  console.log('xxx 111 formatGpsDate input:', datetime)
+  console.log('xxx formatGpsDate input:', datetime)
   if (!datetime) return ''
 
   const date = dayjs(datetime)
