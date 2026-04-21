@@ -1,4 +1,3 @@
-import { RequestHandler, Router } from 'express'
 import type { Services } from '../services'
 import peopleRoutes from './people'
 
