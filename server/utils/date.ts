@@ -71,16 +71,13 @@ const formatDate = (datetime?: string | null): string => {
 }
 
 const formatGpsDate = (datetime?: string | null): string => {
-  console.log('xxx formatGpsDate input:', datetime)
   if (!datetime) return ''
 
   const date = dayjs(datetime)
 
   if (!date?.isValid()) return ''
 
-  const x = date.tz('Europe/London').format('DD MMM YY, HH:mm')
-  console.log('xxx 222 formatGpsDate input:', datetime, 'output:', x)
-  return x
+  return date.tz('Europe/London').format('DD MMM YY, HH:mm')
 }
 
 const formatDob = (dateString?: string | null): string => {

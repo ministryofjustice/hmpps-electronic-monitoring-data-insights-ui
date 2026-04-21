@@ -1,4 +1,4 @@
-import { convertRadiansToDegrees, formatDisplayValue } from '../presenters/helpers/formatters'
+import { formatDisplayValue } from '../presenters/helpers/formatters'
 import GeolocationMechanism from '../types/entities/geolocationMechanism'
 import { formatGpsDate } from '../utils/date'
 
@@ -48,7 +48,7 @@ export default class TrailService {
       overlayBodyTemplateId: 'overlay-body-mdss-location',
 
       // Display values
-      displayPointNumber: index + 1, 
+      displayPointNumber: index + 1,
       displayGpsDate: formatGpsDate(position.gpsDate),
       displayAccuracy: formatDisplayValue(position.precision, '', 'N/A'),
       displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),

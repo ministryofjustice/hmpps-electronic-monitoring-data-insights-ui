@@ -149,6 +149,7 @@ describe('CasesController', () => {
 
     it('should show alert when no location data found for valid search', async () => {
       trailService.filterByDate.mockResolvedValue([])
+      trailService.annotatePositionsWithDisplayProperties.mockReturnValue([])
 
       const queryData = {
         crn: 'X172591',
