@@ -28,6 +28,7 @@ export default function setUpWebSecurity(): Router {
           styleSrc: ["'self'", 'cdn.jsdelivr.net', (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
           styleSrcAttr: ["'unsafe-inline'"],
           fontSrc: ["'self'", 'cdn.jsdelivr.net'],
+          workerSrc: ["'self'", 'blob:'],
           formAction: [`'self' ${config.apis.hmppsAuth.externalUrl}`],
         },
       },
