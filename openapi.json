@@ -1,0 +1,305 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "HMPPS Electronic Monitoring Data Insights Api",
+    "contact": { "name": "HMPPS Digital Studio", "email": "feedback@digital.justice.gov.uk" },
+    "version": "2026-03-24.289.3285403"
+  },
+  "servers": [
+    {
+      "url": "https://electronic-monitoring-data-insights-api-dev.hmpps.service.justice.gov.uk",
+      "description": "Development"
+    },
+    {
+      "url": "https://electronic-monitoring-data-insights-api-preprod.hmpps.service.justice.gov.uk",
+      "description": "Pre-Production"
+    },
+    {
+      "url": "https://electronic-monitoring-data-insights-api.hmpps.service.justice.gov.uk",
+      "description": "Production"
+    },
+    { "url": "http://localhost:8080", "description": "Local" }
+  ],
+  "tags": [
+    { "name": "People", "description": "Endpoints for person details" },
+    { "name": "Violations", "description": "Endpoint to retrieve curfew violations for a person" },
+    { "name": "Locations", "description": "Endpoint to retrieve gsp coordinates for a person by personId" },
+    { "name": "Device", "description": "Endpoint to retrieve EM device for a person" }
+  ],
+  "paths": {
+    "/sync/daily/{tableName}": {
+      "get": {
+        "tags": ["sync-controller"],
+        "operationId": "triggerDailySync",
+        "parameters": [{ "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/SyncResult" } } }
+          }
+        }
+      }
+    },
+    "/people": {
+      "get": {
+        "tags": ["People"],
+        "summary": "Search for people",
+        "operationId": "searchPeople",
+        "parameters": [
+          {
+            "name": "peopleQueryCriteria",
+            "in": "query",
+            "description": "The search criteria for the query",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/PeopleQueryCriteria" }
+          },
+          { "name": "nextToken", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PersonResponse" } } }
+          }
+        }
+      }
+    },
+    "/people/{personId}": {
+      "get": {
+        "tags": ["People"],
+        "summary": "Get a person",
+        "description": "Returns a specific person for a personId.",
+        "operationId": "getPerson",
+        "parameters": [{ "name": "personId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Person" } } }
+          }
+        }
+      }
+    },
+    "/people/{personId}/locations": {
+      "get": {
+        "tags": ["Locations"],
+        "summary": "Get location history",
+        "description": "Returns a paginated list of GPS coordinates for a personId within a specific timespan.",
+        "operationId": "getLocations",
+        "parameters": [
+          { "name": "personId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "from", "in": "query", "required": true, "schema": { "type": "string", "format": "date-time" } },
+          { "name": "to", "in": "query", "required": true, "schema": { "type": "string", "format": "date-time" } },
+          { "name": "nextToken", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/LocationResponse" } } }
+          }
+        }
+      }
+    },
+    "/people/{personId}/locations/{positionId}": {
+      "get": {
+        "tags": ["Locations"],
+        "summary": "Get single location",
+        "description": "Returns a specific position for a personId and a positionId.",
+        "operationId": "getLocation",
+        "parameters": [
+          { "name": "personId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "positionId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Location" } } }
+            }
+          }
+        }
+      }
+    },
+    "/people/{crn}/device": {
+      "get": {
+        "tags": ["Device"],
+        "summary": "Get single device",
+        "description": "Returns a specific device for a CRN.",
+        "operationId": "findByCrn",
+        "parameters": [{ "name": "crn", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Device" } } } }
+          }
+        }
+      }
+    },
+    "/people/{consumerId}/curfew/violations": {
+      "get": {
+        "tags": ["Violations"],
+        "summary": "Get violation history",
+        "description": "Returns a paginated list of curfew violations for a consumerId within a specific timespan.",
+        "operationId": "getViolations",
+        "parameters": [
+          { "name": "consumerId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "from", "in": "query", "required": true, "schema": { "type": "string", "format": "date-time" } },
+          { "name": "to", "in": "query", "required": true, "schema": { "type": "string", "format": "date-time" } },
+          { "name": "nextToken", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/ViolationResponse" } } }
+          }
+        }
+      }
+    },
+    "/people/{consumerId}/curfew/violations/{violationId}": {
+      "get": {
+        "tags": ["Violations"],
+        "summary": "Get single violation",
+        "description": "Returns a specific violation point for a consumerId a and a violationId.",
+        "operationId": "getViolation",
+        "parameters": [
+          { "name": "consumerId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "violationId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/Violation" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SyncResult": {
+        "type": "object",
+        "properties": {
+          "syncId": { "type": "string" },
+          "recordsProcessed": { "type": "integer", "format": "int32" },
+          "status": { "type": "string", "enum": ["RUNNING", "COMPLETED", "FAILED", "SKIPPED"] }
+        },
+        "required": ["recordsProcessed", "status", "syncId"]
+      },
+      "PeopleQueryCriteria": {
+        "type": "object",
+        "properties": {
+          "nomisId": { "type": "string" },
+          "pncId": { "type": "string" },
+          "deliusId": { "type": "string" },
+          "horId": { "type": "string" },
+          "ceprId": { "type": "string" },
+          "prisonId": { "type": "string" },
+          "isValid": { "type": "boolean" }
+        },
+        "required": ["isValid"]
+      },
+      "Person": {
+        "type": "object",
+        "properties": {
+          "personId": { "type": "string" },
+          "consumerId": { "type": "string" },
+          "personName": { "type": "string" },
+          "nomisId": { "type": "string" },
+          "pncId": { "type": "string" },
+          "deliusId": { "type": "string" },
+          "horId": { "type": "string" },
+          "ceprId": { "type": "string" },
+          "prisonId": { "type": "string" },
+          "dob": { "type": "string", "format": "date" },
+          "zip": { "type": "string" },
+          "city": { "type": "string" },
+          "street": { "type": "string" }
+        }
+      },
+      "PersonResponse": {
+        "type": "object",
+        "properties": {
+          "persons": { "type": "array", "items": { "$ref": "#/components/schemas/Person" } },
+          "nextToken": { "type": "string" }
+        },
+        "required": ["persons"]
+      },
+      "Location": {
+        "type": "object",
+        "properties": {
+          "positionId": { "type": "integer", "format": "int32" },
+          "deviceId": { "type": "integer", "format": "int32" },
+          "gpsDate": { "type": "string", "format": "date-time" },
+          "speed": { "type": "integer", "format": "int32" },
+          "satellite": { "type": "integer", "format": "int32" },
+          "direction": { "type": "integer", "format": "int32" },
+          "precision": { "type": "integer", "format": "int32" },
+          "lbs": { "type": "integer", "format": "int32" },
+          "hdop": { "type": "integer", "format": "int32" },
+          "geometry": { "type": "string" },
+          "latitude": { "type": "number", "format": "double" },
+          "longitude": { "type": "number", "format": "double" }
+        },
+        "required": ["positionId"]
+      },
+      "LocationResponse": {
+        "type": "object",
+        "properties": {
+          "locations": { "type": "array", "items": { "$ref": "#/components/schemas/Location" } },
+          "nextToken": { "type": "string" }
+        },
+        "required": ["locations"]
+      },
+      "Device": {
+        "type": "object",
+        "properties": {
+          "deviceId": { "type": "integer", "format": "int32" },
+          "personId": { "type": "integer", "format": "int32" },
+          "deviceStatus": { "type": "string" },
+          "deviceDescription": { "type": "string" },
+          "deviceModelId": { "type": "integer", "format": "int32" },
+          "deviceModelName": { "type": "string" },
+          "deviceSerialNumber": { "type": "string" },
+          "firmwareId": { "type": "integer", "format": "int32" },
+          "firmwareLastUpdatedDate": { "type": "string", "format": "date-time" },
+          "firmwareVersion": { "type": "string" },
+          "operatorName": { "type": "string" },
+          "simcardTelephone": { "type": "string" },
+          "lastUpdatedAt": { "type": "string", "format": "date-time" },
+          "locationId": { "type": "integer", "format": "int32" },
+          "deactivationReasonName": { "type": "string" },
+          "deviceActivationDate": { "type": "string", "format": "date-time" },
+          "deviceDeactivationDate": { "type": "string", "format": "date-time" }
+        },
+        "required": ["deviceId", "personId"]
+      },
+      "Violation": {
+        "type": "object",
+        "properties": {
+          "violationId": { "type": "string" },
+          "deviceWearer": { "type": "string" },
+          "createdDate": { "type": "string", "format": "date-time" },
+          "category": { "type": "string" },
+          "duration": { "type": "string", "format": "date-time" },
+          "start": { "type": "string" },
+          "end": { "type": "string", "format": "date-time" },
+          "state": { "type": "string" },
+          "active": { "type": "string" },
+          "description": { "type": "string" },
+          "responseAction": { "type": "string" },
+          "reasonableExcuse": { "type": "string" },
+          "authorisedAbsence": { "type": "string" },
+          "includedInTotalAtvCalculation": { "type": "string" },
+          "outForEntireCurfewPeriod": { "type": "string" },
+          "outcomeReason": { "type": "string" }
+        }
+      },
+      "ViolationResponse": {
+        "type": "object",
+        "properties": {
+          "violations": { "type": "array", "items": { "$ref": "#/components/schemas/Violation" } },
+          "nextToken": { "type": "string" }
+        },
+        "required": ["violations"]
+      }
+    }
+  }
+}

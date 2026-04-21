@@ -73,4 +73,40 @@ describe('Routes', () => {
         })
       })
   })
+
+  it('GET /map-help', () => {
+    auditService.logPageView.mockResolvedValue(null)
+
+    return request(app)
+      .get('/map-help')
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('Help with the map')
+        expect(res.text).toContain('Location accuracy')
+        expect(res.text).toContain('Direction of travel')
+        expect(res.text).toContain('Missing trail data')
+        expect(res.text).toContain('/assets/images/confidence-circles.png')
+        expect(res.text).toContain(
+          'Map data is around 95% accurate. The map may sometimes show a ping in the wrong location.',
+        )
+        expect(res.text).toContain('The trail shown may not reflect the actual route taken.')
+        expect(auditService.logPageView).toHaveBeenCalledWith(Page.MAP_HELP_PAGE, {
+          who: user.username,
+          correlationId: expect.any(String),
+        })
+      })
+  })
+
+  it('GET /map-help handles service errors', () => {
+    auditService.logPageView.mockRejectedValue(new Error('Some problem calling external api!'))
+
+    return request(app)
+      .get('/map-help')
+      .expect('Content-Type', /html/)
+      .expect(500)
+      .expect(res => {
+        expect(res.text).toContain('Some problem calling external api!')
+      })
+  })
 })
