@@ -81,9 +81,8 @@ const initialiseLocationDataView = () => {
           color: 'rgba(76, 128, 182, 1)',
           width: 2,
         },
-      }),
-    )
-
+      },
+    })
     const numbersLayer = new TextLayer({
       positions,
       textProperty: 'displayPointNumber',
