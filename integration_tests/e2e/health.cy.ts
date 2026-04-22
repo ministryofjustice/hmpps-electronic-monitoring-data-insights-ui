@@ -25,7 +25,9 @@ context('Healthcheck', () => {
     beforeEach(() => {
       cy.task('reset')
       cy.task('stubAuthPing')
+      cy.task('stubExamplePing')
       cy.task('stubTokenVerificationPing', 500)
+      cy.task('stubProbationPing')
     })
 
     it('Reports correctly when token verification down', () => {
