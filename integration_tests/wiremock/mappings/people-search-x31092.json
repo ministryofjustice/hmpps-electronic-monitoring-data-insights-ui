@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/people",
+    "queryParameters": {
+      "deliusId": {
+        "equalTo": "X31092"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8"
+    },
+    "bodyFileName": "people-search-x31092.json"
+  }
+}

@@ -62,6 +62,7 @@ export interface LocationPageRenderData {
   locationAlert: LocationAlert | null
   popData: PopData
   positions: Position[]
+  showComplianceBadge: boolean
   toDate: string
 }
 
@@ -268,6 +269,7 @@ export const buildLocationPageRenderData = (
     locationAlert: null,
     popData: defaultPopData(),
     positions: [],
+    showComplianceBadge: true,
     toDate: '',
   }
 

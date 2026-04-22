@@ -2,6 +2,13 @@ import { HmppsUser } from '../../interfaces/hmppsUser'
 import { ValidationResult } from '../../models/ValidationResult'
 
 export declare module 'express-session' {
+  interface SelectedPersonContext {
+    personId: string
+    consumerId: string
+    fullName: string
+    dateOfBirth: string
+  }
+
   // Declare that the session will potentially contain these additional fields
   interface SessionData {
     returnTo: string
@@ -9,6 +16,7 @@ export declare module 'express-session' {
     formData: unknown
     validationErrors: ValidationResult
     queryId: string
+    peopleSelection: Record<string, SelectedPersonContext>
   }
 }
 

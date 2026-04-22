@@ -18,7 +18,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: '/emdi/example/time',
+        urlPattern: '/example/time',
       },
       response: {
         status: httpStatus,
