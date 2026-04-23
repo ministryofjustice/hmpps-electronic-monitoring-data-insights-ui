@@ -1,4 +1,4 @@
-import TrailService, { Filters, Position } from './trailService'
+import TrailService, { Filters, Position, PositionCardData } from './trailService'
 
 describe('TrailService', () => {
   let trailService: TrailService
@@ -78,6 +78,19 @@ describe('TrailService', () => {
       await expect(trailService.filterByDate(undefined, crn, filters)).rejects.toThrow(
         'Unable to fetch location data. Please try again later.',
       )
+    })
+
+    it('should use N/A as fallback when optional values are undefined', () => {
+      const positions = [
+        { gpsDate: undefined, precision: undefined, latitude: undefined, longitude: undefined },
+      ] as Position[]
+
+      const result: PositionCardData[] = trailService.annotatePositionsWithDisplayProperties(positions)
+
+      expect(result[0].displayLatitude).toBe('N/A')
+      expect(result[0].displayLongitude).toBe('N/A')
+      expect(result[0].displayGpsDate).toBe('N/A')
+      expect(result[0].displayAccuracy).toBe('N/A')
     })
   })
 })

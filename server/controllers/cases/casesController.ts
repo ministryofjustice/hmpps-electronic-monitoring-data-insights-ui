@@ -183,6 +183,7 @@ export default class CasesController {
     const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
     const crn = req.query.crn as string
     let positions: Position[] = []
+    let positionCardData: Position[] = []
     let validationErrors: ValidationError[] = sessionErrors
     let hasSearched = false
     let locationAlert: { text: string } | null = null
@@ -235,6 +236,7 @@ export default class CasesController {
 
           try {
             positions = await this.trailService.filterByDate(res.locals.user?.token, crn, filters)
+            positionCardData = this.trailService.annotatePositionsWithDisplayProperties(positions)
           } catch (error) {
             /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
             console.error('Error fetching locations:', error)
@@ -256,8 +258,8 @@ export default class CasesController {
       activeNav: 'Location activity',
       activeTab: 'location-activity',
       popData: mockPopDetails,
+      positions: positionCardData,
       showComplianceBadge: true,
-      positions,
       alert: true,
       id: personId,
       dateFilterForm: {

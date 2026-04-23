@@ -83,10 +83,9 @@ const initialiseLocationDataView = () => {
         },
       },
     })
-
     const numbersLayer = new TextLayer({
       positions,
-      textProperty: 'precision',
+      textProperty: 'displayPointNumber',
       id: 'numbersLayer',
       title: 'numbersLayer',
       visible: true,
