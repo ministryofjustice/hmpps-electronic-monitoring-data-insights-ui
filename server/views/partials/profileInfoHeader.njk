@@ -1,10 +1,12 @@
 {%- from "moj/components/badge/macro.njk" import mojBadge -%}
 <header class="profile-info-header">
     {% include "../partials/profileInfo.njk" %}
-    {{ mojBadge({
-        text: "Compliance - Not Likely",
-        classes: "moj-badge--red moj-badge--large",
-        attributes: { "data-qa": "curfew-badge" }
-        }) 
-    }}
+    {% if showComplianceBadge %}
+      {{ mojBadge({
+          text: "Compliance - Not Likely",
+          classes: "moj-badge--red moj-badge--large",
+          attributes: { "data-qa": "curfew-badge" }
+          }) 
+      }}
+    {% endif %}
 </header>

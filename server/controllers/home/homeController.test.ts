@@ -36,6 +36,7 @@ describe('HomeController', () => {
       expect(res.render).toHaveBeenCalledWith('pages/index', {
         activeNav: '/',
         popData: mockPopDetails,
+        showComplianceBadge: true,
         alert: true,
       })
     })

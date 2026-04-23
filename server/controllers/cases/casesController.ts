@@ -149,6 +149,7 @@ export default class CasesController {
       activeNav: 'cases',
       activeTab: 'overview',
       popData: popDetails,
+      showComplianceBadge: true,
       alert: true,
       fullName,
       person,
@@ -166,6 +167,7 @@ export default class CasesController {
       activeNav: 'cases',
       activeTab: 'curfew',
       popData: mockPopDetails,
+      showComplianceBadge: true,
       alert: true,
       id: req.params.id,
     })
@@ -257,6 +259,7 @@ export default class CasesController {
       activeTab: 'location-activity',
       popData: mockPopDetails,
       positions: positionCardData,
+      showComplianceBadge: true,
       alert: true,
       id: personId,
       dateFilterForm: {

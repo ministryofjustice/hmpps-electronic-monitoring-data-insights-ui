@@ -6,6 +6,8 @@ services:
     - hmpps_int
     container_name: wiremock
     restart: always
+    volumes:
+      - ./integration_tests/wiremock:/home/wiremock
     ports:
       - "9091:8080"
 

@@ -72,6 +72,7 @@ describe('CasesController', () => {
           dateOfBirth: 'Monday, 1 January 1990',
           tier: 'B3',
         },
+        showComplianceBadge: true,
         highlight: null,
         id: undefined,
         alert: true,
@@ -92,6 +93,7 @@ describe('CasesController', () => {
         activeNav: 'cases',
         activeTab: 'curfew',
         popData: mockPopDetails,
+        showComplianceBadge: true,
         alert: true,
         id: '1',
       })
