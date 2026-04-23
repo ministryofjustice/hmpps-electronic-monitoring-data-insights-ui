@@ -20,6 +20,16 @@ export interface Position {
   gpsDate?: string
 }
 
+export interface PositionCardData extends Position {
+  overlayTitleTemplateId: string
+  overlayBodyTemplateId: string
+  displayPointNumber: number
+  displayGpsDate: string
+  displayAccuracy: string
+  displayLatitude: string
+  displayLongitude: string
+}
+
 export interface PositionData {
   locations: Position[]
 }
@@ -39,7 +49,7 @@ const getGeolocationMechanism = (value: number): GeolocationMechanism | undefine
 }
 
 export default class TrailService {
-  annotatePositionsWithDisplayProperties(positions: Array<Position>): Array<Position> {
+  annotatePositionsWithDisplayProperties(positions: Array<Position>): Array<PositionCardData> {
     return positions.map((position, index) => ({
       ...position,
 
@@ -49,7 +59,7 @@ export default class TrailService {
 
       // Display values
       displayPointNumber: index + 1,
-      displayGpsDate: formatGpsDate(position.gpsDate),
+      displayGpsDate: formatGpsDate(position.gpsDate) || 'N/A',
       displayAccuracy: formatDisplayValue(position.precision, '', 'N/A'),
       displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
       displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
