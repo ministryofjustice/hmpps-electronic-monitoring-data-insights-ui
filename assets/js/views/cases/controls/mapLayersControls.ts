@@ -101,6 +101,7 @@ export default class MapLayersControl extends Control {
     panel.querySelectorAll('[name="mlc-base"]').forEach(radio =>
       radio.addEventListener('change', e => {
         const val = (e.target as HTMLInputElement).value
+        console.log('Base layer changed to', val)
         opts.streetLayer?.setVisible(val === 'street')
         opts.satelliteLayer?.setVisible(val === 'satellite')
       }),

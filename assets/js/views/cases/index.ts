@@ -5,6 +5,10 @@ import {
   CirclesLayer,
   TextLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
+
+import XYZ from 'ol/source/XYZ'
+import TileLayer from 'ol/layer/Tile'
+
 import { isEmpty } from 'ol/extent'
 import type VectorLayer from 'ol/layer/Vector'
 import MapLayersControl from './controls/mapLayersControls'
@@ -47,6 +51,15 @@ const initialiseLocationDataView = () => {
     }
 
     const { positions } = emMap
+
+    // TODO: Replace with OS API once approved
+    const satelliteLayer = new TileLayer({
+      source: new XYZ({
+        url: 'https://api.os.uk/maps/raster/v1/zxy/Imagery_3857/{z}/{x}/{y}.png',
+        attributions: 'Tiles © Ordnance Survey',
+      }),
+      visible: false,
+    })
 
     const locationsLayer = emMap.addLayer(
       new LocationsLayer({
@@ -96,6 +109,7 @@ const initialiseLocationDataView = () => {
       },
     })
 
+    emMap.addLayer(satelliteLayer)
     emMap.addLayer(locationsLayer)
     emMap.addLayer(tracksLayer)
     emMap.addLayer(confidenceLayer)
@@ -112,6 +126,7 @@ const initialiseLocationDataView = () => {
       tracksLayer,
       confidenceLayer,
       numbersLayer,
+      satelliteLayer,
     })
     map.addControl(mapLayersControl)
 
