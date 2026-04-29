@@ -2,11 +2,17 @@ import { stubFor } from './wiremock'
 import { Position } from '../../server/services/trailService'
 
 export default {
-  stubGetLocations: (crn: string = 'X123456', positions: Position[] = []) =>
-    stubFor({
+  stubGetLocations: (
+    args: string | { crn?: string; locations?: Position[] } = 'X123456',
+    positions: Position[] = [],
+  ) => {
+    const crn = typeof args === 'string' ? args : (args.crn ?? 'X123456')
+    const locations = typeof args === 'string' ? positions : (args.locations ?? [])
+
+    return stubFor({
       request: {
         method: 'GET',
-        urlPattern: `/people/${crn}/locations.*`,
+        urlPattern: `/emdi/people/${crn}/locations.*`,
       },
       response: {
         status: 200,
@@ -14,26 +20,20 @@ export default {
           'Content-Type': 'application/json;charset=UTF-8',
         },
         jsonBody: {
-          locations: positions,
+          locations,
+          nextToken: null,
         },
       },
-    }),
+    })
+  },
 
-  stubGetLocationsEmpty: (args: { crn?: string } = {}) => {
-    const { crn = 'X123456' } = args
+  stubGetLocationsEmpty: (args: string | { crn?: string } = {}) => {
+    const crn = typeof args === 'string' ? args : (args.crn ?? 'X123456')
 
     return stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: `/people/${crn}/locations`,
-        queryParameters: {
-          from: {
-            matches: '.*',
-          },
-          to: {
-            matches: '.*',
-          },
-        },
+        urlPattern: `/emdi/people/${crn}/locations.*`,
       },
       response: {
         status: 200,
@@ -42,6 +42,7 @@ export default {
         },
         jsonBody: {
           locations: [],
+          nextToken: null,
         },
       },
     })
@@ -51,7 +52,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: `/people/${crn}/locations?from=.*`,
+        urlPattern: `/emdi/people/${crn}/locations.*`,
       },
       response: {
         status: 500,

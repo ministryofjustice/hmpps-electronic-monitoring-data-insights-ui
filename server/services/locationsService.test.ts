@@ -4,7 +4,7 @@ import type { ApiLocation } from '../data/locationsApiClient'
 
 describe('LocationsService', () => {
   const token = 'user-token'
-  const personId = '41591'
+  const personIdentifier = '41591'
   const positionId = '98765'
   const from = '2026-03-24T00:00:00Z'
   const to = '2026-03-25T00:00:00Z'
@@ -59,13 +59,13 @@ describe('LocationsService', () => {
         nextToken,
       })
 
-      const result = await locationsService.getLocations(token, personId, from, to, nextToken)
+      const result = await locationsService.getLocations(token, personIdentifier, from, to, nextToken)
 
       expect(result).toEqual<LocationsResult>({
         locations: [mappedLocation],
         nextToken,
       })
-      expect(locationsApiClient.getLocations).toHaveBeenCalledWith(token, personId, from, to, nextToken)
+      expect(locationsApiClient.getLocations).toHaveBeenCalledWith(token, personIdentifier, from, to, nextToken)
     })
   })
 
@@ -73,10 +73,10 @@ describe('LocationsService', () => {
     it('maps the API single location response into domain locations', async () => {
       locationsApiClient.getLocation.mockResolvedValue([apiLocation])
 
-      const result = await locationsService.getLocation(token, personId, positionId)
+      const result = await locationsService.getLocation(token, personIdentifier, positionId)
 
       expect(result).toEqual([mappedLocation])
-      expect(locationsApiClient.getLocation).toHaveBeenCalledWith(token, personId, positionId)
+      expect(locationsApiClient.getLocation).toHaveBeenCalledWith(token, personIdentifier, positionId)
     })
   })
 })

@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import CasesController from './casesController'
 import AuditService, { Page } from '../../services/auditService'
+import CaseLocationActivityService from '../../services/caseLocationActivityService'
 import { user } from '../../routes/testutils/appSetup'
 import mockPopDetails from '../mocks/popDetails'
 import * as dummyDataUtils from '../../utils/dummyDataUtils'
 import { FormattedPerson } from '../../interfaces/dummyDataPerson'
-import TrailService from '../../services/trailService'
 import DateSearchValidationService from '../../services/dateSearchValidationService'
 import { ValidationError } from '../../models/ValidationResult'
 import {
@@ -15,12 +15,12 @@ import {
 } from '../../testutils/factories/locationPage.factory'
 
 jest.mock('../../services/auditService')
-jest.mock('../../services/trailService')
+jest.mock('../../services/caseLocationActivityService')
 jest.mock('../../services/dateSearchValidationService')
 
 describe('CasesController', () => {
   let auditService: jest.Mocked<AuditService>
-  let trailService: jest.Mocked<TrailService>
+  let caseLocationActivityService: { getPositions: jest.Mock; annotatePositionsWithDisplayProperties: jest.Mock }
   let dateSearchValidationService: jest.Mocked<DateSearchValidationService>
   let controller: CasesController
   let req: Partial<Request>
@@ -34,23 +34,26 @@ describe('CasesController', () => {
 
   beforeEach(() => {
     auditService = new AuditService(null) as jest.Mocked<AuditService>
-    trailService = new TrailService() as jest.Mocked<TrailService>
 
     dateSearchValidationService = {
       validateDateSearchRequest: jest.fn().mockReturnValue({ success: true }),
     } as jest.Mocked<DateSearchValidationService>
 
-    trailService = {
-      filterByDate: jest.fn(),
-      annotatePositionsWithDisplayProperties: jest.fn(),
-    } as jest.Mocked<TrailService>
+    caseLocationActivityService = {
+      getPositions: jest.fn(),
+      annotatePositionsWithDisplayProperties: jest.fn(positions => positions),
+    }
 
     req = { id: 'test-correlation-id', params: { id: '1', highlight: null } }
     res = {
       locals: { user },
       render: jest.fn(),
     }
-    controller = new CasesController(auditService, trailService, dateSearchValidationService)
+    controller = new CasesController(
+      auditService,
+      caseLocationActivityService as unknown as CaseLocationActivityService,
+      dateSearchValidationService,
+    )
   })
 
   afterEach(() => {
@@ -150,8 +153,7 @@ describe('CasesController', () => {
     })
 
     it('should show alert when no location data found for valid search', async () => {
-      trailService.filterByDate.mockResolvedValue([])
-      trailService.annotatePositionsWithDisplayProperties.mockReturnValue([])
+      caseLocationActivityService.getPositions.mockResolvedValue([])
 
       const queryData = {
         crn: 'X172591',
@@ -182,7 +184,7 @@ describe('CasesController', () => {
     })
 
     it('should handle when search service has an exception', async () => {
-      ;(trailService.filterByDate as jest.Mock).mockRejectedValue(new Error('Search service error'))
+      ;(caseLocationActivityService.getPositions as jest.Mock).mockRejectedValue(new Error('Search service error'))
 
       const queryData = {
         crn: 'X172591',

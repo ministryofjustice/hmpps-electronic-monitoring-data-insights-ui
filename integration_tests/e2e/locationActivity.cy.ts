@@ -234,7 +234,8 @@ context('Cases', () => {
     it('should display "no location data" message when no results found', () => {
       const locationPage = Page.verifyOnPage(LocationActivityPage)
 
-      cy.task('stubGetLocationsEmpty', 'X123456')
+      cy.task('stubGetLocations', { crn: 'X123456', locations: [] })
+      cy.intercept('GET', '/cases/*/location-activity?*').as('getNoLocationData')
 
       locationPage.fillSearchForm({
         crn: 'X123456',
@@ -247,7 +248,11 @@ context('Cases', () => {
       })
 
       locationPage.submitButton().click()
-      cy.contains('No location data found for the selected date range').should('exist')
+      cy.wait('@getNoLocationData')
+      cy.get('[data-qa=location-data-error]')
+        .invoke('text')
+        .then(text => text.trim())
+        .should('eq', 'No location data found for the selected date range.')
     })
   })
 

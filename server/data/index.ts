@@ -18,6 +18,7 @@ import config from '../config'
 import HmppsAuditClient from './hmppsAuditClient'
 import logger from '../../logger'
 import EmdiApiClient from './emdiApiClient'
+import LocationsApiClient from './locationsApiClient'
 import PeopleApiClient from './peopleApiClient'
 
 export const dataAccess = () => {
@@ -32,6 +33,7 @@ export const dataAccess = () => {
     hmppsAuthClient,
     hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
     emdiApiClient: new EmdiApiClient(hmppsAuthClient),
+    locationsApiClient: new LocationsApiClient(hmppsAuthClient),
     peopleApiClient: new PeopleApiClient(hmppsAuthClient),
   }
 }
