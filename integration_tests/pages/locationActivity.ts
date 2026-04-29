@@ -28,6 +28,8 @@ export default class LocationActivityPage extends Page {
 
   submitButton = (): PageElement => cy.get('button[type="submit"]')
 
+  clearFiltersLink = (): PageElement => cy.get('a[href*="/location-activity"]')
+
   emMap = (): PageElement => cy.get('[data-qa=em-map]')
 
   fillSearchForm = ({

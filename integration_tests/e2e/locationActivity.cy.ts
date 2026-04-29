@@ -50,6 +50,7 @@ context('Cases', () => {
         locationPage.endMinuteInput().should('exist')
 
         locationPage.submitButton().should('exist')
+        locationPage.clearFiltersLink().should('exist')
       })
 
       locationPage.emMap().should('exist')
