@@ -4,12 +4,12 @@ import CasesController from '../controllers/cases/casesController'
 import logger from '../../logger'
 
 export default function casesRoutes(
-  { auditService, trailService, dateSearchValidationService }: Services,
+  { auditService, caseLocationActivityService, dateSearchValidationService }: Services,
   get: (path: string, handler: RequestHandler) => Router,
 
   post: (path: string, handler: RequestHandler) => Router,
 ): void {
-  const casesController = new CasesController(auditService, trailService, dateSearchValidationService)
+  const casesController = new CasesController(auditService, caseLocationActivityService, dateSearchValidationService)
 
   get('/cases/:person_id/overview/:highlight?', async (req, res) => {
     await casesController.overview(req, res)

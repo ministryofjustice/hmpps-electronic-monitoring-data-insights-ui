@@ -30,14 +30,14 @@ export default class LocationsApiClient extends RestClient {
 
   async getLocations(
     token: string,
-    personId: string,
+    personIdentifier: string,
     from: string,
     to: string,
     nextToken?: string,
   ): Promise<ApiLocationsResponse> {
     return this.get<ApiLocationsResponse>(
       {
-        path: `/people/${personId}/locations`,
+        path: `/people/${personIdentifier}/locations`,
         query: {
           from,
           to,
@@ -48,10 +48,10 @@ export default class LocationsApiClient extends RestClient {
     )
   }
 
-  async getLocation(token: string, personId: string, positionId: string): Promise<ApiLocation[]> {
+  async getLocation(token: string, personIdentifier: string, positionId: string): Promise<ApiLocation[]> {
     return this.get<ApiLocation[]>(
       {
-        path: `/people/${personId}/locations/${positionId}`,
+        path: `/people/${personIdentifier}/locations/${positionId}`,
       },
       asUser(token),
     )

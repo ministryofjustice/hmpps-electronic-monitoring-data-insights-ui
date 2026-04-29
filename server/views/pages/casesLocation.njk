@@ -64,7 +64,7 @@
   <template id="overlay-body-mdss-location">
     <div class="app-map__overlay-row">
       <span class="app-map__overlay-label">Accuracy</span>
-      <span class="app-map__overlay-value">{{ precision }} meters</span>
+      <span class="app-map__overlay-value">{{ displayAccuracy }}</span>
     </div>
     <div class="app-map__overlay-row">
       <span class="app-map__overlay-label">Date / time</span>
@@ -72,7 +72,7 @@
     </div>
     <div class="app-map__overlay-row">
       <span class="app-map__overlay-label">Lat / Lng</span>
-      <span class="app-map__overlay-value app-map__overlay-value--coords">{{ latitude }}, {{ longitude }}</span>
+      <span class="app-map__overlay-value app-map__overlay-value--coords">{{ displayLatitude }}, {{ displayLongitude }}</span>
     </div>
   </template>
 {% endraw %}

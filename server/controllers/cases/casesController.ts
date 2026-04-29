@@ -1,11 +1,14 @@
 import { Request, Response } from 'express'
 import AuditService, { Page } from '../../services/auditService'
+import CaseLocationActivityService, {
+  type CaseLocationBasePosition,
+  type CaseLocationPosition,
+} from '../../services/caseLocationActivityService'
 import mockPopDetails from '../mocks/popDetails'
 import mockAdamCollins from './mocks/adamCollins'
 import mockLeonelJames from './mocks/leonelJames'
 import mockSamJamesWalker from './mocks/samJamesWalker'
 import { getDateStringFromDateObject, getFormattedPerson, getNameFromPersonObject } from '../../utils/dummyDataUtils'
-import TrailService, { Filters, Position } from '../../services/trailService'
 import DateSearchValidationService from '../../services/dateSearchValidationService'
 import { searchLocationsQuerySchema } from '../../schemas/locationActivity/searchDateFormSchema'
 import { getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
@@ -50,7 +53,7 @@ interface ValidationError {
 export default class CasesController {
   constructor(
     private readonly auditService: AuditService,
-    private readonly trailService: TrailService,
+    private readonly caseLocationActivityService: CaseLocationActivityService,
     private readonly dateSearchValidationService: DateSearchValidationService,
   ) {}
 
@@ -182,8 +185,8 @@ export default class CasesController {
     const personId = req.params.person_id
     const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
     const crn = req.query.crn as string
-    let positions: Position[] = []
-    let positionCardData: Position[] = []
+    let positions: CaseLocationBasePosition[] = []
+    let positionCardData: CaseLocationPosition[] = []
     let validationErrors: ValidationError[] = sessionErrors
     let hasSearched = false
     let locationAlert: { text: string } | null = null
@@ -229,14 +232,14 @@ export default class CasesController {
 
         const validation = this.dateSearchValidationService.validateDateSearchRequest(fromDate, toDate)
         if (validation.success) {
-          const filters: Filters = {
-            from: queryResult.data.fromDate,
-            to: queryResult.data.toDate,
-          }
-
           try {
-            positions = await this.trailService.filterByDate(res.locals.user?.token, crn, filters)
-            positionCardData = this.trailService.annotatePositionsWithDisplayProperties(positions)
+            positions = await this.caseLocationActivityService.getPositions(
+              res.locals.user.token,
+              crn,
+              queryResult.data.fromDate,
+              queryResult.data.toDate,
+            )
+            positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
           } catch (error) {
             /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
             console.error('Error fetching locations:', error)
