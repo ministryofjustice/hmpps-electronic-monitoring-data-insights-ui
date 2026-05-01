@@ -7,14 +7,14 @@ const createDateTimeSchema = (label: 'From' | 'To') =>
     hour: z
       .string()
       .trim()
-      .min(1, `You must enter a ${label.toLowerCase()} hour`)
+      .min(1, `You must enter a time ${label.toLowerCase()} hour`)
       .refine(val => !Number.isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 23, {
         message: `${label} hour must be between 00 and 23`,
       }),
     minute: z
       .string()
       .trim()
-      .min(1, `You must enter a ${label.toLowerCase()} minute`)
+      .min(1, `You must enter a time ${label.toLowerCase()} minute`)
       .refine(val => !Number.isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 59, {
         message: `${label} minute must be between 00 and 59`,
       }),
