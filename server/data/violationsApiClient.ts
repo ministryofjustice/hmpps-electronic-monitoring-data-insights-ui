@@ -1,4 +1,4 @@
-import { asUser, RestClient } from '@ministryofjustice/hmpps-rest-client'
+import { asSystem, RestClient } from '@ministryofjustice/hmpps-rest-client'
 import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
 import logger from '../../logger'
@@ -33,7 +33,7 @@ export default class ViolationsApiClient extends RestClient {
   }
 
   async getViolations(
-    token: string,
+    username: string,
     consumerId: string,
     from: string,
     to: string,
@@ -48,16 +48,16 @@ export default class ViolationsApiClient extends RestClient {
           ...(nextToken ? { nextToken } : {}),
         },
       },
-      asUser(token),
+      asSystem(username),
     )
   }
 
-  async getViolation(token: string, consumerId: string, violationId: string): Promise<ApiViolation> {
+  async getViolation(username: string, consumerId: string, violationId: string): Promise<ApiViolation> {
     return this.get<ApiViolation>(
       {
         path: `/people/${consumerId}/curfew/violations/${violationId}`,
       },
-      asUser(token),
+      asSystem(username),
     )
   }
 }

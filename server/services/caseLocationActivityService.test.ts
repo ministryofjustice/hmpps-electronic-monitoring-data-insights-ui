@@ -35,7 +35,7 @@ describe('CaseLocationActivityService', () => {
     })
 
     const result = await caseLocationActivityService.getPositions(
-      'token',
+      'user1',
       'X172591',
       '2026-03-24T00:00:00Z',
       '2026-03-25T00:00:00Z',
@@ -121,7 +121,7 @@ describe('CaseLocationActivityService', () => {
     })
 
     const result = await caseLocationActivityService.getPositions(
-      'token',
+      'user1',
       'X172591',
       '2026-03-24T00:00:00Z',
       '2026-03-25T00:00:00Z',

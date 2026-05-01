@@ -4,8 +4,11 @@ import config from '../config'
 import LocationsApiClient from './locationsApiClient'
 
 describe('LocationsApiClient integration', () => {
-  const authenticationClient = {} as AuthenticationClient
-  const token = 'user-token'
+  const systemToken = 'system-token'
+  const authenticationClient = {
+    getToken: jest.fn().mockResolvedValue(systemToken),
+  } as unknown as jest.Mocked<AuthenticationClient>
+  const username = 'user1'
   const personId = '41591'
   const positionId = '98765'
   const from = '2026-03-24T00:00:00Z'
@@ -24,7 +27,7 @@ describe('LocationsApiClient integration', () => {
 
   it('gets locations by personId and date range against the EMDI API', async () => {
     nock(config.apis.emdiApi.url, {
-      reqheaders: { authorization: `Bearer ${token}` },
+      reqheaders: { authorization: `Bearer ${systemToken}` },
     })
       .get(`/people/${personId}/locations`)
       .query({ from, to, nextToken })
@@ -48,8 +51,9 @@ describe('LocationsApiClient integration', () => {
         nextToken: null,
       })
 
-    const result = await locationsApiClient.getLocations(token, personId, from, to, nextToken)
+    const result = await locationsApiClient.getLocations(username, personId, from, to, nextToken)
 
+    expect(authenticationClient.getToken).toHaveBeenCalledWith(username)
     expect(result).toEqual({
       locations: [
         {
@@ -74,7 +78,7 @@ describe('LocationsApiClient integration', () => {
 
   it('gets a single location by personId and positionId against the EMDI API', async () => {
     nock(config.apis.emdiApi.url, {
-      reqheaders: { authorization: `Bearer ${token}` },
+      reqheaders: { authorization: `Bearer ${systemToken}` },
     })
       .get(`/people/${personId}/locations/${positionId}`)
       .reply(200, [
@@ -94,8 +98,9 @@ describe('LocationsApiClient integration', () => {
         },
       ])
 
-    const result = await locationsApiClient.getLocation(token, personId, positionId)
+    const result = await locationsApiClient.getLocation(username, personId, positionId)
 
+    expect(authenticationClient.getToken).toHaveBeenCalledWith(username)
     expect(result).toEqual([
       {
         positionId: 98765,

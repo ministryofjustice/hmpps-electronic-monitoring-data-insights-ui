@@ -25,13 +25,13 @@ export default class LocationsService {
   constructor(private readonly locationsApiClient: LocationsApiClient) {}
 
   async getLocations(
-    token: string,
+    username: string,
     personIdentifier: string,
     from: string,
     to: string,
     nextToken?: string,
   ): Promise<LocationsResult> {
-    const response = await this.locationsApiClient.getLocations(token, personIdentifier, from, to, nextToken)
+    const response = await this.locationsApiClient.getLocations(username, personIdentifier, from, to, nextToken)
 
     return {
       locations: response.locations.map(location => this.mapLocation(location)),
@@ -39,8 +39,8 @@ export default class LocationsService {
     }
   }
 
-  async getLocation(token: string, personIdentifier: string, positionId: string): Promise<Location[]> {
-    const locations = await this.locationsApiClient.getLocation(token, personIdentifier, positionId)
+  async getLocation(username: string, personIdentifier: string, positionId: string): Promise<Location[]> {
+    const locations = await this.locationsApiClient.getLocation(username, personIdentifier, positionId)
     return locations.map(location => this.mapLocation(location))
   }
 

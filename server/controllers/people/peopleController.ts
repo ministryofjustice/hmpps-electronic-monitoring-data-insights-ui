@@ -9,8 +9,8 @@ export default class PeopleController {
 
   async getPersonByDeliusId(req: Request, res: Response): Promise<void> {
     const { delius_id: deliusId } = req.params
-    const { token } = res.locals.user
-    const result = await this.peopleService.searchPeople(token, deliusId)
+    const { username } = res.locals.user
+    const result = await this.peopleService.searchPeople(username, deliusId)
     const person = result.people[0] ?? null
 
     if (person) {

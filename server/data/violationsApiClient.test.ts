@@ -1,10 +1,10 @@
-import { asUser } from '@ministryofjustice/hmpps-rest-client'
+import { asSystem } from '@ministryofjustice/hmpps-rest-client'
 import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import ViolationsApiClient, { type ApiViolation, type ApiViolationsResponse } from './violationsApiClient'
 
 describe('ViolationsApiClient', () => {
   const authenticationClient = {} as AuthenticationClient
-  const token = 'user-token'
+  const username = 'user1'
   const consumerId = '9b74b1071beb2210743d8551f54bcbcc'
   const violationId = 'ATV-123'
   const from = '2026-03-24T00:00:00Z'
@@ -44,10 +44,10 @@ describe('ViolationsApiClient', () => {
   })
 
   describe('getViolations', () => {
-    it('calls the violations endpoint with consumerId and date range using the user token', async () => {
+    it('calls the violations endpoint with consumerId and date range using the system token for the username', async () => {
       const getSpy = jest.spyOn(violationsApiClient, 'get').mockResolvedValue(violationsResponse)
 
-      const result = await violationsApiClient.getViolations(token, consumerId, from, to)
+      const result = await violationsApiClient.getViolations(username, consumerId, from, to)
 
       expect(result).toEqual(violationsResponse)
       expect(getSpy).toHaveBeenCalledWith(
@@ -55,37 +55,37 @@ describe('ViolationsApiClient', () => {
           path: `/people/${consumerId}/curfew/violations`,
           query: { from, to },
         },
-        asUser(token),
+        asSystem(username),
       )
     })
 
     it('includes nextToken when provided', async () => {
       const getSpy = jest.spyOn(violationsApiClient, 'get').mockResolvedValue(violationsResponse)
 
-      await violationsApiClient.getViolations(token, consumerId, from, to, nextToken)
+      await violationsApiClient.getViolations(username, consumerId, from, to, nextToken)
 
       expect(getSpy).toHaveBeenCalledWith(
         {
           path: `/people/${consumerId}/curfew/violations`,
           query: { from, to, nextToken },
         },
-        asUser(token),
+        asSystem(username),
       )
     })
   })
 
   describe('getViolation', () => {
-    it('calls the single violation endpoint with consumerId and violationId using the user token', async () => {
+    it('calls the single violation endpoint with consumerId and violationId using the system token for the username', async () => {
       const getSpy = jest.spyOn(violationsApiClient, 'get').mockResolvedValue(violationResponse)
 
-      const result = await violationsApiClient.getViolation(token, consumerId, violationId)
+      const result = await violationsApiClient.getViolation(username, consumerId, violationId)
 
       expect(result).toEqual(violationResponse)
       expect(getSpy).toHaveBeenCalledWith(
         {
           path: `/people/${consumerId}/curfew/violations/${violationId}`,
         },
-        asUser(token),
+        asSystem(username),
       )
     })
   })

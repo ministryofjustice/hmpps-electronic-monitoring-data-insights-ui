@@ -27,8 +27,8 @@ export type PeopleSearchResult = {
 export default class PeopleService {
   constructor(private readonly peopleApiClient: PeopleApiClient) {}
 
-  async searchPeople(token: string, deliusId: string): Promise<PeopleSearchResult> {
-    const response = await this.peopleApiClient.searchPeople(token, deliusId)
+  async searchPeople(username: string, deliusId: string): Promise<PeopleSearchResult> {
+    const response = await this.peopleApiClient.searchPeople(username, deliusId)
 
     return {
       people: response.persons.map(person => this.mapPerson(person)),
@@ -36,8 +36,8 @@ export default class PeopleService {
     }
   }
 
-  async getPerson(token: string, personId: string): Promise<Person> {
-    const person = await this.peopleApiClient.getPerson(token, personId)
+  async getPerson(username: string, personId: string): Promise<Person> {
+    const person = await this.peopleApiClient.getPerson(username, personId)
     return this.mapPerson(person)
   }
 

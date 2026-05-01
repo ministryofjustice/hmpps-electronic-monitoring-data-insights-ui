@@ -4,8 +4,11 @@ import config from '../config'
 import PeopleApiClient from './peopleApiClient'
 
 describe('PeopleApiClient integration', () => {
-  const authenticationClient = {} as AuthenticationClient
-  const token = 'user-token'
+  const systemToken = 'system-token'
+  const authenticationClient = {
+    getToken: jest.fn().mockResolvedValue(systemToken),
+  } as unknown as jest.Mocked<AuthenticationClient>
+  const username = 'user1'
   const deliusId = 'X31092'
   const personId = '41591'
 
@@ -21,7 +24,7 @@ describe('PeopleApiClient integration', () => {
 
   it('searches people by deliusId against the EMDI API', async () => {
     nock(config.apis.emdiApi.url, {
-      reqheaders: { authorization: `Bearer ${token}` },
+      reqheaders: { authorization: `Bearer ${systemToken}` },
     })
       .get('/people')
       .query({ deliusId })
@@ -46,8 +49,9 @@ describe('PeopleApiClient integration', () => {
         nextToken: null,
       })
 
-    const result = await peopleApiClient.searchPeople(token, deliusId)
+    const result = await peopleApiClient.searchPeople(username, deliusId)
 
+    expect(authenticationClient.getToken).toHaveBeenCalledWith(username)
     expect(result).toEqual({
       persons: [
         {
@@ -73,7 +77,7 @@ describe('PeopleApiClient integration', () => {
 
   it('gets a single person by personId against the EMDI API', async () => {
     nock(config.apis.emdiApi.url, {
-      reqheaders: { authorization: `Bearer ${token}` },
+      reqheaders: { authorization: `Bearer ${systemToken}` },
     })
       .get(`/people/${personId}`)
       .reply(200, {
@@ -92,8 +96,9 @@ describe('PeopleApiClient integration', () => {
         street: '2 Dunlin Close',
       })
 
-    const result = await peopleApiClient.getPerson(token, personId)
+    const result = await peopleApiClient.getPerson(username, personId)
 
+    expect(authenticationClient.getToken).toHaveBeenCalledWith(username)
     expect(result).toEqual({
       personId: '41591',
       consumerId: '9b74b1071beb2210743d8551f54bcbcc',

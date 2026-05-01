@@ -1,4 +1,4 @@
-import { asUser, RestClient } from '@ministryofjustice/hmpps-rest-client'
+import { asSystem, RestClient } from '@ministryofjustice/hmpps-rest-client'
 import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
 import logger from '../../logger'
@@ -29,7 +29,7 @@ export default class LocationsApiClient extends RestClient {
   }
 
   async getLocations(
-    token: string,
+    username: string,
     personIdentifier: string,
     from: string,
     to: string,
@@ -44,16 +44,16 @@ export default class LocationsApiClient extends RestClient {
           ...(nextToken ? { nextToken } : {}),
         },
       },
-      asUser(token),
+      asSystem(username),
     )
   }
 
-  async getLocation(token: string, personIdentifier: string, positionId: string): Promise<ApiLocation[]> {
+  async getLocation(username: string, personIdentifier: string, positionId: string): Promise<ApiLocation[]> {
     return this.get<ApiLocation[]>(
       {
         path: `/people/${personIdentifier}/locations/${positionId}`,
       },
-      asUser(token),
+      asSystem(username),
     )
   }
 }
