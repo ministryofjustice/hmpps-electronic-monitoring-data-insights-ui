@@ -23,25 +23,25 @@ describe('searchLocationsQuerySchema', () => {
 
       expect(issues[0]).toMatchObject({
         code: 'too_small',
-        message: 'You must enter a from hour',
+        message: 'You must enter a time from hour',
         path: ['start', 'hour'],
       })
 
       expect(issues[1]).toMatchObject({
         code: 'too_small',
-        message: 'You must enter a from minute',
+        message: 'You must enter a time from minute',
         path: ['start', 'minute'],
       })
 
       expect(issues[2]).toMatchObject({
         code: 'too_small',
-        message: 'You must enter a to hour',
+        message: 'You must enter a time to hour',
         path: ['end', 'hour'],
       })
 
       expect(issues[3]).toMatchObject({
         code: 'too_small',
-        message: 'You must enter a to minute',
+        message: 'You must enter a time to minute',
         path: ['end', 'minute'],
       })
     }

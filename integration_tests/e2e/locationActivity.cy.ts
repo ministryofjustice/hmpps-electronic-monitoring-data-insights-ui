@@ -72,14 +72,14 @@ context('Cases', () => {
       cy.get('.govuk-error-summary__list').within(() => {
         cy.contains('From date must be DD/MM/YYYY').should('exist')
         cy.contains('To date must be DD/MM/YYYY').should('exist')
-        cy.contains('You must enter a to hour').should('exist')
-        cy.contains('You must enter a to minute').should('exist')
+        cy.contains('You must enter a time to hour').should('exist')
+        cy.contains('You must enter a time to minute').should('exist')
       })
 
       cy.contains('From date must be DD/MM/YYYY').should('exist')
       cy.contains('To date must be DD/MM/YYYY').should('exist')
-      cy.contains('You must enter a to hour').should('exist')
-      cy.contains('You must enter a to minute').should('exist')
+      cy.contains('You must enter a time to hour').should('exist')
+      cy.contains('You must enter a time to minute').should('exist')
     })
 
     it('should show validation errors for missing end date fields only', () => {
@@ -95,8 +95,8 @@ context('Cases', () => {
 
       cy.get('.govuk-error-summary').should('exist')
       cy.contains('To date must be DD/MM/YYYY').should('exist')
-      cy.contains('You must enter a to hour').should('exist')
-      cy.contains('You must enter a to minute').should('exist')
+      cy.contains('You must enter a time to hour').should('exist')
+      cy.contains('You must enter a time to minute').should('exist')
 
       cy.contains('From date must be DD/MM/YYYY').should('not.exist')
     })
