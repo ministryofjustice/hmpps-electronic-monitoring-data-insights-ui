@@ -54,12 +54,12 @@ export default class CaseLocationActivityService {
   constructor(private readonly locationsService: LocationsService) {}
 
   async getPositions(
-    token: string,
+    username: string,
     personIdentifier: string,
     from: string,
     to: string,
   ): Promise<CaseLocationBasePosition[]> {
-    const result = await this.locationsService.getLocations(token, personIdentifier, from, to)
+    const result = await this.locationsService.getLocations(username, personIdentifier, from, to)
 
     return result.locations.filter(hasCoordinates).map((location, index) => this.mapLocation(location, index))
   }

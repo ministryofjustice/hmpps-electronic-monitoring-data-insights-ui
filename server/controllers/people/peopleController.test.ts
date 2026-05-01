@@ -61,7 +61,7 @@ describe('PeopleController', () => {
 
     await controller.getPersonByDeliusId(req as Request, res as Response)
 
-    expect(peopleService.searchPeople).toHaveBeenCalledWith(user.token, 'X31092')
+    expect(peopleService.searchPeople).toHaveBeenCalledWith(user.username, 'X31092')
     expect(req.session).toEqual({
       peopleSelection: {
         X31092: {

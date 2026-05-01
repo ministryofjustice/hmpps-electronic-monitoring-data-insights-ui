@@ -4,8 +4,11 @@ import config from '../config'
 import ViolationsApiClient from './violationsApiClient'
 
 describe('ViolationsApiClient integration', () => {
-  const authenticationClient = {} as AuthenticationClient
-  const token = 'user-token'
+  const systemToken = 'system-token'
+  const authenticationClient = {
+    getToken: jest.fn().mockResolvedValue(systemToken),
+  } as unknown as jest.Mocked<AuthenticationClient>
+  const username = 'user1'
   const consumerId = '9b74b1071beb2210743d8551f54bcbcc'
   const violationId = 'ATV-123'
   const from = '2026-03-24T00:00:00Z'
@@ -24,7 +27,7 @@ describe('ViolationsApiClient integration', () => {
 
   it('gets violations by consumerId and date range against the EMDI API', async () => {
     nock(config.apis.emdiApi.url, {
-      reqheaders: { authorization: `Bearer ${token}` },
+      reqheaders: { authorization: `Bearer ${systemToken}` },
     })
       .get(`/people/${consumerId}/curfew/violations`)
       .query({ from, to, nextToken })
@@ -52,8 +55,9 @@ describe('ViolationsApiClient integration', () => {
         nextToken: null,
       })
 
-    const result = await violationsApiClient.getViolations(token, consumerId, from, to, nextToken)
+    const result = await violationsApiClient.getViolations(username, consumerId, from, to, nextToken)
 
+    expect(authenticationClient.getToken).toHaveBeenCalledWith(username)
     expect(result).toEqual({
       violations: [
         {
@@ -82,7 +86,7 @@ describe('ViolationsApiClient integration', () => {
 
   it('gets a single violation by consumerId and violationId against the EMDI API', async () => {
     nock(config.apis.emdiApi.url, {
-      reqheaders: { authorization: `Bearer ${token}` },
+      reqheaders: { authorization: `Bearer ${systemToken}` },
     })
       .get(`/people/${consumerId}/curfew/violations/${violationId}`)
       .reply(200, {
@@ -104,8 +108,9 @@ describe('ViolationsApiClient integration', () => {
         outcomeReason: 'Pending review',
       })
 
-    const result = await violationsApiClient.getViolation(token, consumerId, violationId)
+    const result = await violationsApiClient.getViolation(username, consumerId, violationId)
 
+    expect(authenticationClient.getToken).toHaveBeenCalledWith(username)
     expect(result).toEqual({
       violationId: 'ATV-123',
       deviceWearer: 'DEVWR0004718',

@@ -1,4 +1,4 @@
-import { asSystem, asUser, RestClient } from '@ministryofjustice/hmpps-rest-client'
+import { asSystem, RestClient } from '@ministryofjustice/hmpps-rest-client'
 
 export default class EmdiService {
   constructor(private readonly emdiApiClient: RestClient) {}
@@ -8,7 +8,7 @@ export default class EmdiService {
     return time
   }
 
-  async getData(token: string): Promise<string> {
+  async getData(username: string): Promise<string> {
     const response = await this.emdiApiClient.get(
       {
         path: `/hello`,
@@ -16,7 +16,7 @@ export default class EmdiService {
           include_device_activations: true,
         },
       },
-      asUser(token),
+      asSystem(username),
     )
 
     return response.toString()

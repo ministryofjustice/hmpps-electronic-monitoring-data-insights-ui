@@ -1,10 +1,10 @@
-import { asUser } from '@ministryofjustice/hmpps-rest-client'
+import { asSystem } from '@ministryofjustice/hmpps-rest-client'
 import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import PeopleApiClient, { type ApiPeopleResponse, type ApiPerson } from './peopleApiClient'
 
 describe('PeopleApiClient', () => {
   const authenticationClient = {} as AuthenticationClient
-  const token = 'user-token'
+  const username = 'user1'
   const deliusId = 'X31092'
   const personId = '41591'
 
@@ -38,10 +38,10 @@ describe('PeopleApiClient', () => {
   })
 
   describe('searchPeople', () => {
-    it('calls the people search endpoint with deliusId using the user token', async () => {
+    it('calls the people search endpoint with deliusId using the system token for the username', async () => {
       const getSpy = jest.spyOn(peopleApiClient, 'get').mockResolvedValue(searchResponse)
 
-      const result = await peopleApiClient.searchPeople(token, deliusId)
+      const result = await peopleApiClient.searchPeople(username, deliusId)
 
       expect(result).toEqual(searchResponse)
       expect(getSpy).toHaveBeenCalledWith(
@@ -49,23 +49,23 @@ describe('PeopleApiClient', () => {
           path: '/people',
           query: { deliusId },
         },
-        asUser(token),
+        asSystem(username),
       )
     })
   })
 
   describe('getPerson', () => {
-    it('calls the person endpoint with personId using the user token', async () => {
+    it('calls the person endpoint with personId using the system token for the username', async () => {
       const getSpy = jest.spyOn(peopleApiClient, 'get').mockResolvedValue(personResponse)
 
-      const result = await peopleApiClient.getPerson(token, personId)
+      const result = await peopleApiClient.getPerson(username, personId)
 
       expect(result).toEqual(personResponse)
       expect(getSpy).toHaveBeenCalledWith(
         {
           path: `/people/${personId}`,
         },
-        asUser(token),
+        asSystem(username),
       )
     })
   })

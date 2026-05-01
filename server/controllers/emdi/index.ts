@@ -5,8 +5,8 @@ export default class EmdiController {
   constructor(private readonly service: EdmiService) {}
 
   view: RequestHandler = async (req, res) => {
-    const { token } = res.locals.user
-    const data = await this.service.getData(token)
+    const { username } = res.locals.user
+    const data = await this.service.getData(username)
 
     res.render('pages/emdi/index', {
       curfew: JSON.stringify(data),

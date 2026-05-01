@@ -3,7 +3,7 @@ import type ViolationsApiClient from '../data/violationsApiClient'
 import type { ApiViolation } from '../data/violationsApiClient'
 
 describe('ViolationsService', () => {
-  const token = 'user-token'
+  const username = 'user1'
   const consumerId = '9b74b1071beb2210743d8551f54bcbcc'
   const violationId = 'ATV-123'
   const from = '2026-03-24T00:00:00Z'
@@ -67,13 +67,13 @@ describe('ViolationsService', () => {
         nextToken,
       })
 
-      const result = await violationsService.getViolations(token, consumerId, from, to, nextToken)
+      const result = await violationsService.getViolations(username, consumerId, from, to, nextToken)
 
       expect(result).toEqual<ViolationsResult>({
         violations: [mappedViolation],
         nextToken,
       })
-      expect(violationsApiClient.getViolations).toHaveBeenCalledWith(token, consumerId, from, to, nextToken)
+      expect(violationsApiClient.getViolations).toHaveBeenCalledWith(username, consumerId, from, to, nextToken)
     })
   })
 
@@ -81,10 +81,10 @@ describe('ViolationsService', () => {
     it('maps the API single violation response into a domain violation', async () => {
       violationsApiClient.getViolation.mockResolvedValue(apiViolation)
 
-      const result = await violationsService.getViolation(token, consumerId, violationId)
+      const result = await violationsService.getViolation(username, consumerId, violationId)
 
       expect(result).toEqual(mappedViolation)
-      expect(violationsApiClient.getViolation).toHaveBeenCalledWith(token, consumerId, violationId)
+      expect(violationsApiClient.getViolation).toHaveBeenCalledWith(username, consumerId, violationId)
     })
   })
 })

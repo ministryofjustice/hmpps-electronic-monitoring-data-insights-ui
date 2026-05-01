@@ -1,10 +1,10 @@
-import { asUser } from '@ministryofjustice/hmpps-rest-client'
+import { asSystem } from '@ministryofjustice/hmpps-rest-client'
 import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import LocationsApiClient, { type ApiLocation, type ApiLocationsResponse } from './locationsApiClient'
 
 describe('LocationsApiClient', () => {
   const authenticationClient = {} as AuthenticationClient
-  const token = 'user-token'
+  const username = 'user1'
   const personId = '41591'
   const positionId = '98765'
   const from = '2026-03-24T00:00:00Z'
@@ -40,10 +40,10 @@ describe('LocationsApiClient', () => {
   })
 
   describe('getLocations', () => {
-    it('calls the locations endpoint with personId and date range using the user token', async () => {
+    it('calls the locations endpoint with personId and date range using the system token for the username', async () => {
       const getSpy = jest.spyOn(locationsApiClient, 'get').mockResolvedValue(locationsResponse)
 
-      const result = await locationsApiClient.getLocations(token, personId, from, to)
+      const result = await locationsApiClient.getLocations(username, personId, from, to)
 
       expect(result).toEqual(locationsResponse)
       expect(getSpy).toHaveBeenCalledWith(
@@ -51,37 +51,37 @@ describe('LocationsApiClient', () => {
           path: `/people/${personId}/locations`,
           query: { from, to },
         },
-        asUser(token),
+        asSystem(username),
       )
     })
 
     it('includes nextToken when provided', async () => {
       const getSpy = jest.spyOn(locationsApiClient, 'get').mockResolvedValue(locationsResponse)
 
-      await locationsApiClient.getLocations(token, personId, from, to, nextToken)
+      await locationsApiClient.getLocations(username, personId, from, to, nextToken)
 
       expect(getSpy).toHaveBeenCalledWith(
         {
           path: `/people/${personId}/locations`,
           query: { from, to, nextToken },
         },
-        asUser(token),
+        asSystem(username),
       )
     })
   })
 
   describe('getLocation', () => {
-    it('calls the single location endpoint with personId and positionId using the user token', async () => {
+    it('calls the single location endpoint with personId and positionId using the system token for the username', async () => {
       const getSpy = jest.spyOn(locationsApiClient, 'get').mockResolvedValue(locationResponse)
 
-      const result = await locationsApiClient.getLocation(token, personId, positionId)
+      const result = await locationsApiClient.getLocation(username, personId, positionId)
 
       expect(result).toEqual(locationResponse)
       expect(getSpy).toHaveBeenCalledWith(
         {
           path: `/people/${personId}/locations/${positionId}`,
         },
-        asUser(token),
+        asSystem(username),
       )
     })
   })

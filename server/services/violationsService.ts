@@ -29,13 +29,13 @@ export default class ViolationsService {
   constructor(private readonly violationsApiClient: ViolationsApiClient) {}
 
   async getViolations(
-    token: string,
+    username: string,
     consumerId: string,
     from: string,
     to: string,
     nextToken?: string,
   ): Promise<ViolationsResult> {
-    const response = await this.violationsApiClient.getViolations(token, consumerId, from, to, nextToken)
+    const response = await this.violationsApiClient.getViolations(username, consumerId, from, to, nextToken)
 
     return {
       violations: response.violations.map(violation => this.mapViolation(violation)),
@@ -43,8 +43,8 @@ export default class ViolationsService {
     }
   }
 
-  async getViolation(token: string, consumerId: string, violationId: string): Promise<Violation> {
-    const violation = await this.violationsApiClient.getViolation(token, consumerId, violationId)
+  async getViolation(username: string, consumerId: string, violationId: string): Promise<Violation> {
+    const violation = await this.violationsApiClient.getViolation(username, consumerId, violationId)
     return this.mapViolation(violation)
   }
 

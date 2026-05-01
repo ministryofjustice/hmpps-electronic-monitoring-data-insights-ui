@@ -234,7 +234,7 @@ export default class CasesController {
         if (validation.success) {
           try {
             positions = await this.caseLocationActivityService.getPositions(
-              res.locals.user.token,
+              res.locals.user.username,
               crn,
               queryResult.data.fromDate,
               queryResult.data.toDate,

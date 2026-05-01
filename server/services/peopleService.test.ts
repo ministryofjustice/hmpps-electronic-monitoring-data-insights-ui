@@ -3,7 +3,7 @@ import type PeopleApiClient from '../data/peopleApiClient'
 import type { ApiPerson } from '../data/peopleApiClient'
 
 describe('PeopleService', () => {
-  const token = 'user-token'
+  const username = 'user1'
   const deliusId = 'X31092'
   const personId = '41591'
 
@@ -60,13 +60,13 @@ describe('PeopleService', () => {
         nextToken: null,
       })
 
-      const result = await peopleService.searchPeople(token, deliusId)
+      const result = await peopleService.searchPeople(username, deliusId)
 
       expect(result).toEqual<PeopleSearchResult>({
         people: [mappedPerson],
         nextToken: null,
       })
-      expect(peopleApiClient.searchPeople).toHaveBeenCalledWith(token, deliusId)
+      expect(peopleApiClient.searchPeople).toHaveBeenCalledWith(username, deliusId)
     })
   })
 
@@ -74,10 +74,10 @@ describe('PeopleService', () => {
     it('maps the API person response into a domain person', async () => {
       peopleApiClient.getPerson.mockResolvedValue(apiPerson)
 
-      const result = await peopleService.getPerson(token, personId)
+      const result = await peopleService.getPerson(username, personId)
 
       expect(result).toEqual(mappedPerson)
-      expect(peopleApiClient.getPerson).toHaveBeenCalledWith(token, personId)
+      expect(peopleApiClient.getPerson).toHaveBeenCalledWith(username, personId)
     })
   })
 })
