@@ -274,7 +274,7 @@ context('Cases', () => {
 
       locationPage.submitButton().click()
 
-      cy.get('.govuk-error-summary a').contains('You must enter a to hour').click()
+      cy.get('.govuk-error-summary a').contains('You must enter a time to hour').click()
 
       cy.focused().should('have.attr', 'id', 'end-hour')
     })
