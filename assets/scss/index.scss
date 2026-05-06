@@ -17,6 +17,7 @@ $govuk-page-width: $moj-page-width;
 @import './components/map-layer-control';
 @import './overrides/local';
 @import './overrides/overview';
+@import './overrides/map-help';
 
 @import 'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/footer';
 @import 'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/header';
