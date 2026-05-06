@@ -8,7 +8,7 @@
   <a href="javascript:history.back()" class="govuk-back-link">Back</a>
 
   <h2 class="govuk-heading-l">{{locale.title}}</h2>
-
+  <div class="govuk-width-container map-help-section-container">
   {% if locale and locale.content %}
     {% for _, section in locale.content %}
       {% if section %}
@@ -20,19 +20,10 @@
         {% set insert = section.insert %}
         {% set image = section.image %}
 
-        <div class="govuk-!-margin-bottom-6">
-          {% if section.title %}
-            <h2 class="govuk-heading-m">{{ section.title }}</h2>
-          {% endif %}
-
-          <div style="overflow: hidden;">
-            {% if image and image.src %}
-              <img
-                src="{{ image.src }}"
-                alt="{{ image.alt or '' }}"
-                class="govuk-!-margin-left-4 govuk-!-margin-bottom-2"
-                style="float: right; max-width: 200px; height: auto;"
-              >
+        <div class="govuk-grid-row">
+          <div class="govuk-!-margin-bottom-6 {{ "govuk-grid-column-three-quarters" if (image and image.src) else "govuk-grid-column-full" }}">
+            {% if section.title %}
+              <h2 class="govuk-heading-m">{{ section.title }}</h2>
             {% endif %}
 
             {% for paragraph in firstParagraphs %}
@@ -81,9 +72,19 @@
               </ul>
             {% endif %}
           </div>
+          {% if image and image.src %}
+            <div class="govuk-grid-column-one-quarter">
+              <img
+                src="{{ image.src }}"
+                alt="{{ image.alt or '' }}"
+                class="govuk-!-margin-top-8"
+              >
+            </div>
+          {% endif %}
         </div>
+        
       {% endif %}
     {% endfor %}
   {% endif %}
-
+  </div>
 {% endblock %}
