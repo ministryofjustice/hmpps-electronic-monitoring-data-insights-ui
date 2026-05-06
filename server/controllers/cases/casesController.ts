@@ -276,6 +276,7 @@ export default class CasesController {
       fromDate: queryRange.fromDate,
       toDate: queryRange.toDate,
       locationAlert,
+      currentUrl: encodeURIComponent(String(req.originalUrl)),
     })
   }
 

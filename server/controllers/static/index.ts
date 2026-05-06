@@ -12,6 +12,7 @@ export default class StaticController {
     })
     res.render('pages/mapHelp', {
       locale: mapHelplocale,
+      returnUrl: req.query?.returnUrl ? decodeURIComponent(req.query.returnUrl as string) : '/',
     })
   }
 }

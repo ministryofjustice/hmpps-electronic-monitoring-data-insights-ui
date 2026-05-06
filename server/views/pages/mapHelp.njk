@@ -5,7 +5,7 @@
 
 {% block content %}
 
-  <a href="javascript:history.back()" class="govuk-back-link">Back</a>
+  <a href="{{ returnUrl or '/' }}" class="govuk-back-link">Back</a>
 
   <h2 class="govuk-heading-l">{{locale.title}}</h2>
   <div class="govuk-width-container map-help-section-container">
