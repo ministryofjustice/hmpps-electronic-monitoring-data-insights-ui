@@ -64,6 +64,7 @@ export interface LocationPageRenderData {
   positions: Position[]
   showComplianceBadge: boolean
   toDate: string
+  currentUrl?: string
 }
 
 export interface LocationApiResponse {
@@ -401,6 +402,7 @@ export const buildLocationPageWithServiceError = (
     locationAlert: {
       text: 'Unable to fetch location data. Please try again later.',
     },
+    currentUrl: encodeURIComponent(`/cases/${crn}/location?fromDate=${fromDate}&toDate=${toDate}`),
     ...overrides,
   })
 }

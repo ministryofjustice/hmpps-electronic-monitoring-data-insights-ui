@@ -14,7 +14,7 @@ describe('StaticController', () => {
 
   beforeEach(() => {
     auditService = new AuditService(null) as jest.Mocked<AuditService>
-    req = { id: 'test-correlation-id' }
+
     res = {
       locals: { user },
       render: jest.fn(),
@@ -28,6 +28,10 @@ describe('StaticController', () => {
 
   describe('mapHelp', () => {
     it('logs page view and renders the map help page with locale content', async () => {
+      req = {
+        id: 'test-correlation-id',
+        query: { returnUrl: '/cases/123?tab=map' },
+      }
       await controller.mapHelp(req as Request, res as Response)
 
       expect(auditService.logPageView).toHaveBeenCalledWith(Page.MAP_HELP_PAGE, {
@@ -36,6 +40,18 @@ describe('StaticController', () => {
       })
       expect(res.render).toHaveBeenCalledWith('pages/mapHelp', {
         locale: mapHelpLocale,
+        returnUrl: '/cases/123?tab=map',
+      })
+    })
+
+    it('defaults returnUrl to "/" if no query param is provided', async () => {
+      req = { id: 'test-id', query: {} }
+
+      await controller.mapHelp(req as Request, res as Response)
+
+      expect(res.render).toHaveBeenCalledWith('pages/mapHelp', {
+        locale: mapHelpLocale,
+        returnUrl: '/',
       })
     })
   })
