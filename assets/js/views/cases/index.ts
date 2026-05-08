@@ -35,6 +35,33 @@ const initialiseDirectionScreenReader = () => {
   })
 }
 
+const injectShadowFocusStyles = (emMap: EmMap) => {
+  const { shadowRoot } = emMap as unknown as HTMLElement & { shadowRoot: ShadowRoot | null }
+  if (!shadowRoot) return
+
+  const sheet = new CSSStyleSheet()
+  sheet.replaceSync(`
+     :host .ol-control button:focus,
+     :host .ol-zoom-in:focus,
+     :host .ol-zoom-out:focus {
+       color: #0b0c0c !important;
+       outline: 3px solid #ffdd00 !important;
+       outline-offset: 0 !important;
+       box-shadow: inset 0 0 0 2px !important;
+       text-decoration: none;
+     }
+
+     :host .ol-control button:focus:not(:focus-visible),
+     :host .ol-zoom-in:focus:not(:focus-visible),
+     :host .ol-zoom-out:focus:not(:focus-visible) {
+       background-color: revert;
+       box-shadow: none;
+       color: revert;
+     }
+   `)
+  shadowRoot.adoptedStyleSheets = [...shadowRoot.adoptedStyleSheets, sheet]
+}
+
 const initialiseLocationDataView = () => {
   const mapContainer = queryElement(document, '[data-qa="em-map"]') as HTMLElement
   const emMap = queryElement(mapContainer, 'em-map') as unknown as EmMap
@@ -45,7 +72,7 @@ const initialiseLocationDataView = () => {
       setTimeout(setupMap, 200)
       return
     }
-
+    injectShadowFocusStyles(emMap as EmMap)
     const { positions } = emMap
 
     const locationsLayer = emMap.addLayer(
