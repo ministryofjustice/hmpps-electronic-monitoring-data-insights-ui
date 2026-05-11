@@ -28,6 +28,15 @@ interface MockEmMapElement {
   getNativeLayer: jest.Mock
 }
 
+interface MockShadowRoot {
+  adoptedStyleSheets: CSSStyleSheet[]
+  querySelector: jest.Mock
+}
+
+interface MockEmMapWithShadow extends MockEmMapElement {
+  shadowRoot: MockShadowRoot | null
+}
+
 jest.mock('./controls/mapLayersControls', () => jest.fn().mockImplementation(() => ({})))
 jest.mock('@ministryofjustice/hmpps-electronic-monitoring-components/map', () => ({}))
 jest.mock('@ministryofjustice/hmpps-electronic-monitoring-components/map/layers', () => ({
@@ -52,7 +61,7 @@ jest.mock('./controls/getRotatedDirection', () => jest.fn())
 jest.mock('../../utils/utils')
 
 describe('initialiseLocationDataView', () => {
-  let mockEmMap: MockEmMapElement
+  let mockEmMap: MockEmMapWithShadow
   let mockMap: MockOlMapInstance
 
   beforeEach(() => {
@@ -75,15 +84,23 @@ describe('initialiseLocationDataView', () => {
       dispatchEvent: jest.fn(),
       fitToAllLayers: jest.fn(),
       getNativeLayer: jest.fn(),
+      shadowRoot: {
+        adoptedStyleSheets: [],
+        querySelector: jest.fn(),
+      },
     }
-
-    const emMapStub = mockEmMap as unknown as EmMap
-
-    ;(utils.queryElement as jest.Mock).mockReturnValue(emMapStub)
+    ;(utils.queryElement as jest.Mock).mockReturnValue(mockEmMap as unknown as EmMap)
   })
 
   afterEach(() => {
     jest.clearAllMocks()
+  })
+
+  const mockReplaceSync = jest.fn()
+  beforeAll(() => {
+    global.CSSStyleSheet = jest.fn().mockImplementation(() => ({
+      replaceSync: mockReplaceSync,
+    })) as unknown as typeof CSSStyleSheet
   })
 
   it('should add a LocationsLayer to the map', () => {
@@ -129,5 +146,28 @@ describe('initialiseLocationDataView', () => {
 
     expect(mockEmMap.dispatchEvent).toHaveBeenCalled()
     jest.useRealTimers()
+  })
+
+  describe('injectShadowFocusStyles', () => {
+    it('should not throw if shadowRoot is null', () => {
+      mockEmMap.shadowRoot = null
+      expect(() => initialiseLocationDataView()).not.toThrow()
+    })
+
+    it('should include MoJ focus styles in the injected stylesheet', () => {
+      initialiseLocationDataView()
+      expect(mockReplaceSync).toHaveBeenCalledWith(expect.stringContaining(':host .ol-zoom-in:focus'))
+      expect(mockReplaceSync).toHaveBeenCalledWith(expect.stringContaining('outline: 3px solid #ffdd00 !important'))
+      expect(mockReplaceSync).toHaveBeenCalledWith(expect.stringContaining(':focus:not(:focus-visible)'))
+    })
+
+    it('should preserve any existing stylesheets on the shadow root', () => {
+      const existingSheet = new CSSStyleSheet()
+      ;(mockEmMap.shadowRoot as MockShadowRoot).adoptedStyleSheets = [existingSheet]
+      initialiseLocationDataView()
+      const { adoptedStyleSheets } = mockEmMap.shadowRoot as MockShadowRoot
+      expect(adoptedStyleSheets).toHaveLength(2)
+      expect(adoptedStyleSheets[0]).toBe(existingSheet)
+    })
   })
 })

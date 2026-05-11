@@ -66,12 +66,12 @@ export default class MapLayersControl extends Control {
         <fieldset class="govuk-fieldset">
             <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
                 <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="mlc-base-street" name="mlc-base" type="radio" value="street" checked>
-                <label class="govuk-label govuk-radios__label" for="mlc-base-street">Street</label>
+                  <input class="govuk-radios__input" id="mlc-base-street" name="mlc-base" type="radio" value="street" checked>
+                  <label class="govuk-label govuk-radios__label" for="mlc-base-street">Street</label>
                 </div>
                 <div class="govuk-radios__item">
-                <input class="govuk-radios__input" id="mlc-base-satellite" name="mlc-base" type="radio" value="satellite">
-                <label class="govuk-label govuk-radios__label" for="mlc-base-satellite">Satellite</label>
+                  <input class="govuk-radios__input" id="mlc-base-satellite" name="mlc-base" type="radio" value="satellite">
+                  <label class="govuk-label govuk-radios__label" for="mlc-base-satellite">Satellite</label>
                 </div>
             </div>
         </fieldset>
