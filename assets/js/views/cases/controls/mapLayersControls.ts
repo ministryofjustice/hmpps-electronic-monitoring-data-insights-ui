@@ -55,7 +55,7 @@ export default class MapLayersControl extends Control {
         <div class="mlc-header govuk-!-margin-bottom-1">
           <button 
             type="button" 
-            class="mlc-panel__close" 
+            class="mlc-panel__close govuk-button govuk-button--secondary" 
             aria-label="Close control panel"
           >
             Close control panel

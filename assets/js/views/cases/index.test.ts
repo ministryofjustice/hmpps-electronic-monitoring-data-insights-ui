@@ -63,6 +63,8 @@ jest.mock('../../utils/utils')
 describe('initialiseLocationDataView', () => {
   let mockEmMap: MockEmMapWithShadow
   let mockMap: MockOlMapInstance
+  const mockCompassReset = { setAttribute: jest.fn() }
+  const mockZoomSliderThumb = { setAttribute: jest.fn() }
 
   beforeEach(() => {
     mockMap = {
@@ -89,7 +91,11 @@ describe('initialiseLocationDataView', () => {
         querySelector: jest.fn(),
       },
     }
-    ;(utils.queryElement as jest.Mock).mockReturnValue(mockEmMap as unknown as EmMap)
+    ;(utils.queryElement as jest.Mock).mockImplementation((_root: unknown, selector: string) => {
+      if (selector === '.ol-rotate-reset') return mockCompassReset
+      if (selector === '.ol-zoomslider-thumb') return mockZoomSliderThumb
+      return mockEmMap as unknown as EmMap
+    })
   })
 
   afterEach(() => {
@@ -168,6 +174,18 @@ describe('initialiseLocationDataView', () => {
       const { adoptedStyleSheets } = mockEmMap.shadowRoot as MockShadowRoot
       expect(adoptedStyleSheets).toHaveLength(2)
       expect(adoptedStyleSheets[0]).toBe(existingSheet)
+    })
+  })
+
+  describe('shadow DOM aria labels', () => {
+    it('should set aria-label on compass reset button', () => {
+      initialiseLocationDataView()
+      expect(mockCompassReset.setAttribute).toHaveBeenCalledWith('aria-label', 'Reset map orientation to north')
+    })
+
+    it('should set aria-label on zoom slider thumb', () => {
+      initialiseLocationDataView()
+      expect(mockZoomSliderThumb.setAttribute).toHaveBeenCalledWith('aria-label', 'Adjust map zoom')
     })
   })
 })

@@ -12,6 +12,12 @@ import getRotatedDirection from './controls/getRotatedDirection'
 import createLockRotationControl from './controls/createLockRotationControl'
 import { queryElement } from '../../utils/utils'
 
+interface ShadowRootHost extends HTMLElement {
+  shadowRoot: ShadowRoot | null
+}
+
+const getShadowRoot = (emMap: EmMap): ShadowRoot | null => (emMap as ShadowRootHost).shadowRoot
+
 const initialiseDirectionScreenReader = () => {
   const emMap = queryElement(document, 'em-map') as EmMap
   const panAnnounce = queryElement(document, '#map-pan-announce') as HTMLElement
@@ -36,7 +42,7 @@ const initialiseDirectionScreenReader = () => {
 }
 
 const injectShadowFocusStyles = (emMap: EmMap) => {
-  const { shadowRoot } = emMap as unknown as HTMLElement & { shadowRoot: ShadowRoot | null }
+  const shadowRoot = getShadowRoot(emMap)
   if (!shadowRoot) return
 
   const sheet = new CSSStyleSheet()
@@ -149,6 +155,14 @@ const initialiseLocationDataView = () => {
         detail: { message: 'All custom layers added' },
       }),
     )
+    const shadowRoot = getShadowRoot(emMap)
+    if (!shadowRoot) return
+
+    const compassReset = queryElement(shadowRoot, '.ol-rotate-reset') as HTMLElement
+    compassReset.setAttribute('aria-label', 'Reset map orientation to north')
+
+    const zoomSliderThumb = queryElement(shadowRoot, '.ol-zoomslider-thumb') as HTMLElement
+    zoomSliderThumb.setAttribute('aria-label', 'Adjust map zoom')
 
     const nativeLayer = locationsLayer.getNativeLayer()
     if (nativeLayer && Array.isArray(nativeLayer)) {
