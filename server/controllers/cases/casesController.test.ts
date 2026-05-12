@@ -13,6 +13,7 @@ import {
   buildLocationPageWithServiceError,
   buildLocationPageWithValidationErrors,
 } from '../../testutils/factories/locationPage.factory'
+import casesLocationLocale from './cases-location.locale.json'
 
 jest.mock('../../services/auditService')
 jest.mock('../../services/caseLocationActivityService')
@@ -125,7 +126,11 @@ describe('CasesController', () => {
       })
       expect(res.render).toHaveBeenCalledWith(
         'pages/casesLocation',
-        buildLocationPageInitialState('X172591', { popData: mockPopDetails, currentUrl: mockCurrentUrl }),
+        buildLocationPageInitialState('X172591', {
+          locale: casesLocationLocale,
+          popData: mockPopDetails,
+          currentUrl: mockCurrentUrl,
+        }),
       )
     })
 
@@ -139,6 +144,7 @@ describe('CasesController', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/casesLocation',
         buildLocationPageWithValidationErrors(validationErrors, mockQueryData.crn, {
+          locale: casesLocationLocale,
           popData: mockPopDetails,
           currentUrl: mockCurrentUrl,
         }),
@@ -151,8 +157,9 @@ describe('CasesController', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/casesLocation',
         buildLocationPageWithValidationErrors([], mockQueryData.crn, {
+          locale: casesLocationLocale,
           popData: mockPopDetails,
-          locationAlert: { text: 'No location data found for the selected date range.' },
+          locationAlert: { text: casesLocationLocale.alerts.noResults },
           currentUrl: mockCurrentUrl,
         }),
       )
@@ -164,6 +171,7 @@ describe('CasesController', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/casesLocation',
         buildLocationPageWithServiceError(mockQueryData.crn, mockQueryData.start.date, mockQueryData.end.date, {
+          locale: casesLocationLocale,
           popData: mockPopDetails,
           currentUrl: mockCurrentUrl,
         }),

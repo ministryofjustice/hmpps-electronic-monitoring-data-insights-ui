@@ -24,7 +24,7 @@
   {% include "partials/popAlert.njk" %}
   {% include "partials/casesSubNavigation.njk" %}
   <div class="location-activity">
-    <h2 class="govuk-heading-m">Location activity</h2>
+    <h2 class="govuk-heading-m">{{ locale.title }}</h2>
     <div class="date-time-picker">
       <div class="govuk-grid-row">
         {% include "partials/mapSearchForm.njk" %}
@@ -33,11 +33,11 @@
     <div class="em-map" 
         data-qa="em-map" 
         role="region" 
-        aria-label="Interactive map" aria-describedby="map-instructions"
+        aria-label="{{ locale.map.ariaLabel }}" aria-describedby="map-instructions"
         tabindex="0">
 
         <span id="map-instructions" class="govuk-visually-hidden">
-          Use arrow keys to pan, plus and minus to zoom.
+          {{ locale.map.instructions }}
         </span>
         <div id="map-pan-announce" aria-live="polite" aria-atomic="true" class="govuk-visually-hidden"></div>
         <div id="map-rotation-status" aria-live="polite" aria-atomic="true" class="govuk-visually-hidden"></div>
@@ -58,20 +58,20 @@
 
        {% raw %}
   <template id="overlay-title-mdss-location">
-    <div><strong>Point {{ displayPointNumber }}</strong></div>
+    <div><strong>{{ locale.overlay.point }} {{ displayPointNumber }}</strong></div>
   </template>
 
   <template id="overlay-body-mdss-location">
     <div class="app-map__overlay-row">
-      <span class="app-map__overlay-label">Accuracy</span>
+      <span class="app-map__overlay-label">{{ locale.overlay.accuracy }}</span>
       <span class="app-map__overlay-value">{{ displayAccuracy }}</span>
     </div>
     <div class="app-map__overlay-row">
-      <span class="app-map__overlay-label">Date / time</span>
+      <span class="app-map__overlay-label">{{ locale.overlay.dateTime }}</span>
       <span class="app-map__overlay-value">{{ displayGpsDate }}</span>
     </div>
     <div class="app-map__overlay-row">
-      <span class="app-map__overlay-label">Lat / Lng</span>
+      <span class="app-map__overlay-label">{{ locale.overlay.latLng }}</span>
       <span class="app-map__overlay-value app-map__overlay-value--coords">{{ displayLatitude }}, {{ displayLongitude }}</span>
     </div>
   </template>
@@ -169,6 +169,6 @@
         </script>
      
     </div>
-    <p class="govuk-body-m"><a href="/map-help?returnUrl={{ currentUrl }}">Guide to the map</a></p>
+    <p class="govuk-body-m"><a href="/map-help?returnUrl={{ currentUrl }}">{{ locale.links.mapHelp }}</a></p>
   </div>
 {% endblock %}

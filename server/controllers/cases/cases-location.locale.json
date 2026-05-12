@@ -1,0 +1,31 @@
+{
+  "title": "Location activity",
+  "map": {
+    "ariaLabel": "Interactive map",
+    "instructions": "Use arrow keys to pan, plus and minus to zoom."
+  },
+  "overlay": {
+    "point": "Point",
+    "accuracy": "Accuracy",
+    "dateTime": "Date / time",
+    "latLng": "Lat / Lng"
+  },
+  "links": {
+    "mapHelp": "Guide to the map"
+  },
+  "search": {
+    "errorSummaryTitle": "There is a problem",
+    "heading": "Search map by date and time",
+    "crn": "CRN",
+    "dateFrom": "Date from",
+    "timeFrom": "Time from",
+    "dateTo": "Date to",
+    "timeTo": "Time to",
+    "update": "Update map",
+    "clear": "Clear filters"
+  },
+  "alerts": {
+    "fetchError": "Unable to fetch location data. Please try again later.",
+    "noResults": "No location data found for the selected date range."
+  }
+}

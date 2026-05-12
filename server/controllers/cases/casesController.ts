@@ -14,6 +14,7 @@ import { searchLocationsQuerySchema } from '../../schemas/locationActivity/searc
 import { getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
 import { ValidationResult } from '../../models/ValidationResult'
 import { convertZodErrorToValidationError } from '../../utils/errors'
+import casesLocationLocale from './cases-location.locale.json'
 
 interface LocationDateFilterFormData {
   date: string
@@ -243,7 +244,7 @@ export default class CasesController {
           } catch (error) {
             /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
             console.error('Error fetching locations:', error)
-            locationAlert = { text: 'Unable to fetch location data. Please try again later.' }
+            locationAlert = { text: casesLocationLocale.alerts.fetchError }
           }
         } else {
           validationErrors = validation.errors || []
@@ -255,11 +256,12 @@ export default class CasesController {
       formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
     }
     if (!locationAlert && hasSearched && positions.length === 0) {
-      locationAlert = { text: 'No location data found for the selected date range.' }
+      locationAlert = { text: casesLocationLocale.alerts.noResults }
     }
     res.render('pages/casesLocation', {
       activeNav: 'Location activity',
       activeTab: 'location-activity',
+      locale: casesLocationLocale,
       popData: mockPopDetails,
       positions: positionCardData,
       showComplianceBadge: true,

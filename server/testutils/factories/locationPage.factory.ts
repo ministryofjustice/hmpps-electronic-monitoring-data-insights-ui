@@ -56,6 +56,7 @@ export interface LocationPageRenderData {
   activeTab: string
   alert: boolean
   dateFilterForm: DateFilterForm
+  locale?: Record<string, unknown>
   fromDate: string
   hasSearched: boolean
   id: string | undefined
