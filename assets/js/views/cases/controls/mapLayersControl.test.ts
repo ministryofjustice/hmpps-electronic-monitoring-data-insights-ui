@@ -93,4 +93,31 @@ describe('MapLayersControl', () => {
       expect(openBtn.hasAttribute('data-hidden')).toBe(true)
     })
   })
+
+  describe('focus management', () => {
+    it('moves focus to the first focusable element in the panel when opened', () => {
+      const closeBtn = mapContainer.querySelector('.mlc-panel__close') as HTMLElement
+      closeBtn.click()
+
+      const openBtn = mapContainer.querySelector('.mlc-open-btn') as HTMLElement
+
+      const firstFocusable = mapContainer.querySelector<HTMLElement>(
+        '.mlc-panel input, .mlc-panel button, .mlc-panel [href], .mlc-panel select, .mlc-panel textarea, .mlc-panel [tabindex]:not([tabindex="-1"])',
+      )
+      const focusSpy = jest.spyOn(firstFocusable!, 'focus')
+
+      openBtn.click()
+      expect(focusSpy).toHaveBeenCalled()
+    })
+
+    it('moves focus back to the open button when the panel is closed', () => {
+      const openBtn = mapContainer.querySelector('.mlc-open-btn') as HTMLElement
+      const focusSpy = jest.spyOn(openBtn, 'focus')
+
+      const closeBtn = mapContainer.querySelector('.mlc-panel__close') as HTMLElement
+      closeBtn.click()
+
+      expect(focusSpy).toHaveBeenCalled()
+    })
+  })
 })

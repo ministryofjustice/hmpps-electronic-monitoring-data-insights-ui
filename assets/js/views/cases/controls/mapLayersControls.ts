@@ -117,9 +117,18 @@ export default class MapLayersControl extends Control {
     bindCheckbox('#mlc-confidence', opts.confidenceLayer)
     bindCheckbox('#mlc-numbers', opts.numbersLayer)
 
-    panel.querySelector('.mlc-panel__close')?.addEventListener('click', () => toggle(panel, openBtn))
+    panel.querySelector('.mlc-panel__close')?.addEventListener('click', () => {
+      toggle(panel, openBtn)
+      openBtn.focus()
+    })
 
-    openBtn.addEventListener('click', () => toggle(openBtn, panel))
+    openBtn.addEventListener('click', () => {
+      toggle(openBtn, panel)
+      const firstFocusable = panel.querySelector<HTMLElement>(
+        'input, button, [href], select, textarea, [tabindex]:not([tabindex="-1"])',
+      )
+      firstFocusable?.focus()
+    })
 
     return { panel, openBtn }
   }
