@@ -164,6 +164,13 @@ const initialiseLocationDataView = () => {
     const zoomSliderThumb = queryElement(shadowRoot, '.ol-zoomslider-thumb') as HTMLElement
     zoomSliderThumb.setAttribute('aria-label', 'Adjust map zoom')
 
+    const olZoomSlider = queryElement(shadowRoot, '.ol-zoomslider') as HTMLElement | null
+    const olRotate = queryElement(shadowRoot, '.ol-rotate') as HTMLElement | null
+
+    if (olZoomSlider && olRotate && olRotate.parentNode) {
+      olRotate.parentNode.insertBefore(olZoomSlider, olRotate)
+    }
+
     const nativeLayer = locationsLayer.getNativeLayer()
     if (nativeLayer && Array.isArray(nativeLayer)) {
       const layer = nativeLayer[0] as VectorLayer
