@@ -37,7 +37,10 @@
                     classes: "govuk-label--s govuk-margin-bottom-2"
                 },
                 errorMessage: { text: dateErrorMessage } if dateErrorMessage,
-                value: params.value
+                value: params.value,
+                hint: {
+                    text: "For example, 17/5/2024"
+                }
             }) }}
         </fieldset>
     </div>
@@ -69,7 +72,10 @@
                     value: params.minute,
                     attributes: { "data-qa": params.id + "-minute" }
                 }
-            ]
+            ],
+            hint: {
+                text: "For example, 14:55"
+            }
         }) }}
     {% endif %}
 </div>

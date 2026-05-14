@@ -80,11 +80,13 @@
                     </div>
                      <div class="govuk-grid-column-one-third">
                         <div class="map-search__form-actions">
-                            {{ govukButton({
-                                text: locale.search.update,
-                                classes: "govuk-!-margin-right-2 govuk-!-margin-bottom-0"
-                            }) }}
-                            <a href="{{ form.action }}" class="govuk-link govuk-link--no-visited-state">{{ locale.search.clear }}</a>
+                            <div class="govuk-button-group">
+                                {{ govukButton({
+                                    text: locale.search.update,
+                                    classes: "govuk-!-margin-right-2 govuk-!-margin-bottom-0"
+                                }) }}
+                                <a href="{{ form.action }}" class="govuk-link govuk-link--no-visited-state">{{ locale.search.clear }}</a>
+                            </div>
                         </div>
                     </div>
                 </div>
