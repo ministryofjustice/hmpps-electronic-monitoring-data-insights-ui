@@ -9,7 +9,7 @@
 
 {% if form.errorSummary and form.errorSummary | length %}
     {{ govukErrorSummary({
-        titleText: "There is a problem",
+        titleText: locale.search.errorSummaryTitle,
         errorList: form.errorSummary
     }) }}
 {% endif %}
@@ -29,7 +29,7 @@
 
 <div class="govuk-width-container">
     <div class="govuk-grid-row govuk-!-margin-bottom-3 govuk-!-margin-right-0 govuk-!-margin-left-0">
-        <h3 class="govuk-heading-s">Search map by date and time</h3>
+        <h3 class="govuk-heading-s">{{ locale.search.heading }}</h3>
         <div class="map-search govuk-!-padding-4">
             <form
                 id="dateFilterForm"
@@ -43,7 +43,7 @@
                 {{
                     govukInput({
                         label: {
-                        text: "CRN",
+                        text: locale.search.crn,
                         classes: "govuk-label--s"
                         },
                         classes: "govuk-date-input__input govuk-input--width-5",
@@ -58,8 +58,8 @@
                         {{ dtp.date_time_picker({
                             id: "start",
                             name: "start",
-                            labelText: "Date from",
-                            timeLabel: "Time from",
+                            labelText: locale.search.dateFrom,
+                            timeLabel: locale.search.timeFrom,
                             value: form.values.fromDate.date,
                             hour: form.values.fromDate.hour,
                             minute: form.values.fromDate.minute,
@@ -70,8 +70,8 @@
                         {{ dtp.date_time_picker({
                             id: "end",
                             name: "end",
-                            labelText: "Date to",
-                            timeLabel: "Time to",
+                            labelText: locale.search.dateTo,
+                            timeLabel: locale.search.timeTo,
                             value: form.values.toDate.date,
                             hour: form.values.toDate.hour,
                             minute: form.values.toDate.minute,
@@ -80,11 +80,13 @@
                     </div>
                      <div class="govuk-grid-column-one-third">
                         <div class="map-search__form-actions">
-                            {{ govukButton({
-                                text: "Update map",
-                                classes: "govuk-!-margin-right-2 govuk-!-margin-bottom-0"
-                            }) }}
-                            <a href="{{ form.action }}" class="govuk-link govuk-link--no-visited-state">Clear filters</a>
+                            <div class="govuk-button-group">
+                                {{ govukButton({
+                                    text: locale.search.update,
+                                    classes: "govuk-!-margin-right-2 govuk-!-margin-bottom-0"
+                                }) }}
+                                <a href="{{ form.action }}" class="govuk-link govuk-link--no-visited-state">{{ locale.search.clear }}</a>
+                            </div>
                         </div>
                     </div>
                 </div>
