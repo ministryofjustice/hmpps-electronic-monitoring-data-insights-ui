@@ -6,9 +6,6 @@ import config from '../config'
 export default function setUpWebSecurity(): Router {
   const router = express.Router()
 
-  // Secure code best practice - see:
-  // 1. https://expressjs.com/en/advanced/best-practice-security.html,
-  // 2. https://www.npmjs.com/package/helmet
   router.use((_req: Request, res: Response, next: NextFunction) => {
     res.locals.cspNonce = crypto.randomBytes(16).toString('hex')
     next()
@@ -30,6 +27,12 @@ export default function setUpWebSecurity(): Router {
           fontSrc: ["'self'", 'cdn.jsdelivr.net'],
           workerSrc: ["'self'", 'blob:'],
           formAction: [`'self' ${config.apis.hmppsAuth.externalUrl}`],
+          connectSrc: [
+            "'self'",
+            'https://probation-frontend-components-dev.hmpps.service.justice.gov.uk',
+            'https://api.os.uk',
+          ],
+          imgSrc: ["'self'", 'data:', 'blob:', 'https://*.os.uk'],
         },
       },
       crossOriginEmbedderPolicy: false,
