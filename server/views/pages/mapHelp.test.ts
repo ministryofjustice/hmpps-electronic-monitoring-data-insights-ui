@@ -29,10 +29,10 @@ describe('mapHelp template', () => {
       title: 'Help with the map',
       content: {
         confidenceCircles: {
-          title: 'Confidence circles',
+          title: 'Location accuracy',
           image: {
             src: '/assets/images/confidence-circles.png',
-            alt: 'Confidence circles map',
+            alt: 'Location accuracy map',
           },
           'first-pagaraphs': ['First paragraph', 'Second paragraph'],
           insert: 'Inset paragraph',
@@ -45,9 +45,9 @@ describe('mapHelp template', () => {
     })
 
     expect(html).toContain('Help with the map')
-    expect(html).toContain('Confidence circles')
+    expect(html).toContain('Location accuracy')
     expect(html).toContain('src="/assets/images/confidence-circles.png"')
-    expect(html).toContain('alt="Confidence circles map"')
+    expect(html).toContain('alt="Location accuracy map"')
     expect(html).toContain('First paragraph')
     expect(html).toContain('Second paragraph')
     expect(html).toContain('<p class="govuk-inset-text">Inset paragraph</p>')
