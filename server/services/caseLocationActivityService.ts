@@ -74,6 +74,8 @@ export default class CaseLocationActivityService {
       displayAccuracy: formatDisplayValue(position.precision, ' meters', 'N/A'),
       displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
       displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
+      displaySpeed: formatDisplayValue(position.speed, ' m/s', 'N/A'),
+      displayGeolocationMechanism: position.geolocationMechanism,
     }))
   }
 

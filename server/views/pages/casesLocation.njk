@@ -74,6 +74,14 @@
       <span class="app-map__overlay-label">{{ locale.overlay.latLng }}</span>
       <span class="app-map__overlay-value app-map__overlay-value--coords">{{ displayLatitude }}, {{ displayLongitude }}</span>
     </div>
+    <div class="app-map__overlay-row">
+      <span class="app-map__overlay-label">{{ locale.overlay.speed }}</span>
+      <span class="app-map__overlay-value">{{ displaySpeed }}</span>
+    </div>
+    <div class="app-map__overlay-row">
+      <span class="app-map__overlay-label">{{ locale.overlay.geolocationMechanism }}</span>
+      <span class="app-map__overlay-value">{{ displayGeolocationMechanism }}</span>
+    </div>
   </template>
 {% endraw %}
 

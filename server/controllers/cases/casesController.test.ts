@@ -193,4 +193,17 @@ describe('CasesController', () => {
       })
     })
   })
+
+  describe('casesLocationLocale', () => {
+    it('should contain the expected overlay fields', () => {
+      expect(casesLocationLocale.overlay).toMatchObject({
+        point: expect.any(String),
+        accuracy: expect.any(String),
+        dateTime: expect.any(String),
+        latLng: expect.any(String),
+        speed: expect.any(String),
+        geolocationMechanism: expect.any(String),
+      })
+    })
+  })
 })
