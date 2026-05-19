@@ -84,11 +84,11 @@ export default class MapLayersControl extends Control {
           <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
               <input class="govuk-checkboxes__input" id="mlc-tracks" type="checkbox" ${(opts.map.getNativeLayer(opts.tracksLayer.id) as BaseLayer)?.getVisible() ? 'checked' : ''}>
-              <label class="govuk-label govuk-checkboxes__label" for="mlc-tracks">Direction info</label>
+              <label class="govuk-label govuk-checkboxes__label" for="mlc-tracks">Direction of travel</label>
             </div>
             <div class="govuk-checkboxes__item">
               <input class="govuk-checkboxes__input" id="mlc-confidence" type="checkbox" ${(opts.map.getNativeLayer(opts.confidenceLayer?.id) as BaseLayer | undefined)?.getVisible() ? 'checked' : ''}>
-              <label class="govuk-label govuk-checkboxes__label" for="mlc-confidence">Confidence circles</label>
+              <label class="govuk-label govuk-checkboxes__label" for="mlc-confidence">Location accuracy</label>
             </div>
             <div class="govuk-checkboxes__item">
               <input class="govuk-checkboxes__input" id="mlc-numbers" type="checkbox" ${(opts.map.getNativeLayer(opts.numbersLayer?.id) as BaseLayer | undefined)?.getVisible() ? 'checked' : ''}>
