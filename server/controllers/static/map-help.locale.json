@@ -46,7 +46,7 @@
         "alt": ""
       },
       "first-pagaraphs": [
-        "The lines on maps show the likely path a person on probation took between locations and do not represent a confirmed route."
+        "Each point is joined to the next point in the sequence by a line to form a trail."
       ],
       "insert": "The trail shown may not reflect the actual route taken.",
       "last-pagaraphs": [
