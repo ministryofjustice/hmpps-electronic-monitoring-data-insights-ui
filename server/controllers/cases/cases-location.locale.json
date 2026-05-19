@@ -8,7 +8,9 @@
     "point": "Point",
     "accuracy": "Accuracy",
     "dateTime": "Date / time",
-    "latLng": "Lat / Lng"
+    "latLng": "Lat / Lng",
+    "speed": "Speed",
+    "geolocationMechanism": "Signal type"
   },
   "links": {
     "mapHelp": "Guide to the map"
