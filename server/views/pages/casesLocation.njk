@@ -58,28 +58,28 @@
 
        {% raw %}
   <template id="overlay-title-mdss-location">
-    <div><strong>{{ locale.overlay.point }} {{ displayPointNumber }}</strong></div>
+    <div><strong>{{ positionCardHeader }} {{ displayPointNumber }}</strong></div>
   </template>
 
   <template id="overlay-body-mdss-location">
     <div class="app-map__overlay-row">
-      <span class="app-map__overlay-label">{{ locale.overlay.accuracy }}</span>
+      <span class="app-map__overlay-label">{{ positionCardAccuracyLabel }}</span>
       <span class="app-map__overlay-value">{{ displayAccuracy }}</span>
     </div>
     <div class="app-map__overlay-row">
-      <span class="app-map__overlay-label">{{ locale.overlay.dateTime }}</span>
+      <span class="app-map__overlay-label">{{ positionCardDateTimeLabel }}</span>
       <span class="app-map__overlay-value">{{ displayGpsDate }}</span>
     </div>
     <div class="app-map__overlay-row">
-      <span class="app-map__overlay-label">{{ locale.overlay.latLng }}</span>
+      <span class="app-map__overlay-label">{{ positionCardLatLngLabel }}</span>
       <span class="app-map__overlay-value app-map__overlay-value--coords">{{ displayLatitude }}, {{ displayLongitude }}</span>
     </div>
     <div class="app-map__overlay-row">
-      <span class="app-map__overlay-label">{{ locale.overlay.speed }}</span>
+      <span class="app-map__overlay-label">{{ positionCardSpeedLabel }}</span>
       <span class="app-map__overlay-value">{{ displaySpeed }}</span>
     </div>
     <div class="app-map__overlay-row">
-      <span class="app-map__overlay-label">{{ locale.overlay.geolocationMechanism }}</span>
+      <span class="app-map__overlay-label">{{ positionCardGeolocationMechanismLabel }}</span>
       <span class="app-map__overlay-value">{{ displayGeolocationMechanism }}</span>
     </div>
   </template>

@@ -2,6 +2,7 @@ import { formatDisplayValue } from '../presenters/helpers/formatters'
 import GeolocationMechanism from '../types/entities/geolocationMechanism'
 import { formatGpsDate } from '../utils/date'
 import LocationsService, { type Location } from './locationsService'
+import casesLocationLocale from '../controllers/cases/cases-location.locale.json'
 
 export interface CaseLocationBasePosition {
   positionId: number
@@ -29,6 +30,14 @@ export interface CaseLocationPosition extends CaseLocationBasePosition {
   displayAccuracy: string
   displayLatitude: string
   displayLongitude: string
+  displaySpeed: string
+  displayGeolocationMechanism: string
+  positionCardHeader: string
+  positionCardAccuracyLabel: string
+  positionCardDateTimeLabel: string
+  positionCardLatLngLabel: string
+  positionCardSpeedLabel: string
+  positionCardGeolocationMechanismLabel: string
 }
 
 const getGeolocationMechanism = (value: number | null): GeolocationMechanism | 'Unknown' => {
@@ -71,11 +80,17 @@ export default class CaseLocationActivityService {
       overlayBodyTemplateId: 'overlay-body-mdss-location',
       displayPointNumber: index + 1,
       displayGpsDate: formatGpsDate(position.gpsDate) || 'N/A',
-      displayAccuracy: formatDisplayValue(position.precision, ' meters', 'N/A'),
+      displayAccuracy: formatDisplayValue(position.precision, '', 'N/A'),
       displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
       displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
       displaySpeed: formatDisplayValue(position.speed, ' m/s', 'N/A'),
       displayGeolocationMechanism: position.geolocationMechanism,
+      positionCardHeader: casesLocationLocale.overlay.point,
+      positionCardAccuracyLabel: casesLocationLocale.overlay.accuracy,
+      positionCardDateTimeLabel: casesLocationLocale.overlay.dateTime,
+      positionCardLatLngLabel: casesLocationLocale.overlay.latLng,
+      positionCardSpeedLabel: casesLocationLocale.overlay.speed,
+      positionCardGeolocationMechanismLabel: casesLocationLocale.overlay.geolocationMechanism,
     }))
   }
 
