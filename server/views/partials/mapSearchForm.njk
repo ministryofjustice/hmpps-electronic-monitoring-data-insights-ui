@@ -38,6 +38,10 @@
                 class="map-search__form govuk-form-group govuk-!-margin-bottom-0"
                 method="get">
                 <input type="hidden" name="_csrf" value="{{ csrftoken }}" />
+                <input type="hidden" name="mapControls[baseLayer]" value="{{ mapControls.baseLayer }}" data-map-control-input="baseLayer" />
+                <input type="hidden" name="mapControls[tracks]" value="{{ mapControls.tracks }}" data-map-control-input="tracks" />
+                <input type="hidden" name="mapControls[confidence]" value="{{ mapControls.confidence }}" data-map-control-input="confidence" />
+                <input type="hidden" name="mapControls[numbers]" value="{{ mapControls.numbers }}" data-map-control-input="numbers" />
 
                 <div class="govuk-form-group">
                 {{

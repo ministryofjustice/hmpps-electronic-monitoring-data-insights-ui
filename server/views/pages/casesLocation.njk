@@ -32,6 +32,10 @@
     </div>
     <div class="em-map" 
         data-qa="em-map" 
+        data-map-control-base-layer="{{ mapControls.baseLayer }}"
+        data-map-control-tracks="{{ mapControls.tracks }}"
+        data-map-control-confidence="{{ mapControls.confidence }}"
+        data-map-control-numbers="{{ mapControls.numbers }}"
         role="region" 
         aria-label="{{ locale.map.ariaLabel }}" aria-describedby="map-instructions"
         tabindex="0">
