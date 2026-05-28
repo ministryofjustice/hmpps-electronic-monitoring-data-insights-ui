@@ -8,12 +8,39 @@ import {
 import { RequestHandler } from 'express'
 import type { ApplicationInfo } from '../applicationInfo'
 
+type WebInstrumentationConfig = {
+  name: string
+  value: string | boolean | number
+}
+
+function addWebInstrumentationConfig(): void {
+  const appInsightsConfig = (
+    process.env.APPLICATIONINSIGHTS_CONFIGURATION_CONTENT
+      ? JSON.parse(process.env.APPLICATIONINSIGHTS_CONFIGURATION_CONTENT)
+      : {}
+  ) as { webInstrumentationConfig?: WebInstrumentationConfig[] }
+  const webInstrumentationConfig = Array.isArray(appInsightsConfig.webInstrumentationConfig)
+    ? appInsightsConfig.webInstrumentationConfig.filter(({ name }) => name !== 'autoTrackPageVisitTime')
+    : []
+
+  process.env.APPLICATIONINSIGHTS_CONFIGURATION_CONTENT = JSON.stringify({
+    ...appInsightsConfig,
+    webInstrumentationConfig: [...webInstrumentationConfig, { name: 'autoTrackPageVisitTime', value: true }],
+  })
+}
+
 export function initialiseAppInsights(): void {
   if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
     // eslint-disable-next-line no-console
     console.log('Enabling azure application insights')
 
-    setup().setDistributedTracingMode(DistributedTracingModes.AI_AND_W3C).start()
+    addWebInstrumentationConfig()
+
+    const appInsights = setup()
+      .setDistributedTracingMode(DistributedTracingModes.AI_AND_W3C)
+      .enableWebInstrumentation(true)
+
+    appInsights.start()
   }
 }
 
