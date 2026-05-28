@@ -11,6 +11,7 @@ import {
 import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
 import initialiseLocationDataView from './index'
 import * as utils from '../../utils/utils'
+import MapLayersControl from './controls/mapLayersControls'
 
 interface MockOlMapInstance {
   addControl: jest.Mock
@@ -63,6 +64,7 @@ jest.mock('../../utils/utils')
 describe('initialiseLocationDataView', () => {
   let mockEmMap: MockEmMapWithShadow
   let mockMap: MockOlMapInstance
+  let mockMapContainer: HTMLElement
   const mockCompassReset = { setAttribute: jest.fn() }
   const mockZoomSliderThumb = { setAttribute: jest.fn() }
   const mockInsertBefore = jest.fn()
@@ -95,7 +97,10 @@ describe('initialiseLocationDataView', () => {
         querySelector: jest.fn(),
       },
     }
+    mockMapContainer = document.createElement('div')
     ;(utils.queryElement as jest.Mock).mockImplementation((_root: unknown, selector: string) => {
+      if (selector === '[data-qa="em-map"]') return mockMapContainer
+      if (selector === 'em-map') return mockEmMap as unknown as EmMap
       if (selector === '.ol-rotate-reset') return mockCompassReset
       if (selector === '.ol-zoomslider-thumb') return mockZoomSliderThumb
       if (selector === '.ol-zoomslider') return mockOlZoomSlider
@@ -105,6 +110,7 @@ describe('initialiseLocationDataView', () => {
   })
 
   afterEach(() => {
+    document.body.innerHTML = ''
     jest.clearAllMocks()
   })
 
@@ -123,6 +129,54 @@ describe('initialiseLocationDataView', () => {
   it('should add TracksLayer with visible set to true', () => {
     initialiseLocationDataView()
     expect(TracksLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: true }))
+  })
+
+  it('should initialise custom layers and map controls from the persisted map control state', () => {
+    mockMapContainer.dataset.mapControlBaseLayer = 'satellite'
+    mockMapContainer.dataset.mapControlTracks = 'false'
+    mockMapContainer.dataset.mapControlConfidence = 'true'
+    mockMapContainer.dataset.mapControlNumbers = 'false'
+
+    initialiseLocationDataView()
+
+    expect(TracksLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: false }))
+    expect(CirclesLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: true }))
+    expect(TextLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: false }))
+    expect(MapLayersControl).toHaveBeenCalledWith(
+      expect.objectContaining({
+        initialState: {
+          baseLayer: 'satellite',
+          tracks: false,
+          confidence: true,
+          numbers: false,
+        },
+        onChange: expect.any(Function),
+      }),
+    )
+  })
+
+  it('should keep map control hidden inputs in sync', () => {
+    document.body.innerHTML = `
+      <input data-map-control-input="baseLayer" value="street">
+      <input data-map-control-input="tracks" value="true">
+      <input data-map-control-input="confidence" value="true">
+      <input data-map-control-input="numbers" value="true">
+    `
+
+    initialiseLocationDataView()
+
+    const mapLayersControlOptions = (MapLayersControl as unknown as jest.Mock).mock.calls[0][0]
+    mapLayersControlOptions.onChange({
+      baseLayer: 'satellite',
+      tracks: false,
+      confidence: true,
+      numbers: false,
+    })
+
+    expect(document.querySelector<HTMLInputElement>('[data-map-control-input="baseLayer"]')?.value).toBe('satellite')
+    expect(document.querySelector<HTMLInputElement>('[data-map-control-input="tracks"]')?.value).toBe('false')
+    expect(document.querySelector<HTMLInputElement>('[data-map-control-input="confidence"]')?.value).toBe('true')
+    expect(document.querySelector<HTMLInputElement>('[data-map-control-input="numbers"]')?.value).toBe('false')
   })
 
   it('should add a CirclesLayer to the map', () => {
@@ -203,6 +257,8 @@ describe('initialiseLocationDataView', () => {
 
     it('should not throw if zoom slider or rotate control is missing', () => {
       ;(utils.queryElement as jest.Mock).mockImplementation((_root: unknown, selector: string) => {
+        if (selector === '[data-qa="em-map"]') return mockMapContainer
+        if (selector === 'em-map') return mockEmMap as unknown as EmMap
         if (selector === '.ol-rotate-reset') return mockCompassReset
         if (selector === '.ol-zoomslider-thumb') return mockZoomSliderThumb
         if (selector === '.ol-zoomslider') return null

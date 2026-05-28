@@ -5,6 +5,13 @@ import type BaseLayer from 'ol/layer/Base'
 import { ComposableLayer } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
 
+export interface MapControlState {
+  baseLayer: 'street' | 'satellite'
+  tracks: boolean
+  confidence: boolean
+  numbers: boolean
+}
+
 interface MapLayersControlOptions {
   streetLayer?: TileLayer<TileSource>
   satelliteLayer?: TileLayer<TileSource>
@@ -13,6 +20,15 @@ interface MapLayersControlOptions {
   numbersLayer?: ComposableLayer
   mapContainer: HTMLElement
   map: EmMap
+  initialState?: MapControlState
+  onChange?: (state: MapControlState) => void
+}
+
+const defaultMapControlState: MapControlState = {
+  baseLayer: 'street',
+  tracks: true,
+  confidence: true,
+  numbers: true,
 }
 
 export default class MapLayersControl extends Control {
@@ -36,6 +52,8 @@ export default class MapLayersControl extends Control {
   }
 
   private static createPanel(opts: MapLayersControlOptions): { panel: HTMLElement; openBtn: HTMLElement } {
+    const state: MapControlState = { ...defaultMapControlState, ...opts.initialState }
+
     const openBtn = document.createElement('button')
     openBtn.setAttribute('aria-label', 'Open layers panel')
     openBtn.className = 'govuk-button govuk-button--secondary mlc-open-btn'
@@ -66,11 +84,11 @@ export default class MapLayersControl extends Control {
         <fieldset class="govuk-fieldset">
             <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
                 <div class="govuk-radios__item">
-                  <input class="govuk-radios__input" id="mlc-base-street" name="mlc-base" type="radio" value="street" checked>
+                  <input class="govuk-radios__input" id="mlc-base-street" name="mlc-base" type="radio" value="street" ${state.baseLayer === 'street' ? 'checked' : ''}>
                   <label class="govuk-label govuk-radios__label" for="mlc-base-street">Street</label>
                 </div>
                 <div class="govuk-radios__item">
-                  <input class="govuk-radios__input" id="mlc-base-satellite" name="mlc-base" type="radio" value="satellite">
+                  <input class="govuk-radios__input" id="mlc-base-satellite" name="mlc-base" type="radio" value="satellite" ${state.baseLayer === 'satellite' ? 'checked' : ''}>
                   <label class="govuk-label govuk-radios__label" for="mlc-base-satellite">Satellite</label>
                 </div>
             </div>
@@ -83,39 +101,51 @@ export default class MapLayersControl extends Control {
         <fieldset class="govuk-fieldset">
           <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="mlc-tracks" type="checkbox" ${(opts.map.getNativeLayer(opts.tracksLayer.id) as BaseLayer)?.getVisible() ? 'checked' : ''}>
+              <input class="govuk-checkboxes__input" id="mlc-tracks" type="checkbox" ${state.tracks ? 'checked' : ''}>
               <label class="govuk-label govuk-checkboxes__label" for="mlc-tracks">Direction of travel</label>
             </div>
             <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="mlc-confidence" type="checkbox" ${(opts.map.getNativeLayer(opts.confidenceLayer?.id) as BaseLayer | undefined)?.getVisible() ? 'checked' : ''}>
+              <input class="govuk-checkboxes__input" id="mlc-confidence" type="checkbox" ${state.confidence ? 'checked' : ''}>
               <label class="govuk-label govuk-checkboxes__label" for="mlc-confidence">Location accuracy</label>
             </div>
             <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="mlc-numbers" type="checkbox" ${(opts.map.getNativeLayer(opts.numbersLayer?.id) as BaseLayer | undefined)?.getVisible() ? 'checked' : ''}>
+              <input class="govuk-checkboxes__input" id="mlc-numbers" type="checkbox" ${state.numbers ? 'checked' : ''}>
               <label class="govuk-label govuk-checkboxes__label" for="mlc-numbers">Point numbers</label>
             </div>
           </div>
         </fieldset>
       </div>`
 
+    const notifyChange = () => opts.onChange?.({ ...state })
+
+    opts.streetLayer?.setVisible(state.baseLayer === 'street')
+    opts.satelliteLayer?.setVisible(state.baseLayer === 'satellite')
+
     panel.querySelectorAll('[name="mlc-base"]').forEach(radio =>
       radio.addEventListener('change', e => {
         const val = (e.target as HTMLInputElement).value
+        state.baseLayer = val === 'satellite' ? 'satellite' : 'street'
         opts.streetLayer?.setVisible(val === 'street')
         opts.satelliteLayer?.setVisible(val === 'satellite')
+        notifyChange()
       }),
     )
 
-    const bindCheckbox = (id: string, layer?: ComposableLayer) => {
+    const bindCheckbox = (id: string, stateKey: 'tracks' | 'confidence' | 'numbers', layer?: ComposableLayer) => {
       const input = panel.querySelector(id) as HTMLInputElement | null
       if (!input || !layer) return
       const nativeLayer = opts.map.getNativeLayer(layer.id)
-      input.addEventListener('change', () => nativeLayer?.setVisible(input.checked))
+      ;(nativeLayer as BaseLayer | undefined)?.setVisible(state[stateKey])
+      input.addEventListener('change', () => {
+        state[stateKey] = input.checked
+        ;(nativeLayer as BaseLayer | undefined)?.setVisible(input.checked)
+        notifyChange()
+      })
     }
 
-    bindCheckbox('#mlc-tracks', opts.tracksLayer)
-    bindCheckbox('#mlc-confidence', opts.confidenceLayer)
-    bindCheckbox('#mlc-numbers', opts.numbersLayer)
+    bindCheckbox('#mlc-tracks', 'tracks', opts.tracksLayer)
+    bindCheckbox('#mlc-confidence', 'confidence', opts.confidenceLayer)
+    bindCheckbox('#mlc-numbers', 'numbers', opts.numbersLayer)
 
     panel.querySelector('.mlc-panel__close')?.addEventListener('click', () => {
       toggle(panel, openBtn)

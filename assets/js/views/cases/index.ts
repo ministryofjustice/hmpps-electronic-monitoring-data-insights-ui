@@ -7,7 +7,7 @@ import {
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import { isEmpty } from 'ol/extent'
 import type VectorLayer from 'ol/layer/Vector'
-import MapLayersControl from './controls/mapLayersControls'
+import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
 import getRotatedDirection from './controls/getRotatedDirection'
 import createLockRotationControl from './controls/createLockRotationControl'
 import { queryElement } from '../../utils/utils'
@@ -17,6 +17,35 @@ interface ShadowRootHost extends HTMLElement {
 }
 
 const getShadowRoot = (emMap: EmMap): ShadowRoot | null => (emMap as ShadowRootHost).shadowRoot
+
+const defaultMapControlState: MapControlState = {
+  baseLayer: 'street',
+  tracks: true,
+  confidence: true,
+  numbers: true,
+}
+
+const parseBooleanDataValue = (value: string | undefined): boolean | undefined => {
+  if (value === 'true') return true
+  if (value === 'false') return false
+  return undefined
+}
+
+const getInitialMapControlState = (mapContainer: HTMLElement): MapControlState => ({
+  baseLayer: mapContainer.dataset.mapControlBaseLayer === 'satellite' ? 'satellite' : 'street',
+  tracks: parseBooleanDataValue(mapContainer.dataset.mapControlTracks) ?? defaultMapControlState.tracks,
+  confidence: parseBooleanDataValue(mapContainer.dataset.mapControlConfidence) ?? defaultMapControlState.confidence,
+  numbers: parseBooleanDataValue(mapContainer.dataset.mapControlNumbers) ?? defaultMapControlState.numbers,
+})
+
+const syncMapControlInputs = (state: MapControlState) => {
+  ;(Object.keys(state) as Array<keyof MapControlState>).forEach(key => {
+    const input = document.querySelector<HTMLInputElement>(`[data-map-control-input="${key}"]`)
+    if (input) {
+      input.value = String(state[key])
+    }
+  })
+}
 
 const initialiseDirectionScreenReader = () => {
   const emMap = queryElement(document, 'em-map') as EmMap
@@ -80,6 +109,8 @@ const initialiseLocationDataView = () => {
     }
     injectShadowFocusStyles(emMap as EmMap)
     const { positions } = emMap
+    const mapControlState = getInitialMapControlState(mapContainer)
+    syncMapControlInputs(mapControlState)
 
     const locationsLayer = emMap.addLayer(
       new LocationsLayer({
@@ -98,7 +129,7 @@ const initialiseLocationDataView = () => {
     const tracksLayer = new TracksLayer({
       id: 'tracksLayer',
       positions,
-      visible: true,
+      visible: mapControlState.tracks,
       zIndex: 1,
     })
 
@@ -106,7 +137,7 @@ const initialiseLocationDataView = () => {
       positions,
       id: 'confidenceLayer',
       title: 'confidenceLayer',
-      visible: true,
+      visible: mapControlState.confidence,
       zIndex: 3,
       style: {
         fill: 'rgba(0, 0, 0, 0)',
@@ -121,7 +152,7 @@ const initialiseLocationDataView = () => {
       textProperty: 'displayPointNumber',
       id: 'numbersLayer',
       title: 'numbersLayer',
-      visible: true,
+      visible: mapControlState.numbers,
       zIndex: 3,
       style: {
         offset: { x: 0, y: 30 },
@@ -145,6 +176,8 @@ const initialiseLocationDataView = () => {
       tracksLayer,
       confidenceLayer,
       numbersLayer,
+      initialState: mapControlState,
+      onChange: syncMapControlInputs,
     })
     map.addControl(mapLayersControl)
 

@@ -17,10 +17,22 @@ jest.mock('@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 
 const makeLayer = (id: string): ComposableLayer => ({ id }) as unknown as ComposableLayer
 
-const makeMockMap = (visible = true): EmMap =>
-  ({
-    getNativeLayer: jest.fn(() => ({ getVisible: jest.fn(() => visible) })),
-  }) as unknown as EmMap
+const makeNativeLayer = (visible = true) => ({
+  getVisible: jest.fn(() => visible),
+  setVisible: jest.fn(),
+})
+
+const makeMockMap = (visible = true): EmMap => {
+  const layers = {
+    tracks: makeNativeLayer(visible),
+    confidence: makeNativeLayer(visible),
+    numbers: makeNativeLayer(visible),
+  }
+
+  return {
+    getNativeLayer: jest.fn((id: keyof typeof layers) => layers[id]),
+  } as unknown as EmMap
+}
 
 const makeOpts = (map: EmMap) => ({
   tracksLayer: makeLayer('tracks'),
@@ -55,6 +67,109 @@ describe('MapLayersControl', () => {
       const openBtn = mapContainer.querySelector('.mlc-open-btn') as HTMLElement
       expect(openBtn).toBeTruthy()
       expect(openBtn.hasAttribute('data-hidden')).toBe(true)
+    })
+
+    it('renders controls from the provided initial state', () => {
+      const opts = makeOpts(makeMockMap())
+      mapContainer = opts.mapContainer
+
+      // eslint-disable-next-line no-new
+      new MapLayersControl({
+        ...opts,
+        initialState: {
+          baseLayer: 'satellite',
+          tracks: false,
+          confidence: true,
+          numbers: false,
+        },
+      })
+
+      expect((mapContainer.querySelector('#mlc-base-satellite') as HTMLInputElement).checked).toBe(true)
+      expect((mapContainer.querySelector('#mlc-base-street') as HTMLInputElement).checked).toBe(false)
+      expect((mapContainer.querySelector('#mlc-tracks') as HTMLInputElement).checked).toBe(false)
+      expect((mapContainer.querySelector('#mlc-confidence') as HTMLInputElement).checked).toBe(true)
+      expect((mapContainer.querySelector('#mlc-numbers') as HTMLInputElement).checked).toBe(false)
+    })
+
+    it('applies the initial state to layer visibility', () => {
+      const tracksNativeLayer = makeNativeLayer()
+      const confidenceNativeLayer = makeNativeLayer()
+      const numbersNativeLayer = makeNativeLayer()
+      const map = {
+        getNativeLayer: jest.fn((id: string) => {
+          if (id === 'tracks') return tracksNativeLayer
+          if (id === 'confidence') return confidenceNativeLayer
+          if (id === 'numbers') return numbersNativeLayer
+          return undefined
+        }),
+      } as unknown as EmMap
+      const opts = makeOpts(map)
+
+      // eslint-disable-next-line no-new
+      new MapLayersControl({
+        ...opts,
+        initialState: {
+          baseLayer: 'street',
+          tracks: false,
+          confidence: true,
+          numbers: false,
+        },
+      })
+
+      expect(tracksNativeLayer.setVisible).toHaveBeenCalledWith(false)
+      expect(confidenceNativeLayer.setVisible).toHaveBeenCalledWith(true)
+      expect(numbersNativeLayer.setVisible).toHaveBeenCalledWith(false)
+    })
+  })
+
+  describe('when controls change', () => {
+    it('calls onChange with the current state for checkbox changes', () => {
+      const onChange = jest.fn()
+      const opts = makeOpts(makeMockMap())
+      mapContainer = opts.mapContainer
+
+      // eslint-disable-next-line no-new
+      new MapLayersControl({
+        ...opts,
+        initialState: {
+          baseLayer: 'street',
+          tracks: true,
+          confidence: true,
+          numbers: true,
+        },
+        onChange,
+      })
+
+      const tracks = mapContainer.querySelector('#mlc-tracks') as HTMLInputElement
+      tracks.checked = false
+      tracks.dispatchEvent(new Event('change'))
+
+      expect(onChange).toHaveBeenCalledWith({
+        baseLayer: 'street',
+        tracks: false,
+        confidence: true,
+        numbers: true,
+      })
+    })
+
+    it('calls onChange with the current state for base layer changes', () => {
+      const onChange = jest.fn()
+      const opts = makeOpts(makeMockMap())
+      mapContainer = opts.mapContainer
+
+      // eslint-disable-next-line no-new
+      new MapLayersControl({ ...opts, onChange })
+
+      const satellite = mapContainer.querySelector('#mlc-base-satellite') as HTMLInputElement
+      satellite.checked = true
+      satellite.dispatchEvent(new Event('change'))
+
+      expect(onChange).toHaveBeenCalledWith({
+        baseLayer: 'satellite',
+        tracks: true,
+        confidence: true,
+        numbers: true,
+      })
     })
   })
 

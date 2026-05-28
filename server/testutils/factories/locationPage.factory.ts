@@ -66,6 +66,7 @@ export interface LocationPageRenderData {
   showComplianceBadge: boolean
   toDate: string
   currentUrl?: string
+  mapControls: LocationMapControls
 }
 
 export interface LocationApiResponse {
@@ -78,6 +79,13 @@ export interface LocationApiResponse {
 export interface DateFilters {
   from?: string
   to?: string
+}
+
+export interface LocationMapControls {
+  baseLayer: 'street' | 'satellite'
+  tracks: boolean
+  confidence: boolean
+  numbers: boolean
 }
 
 // ============================================================================
@@ -94,6 +102,13 @@ const defaultPopData = (): PopData => ({
   crn: 'X172591',
   dateOfBirth: '1964-10-07',
   tier: 'B3',
+})
+
+const defaultMapControls = (): LocationMapControls => ({
+  baseLayer: 'street',
+  tracks: true,
+  confidence: true,
+  numbers: true,
 })
 
 const defaultDateFilterForm = (): DateFilterForm => ({
@@ -273,6 +288,7 @@ export const buildLocationPageRenderData = (
     positions: [],
     showComplianceBadge: true,
     toDate: '',
+    mapControls: defaultMapControls(),
   }
 
   return {

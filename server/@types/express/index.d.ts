@@ -1,5 +1,6 @@
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import { ValidationResult } from '../../models/ValidationResult'
+import { LocationMapControls } from '../../types/locationMapControls'
 
 export declare module 'express-session' {
   interface SelectedPersonContext {
@@ -17,6 +18,7 @@ export declare module 'express-session' {
     validationErrors: ValidationResult
     queryId: string
     peopleSelection: Record<string, SelectedPersonContext>
+    locationMapControls?: LocationMapControls
   }
 }
 

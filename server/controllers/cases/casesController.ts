@@ -15,6 +15,7 @@ import { getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
 import { ValidationResult } from '../../models/ValidationResult'
 import { convertZodErrorToValidationError } from '../../utils/errors'
 import casesLocationLocale from './cases-location.locale.json'
+import { defaultLocationMapControls, LocationMapControls } from '../../types/locationMapControls'
 
 interface LocationDateFilterFormData {
   date: string
@@ -43,6 +44,7 @@ interface QueryParams {
     minute?: string
   }
   crn?: string
+  mapControls?: Partial<Record<keyof LocationMapControls, unknown>>
 }
 
 interface ValidationError {
@@ -112,6 +114,40 @@ export default class CasesController {
   private persistFormState(req: Request, errors: ValidationResult, formData: LocationBuildProps): void {
     req.session!.validationErrors = errors
     req.session!.formData = formData
+  }
+
+  private parseBooleanMapControlValue(value: unknown): boolean | undefined {
+    if (value === 'true') return true
+    if (value === 'false') return false
+    return undefined
+  }
+
+  private buildLocationMapControls(req: Request): LocationMapControls {
+    const sessionControls: Partial<LocationMapControls> = req.session?.locationMapControls || {}
+    const queryControls = (req.query as QueryParams).mapControls || {}
+
+    const baseLayer =
+      queryControls.baseLayer === 'street' || queryControls.baseLayer === 'satellite'
+        ? queryControls.baseLayer
+        : sessionControls.baseLayer
+
+    const controls: LocationMapControls = {
+      ...defaultLocationMapControls,
+      ...sessionControls,
+      ...(baseLayer ? { baseLayer } : {}),
+    }
+
+    ;(['tracks', 'confidence', 'numbers'] as const).forEach(key => {
+      const value = this.parseBooleanMapControlValue(queryControls[key])
+      if (value !== undefined) {
+        controls[key] = value
+      }
+    })
+
+    if (req.session) {
+      req.session.locationMapControls = controls
+    }
+    return controls
   }
 
   async overview(req: Request, res: Response): Promise<void> {
@@ -193,6 +229,7 @@ export default class CasesController {
     let locationAlert: { text: string } | null = null
     let queryRange = { fromDate: '', toDate: '' }
     let formValues: LocationBuildProps
+    const mapControls = this.buildLocationMapControls(req)
 
     const hasQueryParams = req.query.start !== undefined || req.query.end !== undefined
 
@@ -278,6 +315,7 @@ export default class CasesController {
       fromDate: queryRange.fromDate,
       toDate: queryRange.toDate,
       locationAlert,
+      mapControls,
       currentUrl: encodeURIComponent(String(req.originalUrl)),
     })
   }

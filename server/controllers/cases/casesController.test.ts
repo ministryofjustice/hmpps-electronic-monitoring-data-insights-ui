@@ -134,6 +134,108 @@ describe('CasesController', () => {
       )
     })
 
+    it('should render default map controls when session is empty', async () => {
+      req.query = { crn: 'X172591' }
+      req.session = {} as Request['session']
+
+      await controller.location(req as Request, res as Response)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/casesLocation',
+        expect.objectContaining({
+          mapControls: {
+            baseLayer: 'street',
+            tracks: true,
+            confidence: true,
+            numbers: true,
+          },
+        }),
+      )
+    })
+
+    it('should use map controls stored in session', async () => {
+      req.query = { crn: 'X172591' }
+      req.session = {
+        locationMapControls: {
+          baseLayer: 'satellite',
+          tracks: false,
+          confidence: true,
+          numbers: false,
+        },
+      } as Request['session']
+
+      await controller.location(req as Request, res as Response)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/casesLocation',
+        expect.objectContaining({
+          mapControls: {
+            baseLayer: 'satellite',
+            tracks: false,
+            confidence: true,
+            numbers: false,
+          },
+        }),
+      )
+    })
+
+    it('should update map controls in session from valid query parameters', async () => {
+      req.query = {
+        crn: 'X172591',
+        mapControls: {
+          baseLayer: 'satellite',
+          tracks: 'false',
+          confidence: 'true',
+          numbers: 'false',
+        },
+      }
+      req.session = {} as Request['session']
+
+      await controller.location(req as Request, res as Response)
+
+      expect(req.session.locationMapControls).toEqual({
+        baseLayer: 'satellite',
+        tracks: false,
+        confidence: true,
+        numbers: false,
+      })
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/casesLocation',
+        expect.objectContaining({
+          mapControls: req.session.locationMapControls,
+        }),
+      )
+    })
+
+    it('should ignore invalid map control query parameters', async () => {
+      req.query = {
+        crn: 'X172591',
+        mapControls: {
+          baseLayer: 'hybrid',
+          tracks: 'yes',
+          confidence: 'no',
+          numbers: 'invalid',
+        },
+      }
+      req.session = {
+        locationMapControls: {
+          baseLayer: 'satellite',
+          tracks: false,
+          confidence: false,
+          numbers: true,
+        },
+      } as Request['session']
+
+      await controller.location(req as Request, res as Response)
+
+      expect(req.session.locationMapControls).toEqual({
+        baseLayer: 'satellite',
+        tracks: false,
+        confidence: false,
+        numbers: true,
+      })
+    })
+
     it('should handle validation errors and render location activity tab with errors', async () => {
       const validationErrors = [{ field: 'fromDate', message: 'Invalid date' }] as ValidationError[]
       dateSearchValidationService.validateDateSearchRequest.mockReturnValue({
