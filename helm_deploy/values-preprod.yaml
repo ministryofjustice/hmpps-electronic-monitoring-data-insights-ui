@@ -12,8 +12,8 @@ generic-service:
     HMPPS_AUTH_URL: "https://sign-in-preprod.hmpps.service.justice.gov.uk/auth"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-preprod.prison.service.justice.gov.uk"
     EMDI_API_URL: 'https://electronic-monitoring-data-insights-api-preprod.hmpps.service.justice.gov.uk'
-    EMDI_API_TIMEOUT_RESPONSE: "10000"
-    EMDI_API_TIMEOUT_DEADLINE: "15000"
+    EMDI_API_TIMEOUT_RESPONSE: "15000"
+    EMDI_API_TIMEOUT_DEADLINE: "20000"
     ENVIRONMENT_NAME: PRE-PRODUCTION
     AUDIT_ENABLED: "false"
     COMPONENT_API_URL: "https://probation-frontend-components-preprod.hmpps.service.justice.gov.uk"
