@@ -60,9 +60,10 @@ export default class TrailService {
       // Display values
       displayPointNumber: index + 1,
       displayGpsDate: formatGpsDate(position.gpsDate) || 'N/A',
-      displayAccuracy: formatDisplayValue(position.precision, '', 'N/A'),
-      displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
-      displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
+      displayAccuracy: formatDisplayValue(position.precision, 'metres', 'N/A'),
+      displayLatitude: formatDisplayValue(position.latitude, 'degrees', 'N/A'),
+      displayLongitude: formatDisplayValue(position.longitude, 'degrees', 'N/A'),
+      displaySpeed: formatDisplayValue(position.speed, 'kilometers per hour', 'N/A'),
     }))
   }
 

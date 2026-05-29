@@ -7,8 +7,8 @@
   "overlay": {
     "point": "Point",
     "accuracy": "Accuracy",
-    "dateTime": "Date / time",
-    "latLng": "Lat / Lng",
+    "dateTime": "Date, time",
+    "latLng": "Lat, Long",
     "speed": "Speed",
     "geolocationMechanism": "Signal type"
   },

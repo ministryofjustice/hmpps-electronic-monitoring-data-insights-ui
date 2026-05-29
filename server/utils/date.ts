@@ -77,7 +77,7 @@ const formatGpsDate = (datetime?: string | null): string => {
 
   if (!date?.isValid()) return ''
 
-  return date.tz('Europe/London').format('DD MMM YY, HH:mm')
+  return date.tz('Europe/London').format('DD MMM YYYY, HH:mm')
 }
 
 const formatDob = (dateString?: string | null): string => {
