@@ -120,7 +120,7 @@ describe('formatDob', () => {
 
 describe('formatGpsDate', () => {
   it('should format the date correctly', () => {
-    expect(formatGpsDate('2023-01-01T00:00:00Z')).toBe('01 Jan 23, 00:00')
+    expect(formatGpsDate('2023-01-01T00:00:00Z')).toBe('01 Jan 2023, 00:00')
   })
 
   it('should return an empty string if datetime is undefined', () => {
@@ -136,6 +136,6 @@ describe('formatGpsDate', () => {
   })
 
   it('should format a mid-year date correctly', () => {
-    expect(formatGpsDate('2023-06-15T14:30:00Z')).toBe('15 Jun 23, 15:30')
+    expect(formatGpsDate('2023-06-15T14:30:00Z')).toBe('15 Jun 2023, 15:30')
   })
 })
