@@ -10,6 +10,8 @@ generic-service:
     HMPPS_AUTH_URL: "https://sign-in.hmpps.service.justice.gov.uk/auth"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api.prison.service.justice.gov.uk"
     EMDI_API_URL: 'https://electronic-monitoring-data-insights-api.hmpps.service.justice.gov.uk'
+    EMDI_API_TIMEOUT_RESPONSE: "10000"
+    EMDI_API_TIMEOUT_DEADLINE: "15000"
     AUDIT_ENABLED: "false"
     COMPONENT_API_URL: "https://probation-frontend-components.hmpps.service.justice.gov.uk"
 
