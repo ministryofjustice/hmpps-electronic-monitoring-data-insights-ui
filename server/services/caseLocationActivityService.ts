@@ -83,7 +83,7 @@ export default class CaseLocationActivityService {
       displayAccuracy: formatDisplayValue(position.precision, ' metres', 'N/A'),
       displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
       displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
-      displaySpeed: formatDisplayValue(position.speed, ' kilometers per hour', 'N/A'),
+      displaySpeed: formatDisplayValue(position.speed, ' Kilometres per hour', 'N/A'),
       displayGeolocationMechanism: position.geolocationMechanism,
       positionCardHeader: casesLocationLocale.overlay.point,
       positionCardAccuracyLabel: casesLocationLocale.overlay.accuracy,

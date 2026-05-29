@@ -81,7 +81,7 @@ describe('CaseLocationActivityService', () => {
         displayAccuracy: '10 metres',
         displayLatitude: '51.5',
         displayLongitude: '-0.1',
-        displaySpeed: '2 kilometers per hour',
+        displaySpeed: '2 Kilometres per hour',
         displayGeolocationMechanism: 'Unknown',
         positionCardHeader: 'Point',
         positionCardAccuracyLabel: 'Accuracy',
