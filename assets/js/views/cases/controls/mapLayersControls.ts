@@ -106,7 +106,7 @@ export default class MapLayersControl extends Control {
             </div>
             <div class="govuk-checkboxes__item">
               <input class="govuk-checkboxes__input" id="mlc-confidence" type="checkbox" ${state.confidence ? 'checked' : ''}>
-              <label class="govuk-label govuk-checkboxes__label" for="mlc-confidence">Location accuracy</label>
+              <label class="govuk-label govuk-checkboxes__label" for="mlc-confidence">View location accuracy</label>
             </div>
             <div class="govuk-checkboxes__item">
               <input class="govuk-checkboxes__input" id="mlc-numbers" type="checkbox" ${state.numbers ? 'checked' : ''}>

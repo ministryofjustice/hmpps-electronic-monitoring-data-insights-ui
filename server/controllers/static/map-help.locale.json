@@ -13,17 +13,17 @@
       ]
     },
     "locationAccuracy": {
-      "title": "Location accuracy",
+      "title": "View location accuracy",
       "image": {
         "src": "/assets/images/confidence-circles.png",
         "alt": ""
       },
       "first-pagaraphs": [
-        "Location accuracy can vary, and may be reduced if, for example, satellite signals are blocked or the tag battery is low.",
-        "Map points are surrounded by ‘location accuracy’ that show how confident the system is that the tag pinged at or near to each location.",
-        "Location accuracy cover the area the person may have been in when their tag pinged. The smaller the circle, the more confidence there is about the location.",
+        "View location accuracy can vary, and may be reduced if, for example, satellite signals are blocked or the tag battery is low.",
+        "Map points are surrounded by ‘View location accuracy’ that show how confident the system is that the tag pinged at or near to each location.",
+        "View location accuracy cover the area the person may have been in when their tag pinged. The smaller the circle, the more confidence there is about the location.",
         "To check a circle’s exact size, select its point to open a ‘ping card’ (pop-up box). This shows the distance from the centre to the edge of the circle in metres.",
-        "You can turn Location accuracy off using the option in the top-right menu."
+        "You can turn View location accuracy off using the option in the top-right menu."
       ]
     },
     "signalType": {
