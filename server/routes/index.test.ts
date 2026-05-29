@@ -83,7 +83,7 @@ describe('Routes', () => {
       .expect(200)
       .expect(res => {
         expect(res.text).toContain('Help with the map')
-        expect(res.text).toContain('Location accuracy')
+        expect(res.text).toContain('View location accuracy')
         expect(res.text).toContain('Direction of travel')
         expect(res.text).toContain('Missing trail data')
         expect(res.text).toContain('/assets/images/confidence-circles.png')
