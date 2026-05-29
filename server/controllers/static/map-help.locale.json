@@ -26,6 +26,20 @@
         "You can turn Location accuracy off using the option in the top-right menu."
       ]
     },
+    "signalType": {
+      "title": "Signal type (GPS or LBS)",
+      "image": {
+        "src": "/assets/images/signal-type.png",
+        "alt": ""
+      },
+      "first-pagaraphs": [
+        "When the tag is unable to connect to GPS satellite signals, it uses local cellular network towers to estimate its location instead.",
+        "This is known as LBS tracking.",
+        "Because cellular towers are spaced further apart than GPS satellites, LBS is less accurate than GPS tracking.",
+        "With LBS tracking, the tag will usually ping around once every 3 minutes.",
+        "To check which signal type was used to detect a location, select the point to open its ping card."
+      ]
+    },
     "timeAndDate": {
       "title": "Time and date of activity",
       "image": {
@@ -45,9 +59,7 @@
         "src": "/assets/images/direction-information.png",
         "alt": ""
       },
-      "first-pagaraphs": [
-        "Each point is joined to the next point in the sequence by a line to form a trail."
-      ],
+      "first-pagaraphs": ["Each point is joined to the next point in the sequence by a line to form a trail."],
       "insert": "The trail shown may not reflect the actual route taken.",
       "last-pagaraphs": [
         "Arrows along the trail show the estimated direction of travel, based on the order of the points.",
