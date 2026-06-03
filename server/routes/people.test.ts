@@ -13,7 +13,7 @@ describe('peopleRoutes', () => {
     expect(get).toHaveBeenCalledWith('/people/:delius_id', expect.any(Function))
   })
 
-  it('registers GET /people/:delius_id/location', () => {
+  it('registers GET /people/:delius_id/locations', () => {
     const get = jest.fn()
     const services = {
       peopleService: {},
@@ -21,6 +21,6 @@ describe('peopleRoutes', () => {
 
     peopleRoutes(services, get)
 
-    expect(get).toHaveBeenCalledWith('/people/:delius_id/location', expect.any(Function))
+    expect(get).toHaveBeenCalledWith('/people/:delius_id/locations', expect.any(Function))
   })
 })

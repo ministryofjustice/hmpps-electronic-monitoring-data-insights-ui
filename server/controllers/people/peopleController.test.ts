@@ -90,11 +90,11 @@ describe('PeopleController', () => {
       people: [firstPerson],
       nextToken: null,
     })
-    req.query = { redirectTo: '/people/X31092/location' }
+    req.query = { redirectTo: '/people/X31092/locations' }
 
     await controller.getPersonByDeliusId(req as Request, res as Response)
 
-    expect(res.redirect).toHaveBeenCalledWith('/people/X31092/location')
+    expect(res.redirect).toHaveBeenCalledWith('/people/X31092/locations')
     expect(res.render).not.toHaveBeenCalled()
   })
 
@@ -156,7 +156,7 @@ describe('PeopleController', () => {
   it('redirects back through the person page when location state is missing', async () => {
     await controller.location(req as Request, res as Response)
 
-    expect(res.redirect).toHaveBeenCalledWith('/people/X31092?redirectTo=%2Fpeople%2FX31092%2Flocation')
+    expect(res.redirect).toHaveBeenCalledWith('/people/X31092?redirectTo=%2Fpeople%2FX31092%2Flocations')
     expect(res.render).not.toHaveBeenCalled()
   })
 })

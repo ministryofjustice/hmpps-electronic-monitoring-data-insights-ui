@@ -49,7 +49,7 @@ export default class PeopleController {
     const personContext = this.getSelectedPerson(req, deliusId)
 
     if (!personContext) {
-      const redirectTo = encodeURIComponent(`/people/${deliusId}/location`)
+      const redirectTo = encodeURIComponent(`/people/${deliusId}/locations`)
       res.redirect(`/people/${deliusId}?redirectTo=${redirectTo}`)
       return
     }
@@ -73,7 +73,7 @@ export default class PeopleController {
 
   private getAllowedRedirectTo(req: Request, deliusId: string): string | null {
     const redirectTo = typeof req.query.redirectTo === 'string' ? req.query.redirectTo : null
-    const allowedRedirectTo = `/people/${deliusId}/location`
+    const allowedRedirectTo = `/people/${deliusId}/locations`
 
     return redirectTo === allowedRedirectTo ? redirectTo : null
   }
