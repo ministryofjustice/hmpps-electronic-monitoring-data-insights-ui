@@ -40,7 +40,7 @@ export interface CaseLocationPosition extends CaseLocationBasePosition {
   positionCardGeolocationMechanismLabel: string
 }
 
-const getGeolocationMechanism = (value: number | null): GeolocationMechanism | 'Unknown' => {
+export const getGeolocationMechanism = (value: number | null): GeolocationMechanism | 'Unknown' => {
   const mapping: Record<number, GeolocationMechanism> = {
     1: 'GPS',
     4: 'RF',
@@ -74,24 +74,26 @@ export default class CaseLocationActivityService {
   }
 
   annotatePositionsWithDisplayProperties(positions: Array<CaseLocationBasePosition>): Array<CaseLocationPosition> {
-    return positions.map((position, index) => ({
-      ...position,
-      overlayTitleTemplateId: 'overlay-title-mdss-location',
-      overlayBodyTemplateId: 'overlay-body-mdss-location',
-      displayPointNumber: index + 1,
-      displayGpsDate: formatGpsDate(position.gpsDate) || 'N/A',
-      displayAccuracy: formatDisplayValue(position.precision, ' metres', 'N/A'),
-      displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
-      displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
-      displaySpeed: formatDisplayValue(position.speed, ' Kilometres per hour', 'N/A'),
-      displayGeolocationMechanism: position.geolocationMechanism,
-      positionCardHeader: casesLocationLocale.overlay.point,
-      positionCardAccuracyLabel: casesLocationLocale.overlay.accuracy,
-      positionCardDateTimeLabel: casesLocationLocale.overlay.dateTime,
-      positionCardLatLngLabel: casesLocationLocale.overlay.latLng,
-      positionCardSpeedLabel: casesLocationLocale.overlay.speed,
-      positionCardGeolocationMechanismLabel: casesLocationLocale.overlay.geolocationMechanism,
-    }))
+    return positions
+      .sort((a, b) => new Date(a.gpsDate).getTime() - new Date(b.gpsDate).getTime())
+      .map((position, index) => ({
+        ...position,
+        overlayTitleTemplateId: 'overlay-title-mdss-location',
+        overlayBodyTemplateId: 'overlay-body-mdss-location',
+        displayPointNumber: index + 1,
+        displayGpsDate: formatGpsDate(position.gpsDate) || 'N/A',
+        displayAccuracy: formatDisplayValue(position.precision, ' metres', 'N/A'),
+        displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
+        displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
+        displaySpeed: formatDisplayValue(position.speed, ' Kilometres per hour', 'N/A'),
+        displayGeolocationMechanism: position.geolocationMechanism,
+        positionCardHeader: casesLocationLocale.overlay.point,
+        positionCardAccuracyLabel: casesLocationLocale.overlay.accuracy,
+        positionCardDateTimeLabel: casesLocationLocale.overlay.dateTime,
+        positionCardLatLngLabel: casesLocationLocale.overlay.latLng,
+        positionCardSpeedLabel: casesLocationLocale.overlay.speed,
+        positionCardGeolocationMechanismLabel: casesLocationLocale.overlay.geolocationMechanism,
+      }))
   }
 
   private mapLocation(

@@ -56,6 +56,20 @@ jest.mock('@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 }))
 
 jest.mock('ol/extent', () => ({ isEmpty: jest.fn(() => true) }))
+jest.mock('ol/layer/Vector', () => jest.fn().mockImplementation(() => ({})))
+jest.mock('ol/source/Vector', () => jest.fn().mockImplementation(() => ({})))
+jest.mock('ol/Feature', () => jest.fn().mockImplementation(() => ({})))
+jest.mock('ol/geom', () => ({
+  LineString: jest.fn().mockImplementation(() => ({})),
+}))
+jest.mock('ol/proj', () => ({
+  fromLonLat: jest.fn((coord: number[]) => coord),
+}))
+jest.mock('ol/style', () => ({
+  Style: jest.fn().mockImplementation(() => ({})),
+  Stroke: jest.fn().mockImplementation(() => ({})),
+}))
+
 jest.mock('./controls/layerVisibilityToggle', () => jest.fn())
 jest.mock('./controls/createLockRotationControl', () => jest.fn(() => ({})))
 jest.mock('./controls/getRotatedDirection', () => jest.fn())

@@ -1,4 +1,4 @@
-import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
+import { EmMap, Position } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
 import {
   LocationsLayer,
   TracksLayer,
@@ -6,16 +6,21 @@ import {
   TextLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import { isEmpty } from 'ol/extent'
-import type VectorLayer from 'ol/layer/Vector'
-import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
-import getRotatedDirection from './controls/getRotatedDirection'
-import createLockRotationControl from './controls/createLockRotationControl'
+import VectorLayer from 'ol/layer/Vector'
 import { queryElement } from '../../utils/utils'
+import createLockRotationControl from './controls/createLockRotationControl'
+import getRotatedDirection from './controls/getRotatedDirection'
+import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
 
 interface ShadowRootHost extends HTMLElement {
   shadowRoot: ShadowRoot | null
 }
 
+export interface TrackPosition extends Position {
+  gpsDate?: string
+}
+
+const TIME_GAP_THRESHOLD_MINS = 50
 const getShadowRoot = (emMap: EmMap): ShadowRoot | null => (emMap as ShadowRootHost).shadowRoot
 
 const defaultMapControlState: MapControlState = {
@@ -126,11 +131,31 @@ const initialiseLocationDataView = () => {
       }),
     )!
 
+    const getTimestamp = (position: Position): number | null => {
+      const ts = (position as TrackPosition).gpsDate
+      if (!ts) return null
+      return new Date(ts).getTime()
+    }
+
+    const shouldDash = (from: Position, to: Position): boolean => {
+      const t1 = getTimestamp(from)
+      const t2 = getTimestamp(to)
+      if (t1 === null || t2 === null) return false
+      const diffMinutes = (t2 - t1) / 60000
+      return diffMinutes > TIME_GAP_THRESHOLD_MINS
+    }
+
     const tracksLayer = new TracksLayer({
       id: 'tracksLayer',
       positions,
       visible: mapControlState.tracks,
       zIndex: 1,
+      style: { stroke: { color: 'rgba(76, 128, 182, 1)' } },
+      segmentStyle: ({ positions: [from, to] }) => ({
+        stroke: {
+          lineDash: shouldDash(from, to) ? [8, 6] : undefined,
+        },
+      }),
     })
 
     const confidenceLayer = new CirclesLayer({
