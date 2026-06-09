@@ -1,10 +1,6 @@
 import { CaseLocationBasePosition, getGeolocationMechanism } from '../../../services/caseLocationActivityService'
 import popTrail from './pop_trail.json'
 
-interface Location {
-  locations: CaseLocationBasePosition[]
-}
-
 const MOCK_CRNS = ['X888888']
 
 export const isMockCrn = (crn: string): boolean => {
