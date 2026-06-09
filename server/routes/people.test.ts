@@ -5,6 +5,9 @@ describe('peopleRoutes', () => {
   it('registers GET /people/:delius_id', () => {
     const get = jest.fn()
     const services = {
+      auditService: {},
+      caseLocationActivityService: {},
+      dateSearchValidationService: {},
       peopleService: {},
     } as Services
 
@@ -16,6 +19,9 @@ describe('peopleRoutes', () => {
   it('registers GET /people/:delius_id/locations', () => {
     const get = jest.fn()
     const services = {
+      auditService: {},
+      caseLocationActivityService: {},
+      dateSearchValidationService: {},
       peopleService: {},
     } as Services
 

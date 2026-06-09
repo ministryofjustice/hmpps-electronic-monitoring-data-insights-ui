@@ -3,10 +3,15 @@ import type { Services } from '../services'
 import PeopleController from '../controllers/people/peopleController'
 
 export default function peopleRoutes(
-  { peopleService }: Services,
+  { auditService, caseLocationActivityService, dateSearchValidationService, peopleService }: Services,
   get: (path: string, handler: RequestHandler) => Router,
 ): void {
-  const peopleController = new PeopleController(peopleService)
+  const peopleController = new PeopleController(
+    peopleService,
+    auditService,
+    caseLocationActivityService,
+    dateSearchValidationService,
+  )
 
   get('/people/:delius_id', async (req, res) => {
     await peopleController.getPersonByDeliusId(req, res)
