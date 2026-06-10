@@ -43,20 +43,22 @@
                 <input type="hidden" name="mapControls[confidence]" value="{{ mapControls.confidence }}" data-map-control-input="confidence" />
                 <input type="hidden" name="mapControls[numbers]" value="{{ mapControls.numbers }}" data-map-control-input="numbers" />
 
-                <div class="govuk-form-group">
-                {{
-                    govukInput({
-                        label: {
-                        text: locale.search.crn,
-                        classes: "govuk-label--s"
-                        },
-                        classes: "govuk-date-input__input govuk-input--width-5",
-                        id: "crn",
-                        name: "crn",
-                        value: form.crn
-                    })
-                }}
-                </div>
+                {% if form.showCrn != false %}
+                    <div class="govuk-form-group">
+                    {{
+                        govukInput({
+                            label: {
+                            text: locale.search.crn,
+                            classes: "govuk-label--s"
+                            },
+                            classes: "govuk-date-input__input govuk-input--width-5",
+                            id: "crn",
+                            name: "crn",
+                            value: form.crn
+                        })
+                    }}
+                    </div>
+                {% endif %}
                 <div class="govuk-grid-row">  
                     <div class="govuk-grid-column-one-third">
                         {{ dtp.date_time_picker({

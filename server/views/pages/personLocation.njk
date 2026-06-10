@@ -1,5 +1,5 @@
 {% extends "../partials/layout.njk" %}
-{% extends "moj/template.njk" %}
+{% from "components/moj-api-error/macro.njk" import mojApiError %}
 
 {% set pageTitle = applicationName + " - Person Location" %}
 {% set mainClasses = "app-container govuk-body" %}
@@ -9,25 +9,27 @@
 {% endblock %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      {% include "partials/casesHeader.njk" %}
-      <h1 class="govuk-heading-xl govuk-!-margin-top-6">Location</h1>
+  {% if locationAlert and locationAlert.text %}
+    {{ mojApiError({
+      text: locationAlert.text,
+      attributes: {
+        "data-qa": "location-data-error"
+      }
+    }) }}
+  {% endif %}
 
-      <dl class="govuk-summary-list">
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">Person ID</dt>
-          <dd class="govuk-summary-list__value">{{ personContext.personId }}</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">Consumer ID</dt>
-          <dd class="govuk-summary-list__value">{{ personContext.consumerId }}</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">Delius ID</dt>
-          <dd class="govuk-summary-list__value">{{ popData.crn }}</dd>
-        </div>
-      </dl>
+  {% include "partials/casesHeader.njk" %}
+  <div class="location-activity">
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-4">
+      {{ fullName }}
+    </h1>
+    <h2 class="govuk-heading-m">{{ locale.title }}</h2>
+    <div class="date-time-picker">
+      <div class="govuk-grid-row">
+        {% include "partials/mapSearchForm.njk" %}
+      </div>
     </div>
+    {% include "partials/locationMap.njk" %}
+    <p class="govuk-body-m"><a href="/map-help?returnUrl={{ currentUrl }}">{{ locale.links.mapHelp }}</a></p>
   </div>
 {% endblock %}

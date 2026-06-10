@@ -5,6 +5,9 @@ describe('peopleRoutes', () => {
   it('registers GET /people/:delius_id', () => {
     const get = jest.fn()
     const services = {
+      auditService: {},
+      caseLocationActivityService: {},
+      dateSearchValidationService: {},
       peopleService: {},
     } as Services
 
@@ -13,14 +16,17 @@ describe('peopleRoutes', () => {
     expect(get).toHaveBeenCalledWith('/people/:delius_id', expect.any(Function))
   })
 
-  it('registers GET /people/:delius_id/location', () => {
+  it('registers GET /people/:delius_id/locations', () => {
     const get = jest.fn()
     const services = {
+      auditService: {},
+      caseLocationActivityService: {},
+      dateSearchValidationService: {},
       peopleService: {},
     } as Services
 
     peopleRoutes(services, get)
 
-    expect(get).toHaveBeenCalledWith('/people/:delius_id/location', expect.any(Function))
+    expect(get).toHaveBeenCalledWith('/people/:delius_id/locations', expect.any(Function))
   })
 })
