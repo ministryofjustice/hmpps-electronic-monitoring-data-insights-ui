@@ -267,7 +267,6 @@ export default class CasesController {
 
         const fromDate = parseDateTimeFromISOString(queryResult.data.fromDate)
         const toDate = parseDateTimeFromISOString(queryResult.data.toDate)
-
         const validation = this.dateSearchValidationService.validateDateSearchRequest(fromDate, toDate)
         if (validation.success) {
           try {
@@ -277,6 +276,7 @@ export default class CasesController {
               queryResult.data.fromDate,
               queryResult.data.toDate,
             )
+
             positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
           } catch (error) {
             /* eslint no-console: ["error", { allow: ["warn", "error"] }] */

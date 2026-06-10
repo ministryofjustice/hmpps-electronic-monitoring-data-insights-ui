@@ -50,21 +50,23 @@ const getGeolocationMechanism = (value: number): GeolocationMechanism | undefine
 
 export default class TrailService {
   annotatePositionsWithDisplayProperties(positions: Array<Position>): Array<PositionCardData> {
-    return positions.map((position, index) => ({
-      ...position,
+    return positions
+      .sort((a, b) => new Date(a.gpsDate).getTime() - new Date(b.gpsDate).getTime())
+      .map((position, index) => ({
+        ...position,
 
-      // Overlay template
-      overlayTitleTemplateId: 'overlay-title-mdss-location',
-      overlayBodyTemplateId: 'overlay-body-mdss-location',
+        // Overlay template
+        overlayTitleTemplateId: 'overlay-title-mdss-location',
+        overlayBodyTemplateId: 'overlay-body-mdss-location',
 
-      // Display values
-      displayPointNumber: index + 1,
-      displayGpsDate: formatGpsDate(position.gpsDate) || 'N/A',
-      displayAccuracy: formatDisplayValue(position.precision, 'metres', 'N/A'),
-      displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
-      displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
-      displaySpeed: formatDisplayValue(position.speed, 'Kilometres per hour', 'N/A'),
-    }))
+        // Display values
+        displayPointNumber: index + 1,
+        displayGpsDate: formatGpsDate(position.gpsDate) || 'N/A',
+        displayAccuracy: formatDisplayValue(position.precision, 'metres', 'N/A'),
+        displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
+        displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
+        displaySpeed: formatDisplayValue(position.speed, 'Kilometres per hour', 'N/A'),
+      }))
   }
 
   async filterByDate(token: string | undefined, crn: string, filters: Filters): Promise<Position[]> {
