@@ -161,7 +161,7 @@ export default class PeopleController {
 
     const redirectTo = this.getAllowedRedirectTo(req, deliusId)
 
-    if (redirectTo) {
+    if (redirectTo && person) {
       res.redirect(redirectTo)
       return
     }

@@ -123,6 +123,36 @@ describe('PeopleController', () => {
 
     expect(res.redirect).toHaveBeenCalledWith('/people/X31092/locations')
     expect(res.render).not.toHaveBeenCalled()
+    expect(req.session).toEqual({
+      peopleSelection: {
+        X31092: {
+          personId: '41591',
+          consumerId: '9b74b1071beb2210743d8551f54bcbcc',
+          fullName: 'DEVWR0004718',
+          dateOfBirth: '2020-01-01',
+        },
+      },
+    })
+  })
+
+  it('renders person not found instead of redirecting onward when redirectTo is provided and no person is found', async () => {
+    peopleService.searchPeople.mockResolvedValue({
+      people: [],
+      nextToken: null,
+    })
+    req.query = { redirectTo: '/people/X31092/locations' }
+
+    await controller.getPersonByDeliusId(req as Request, res as Response)
+
+    expect(res.redirect).not.toHaveBeenCalled()
+    expect(req.session).toEqual({})
+    expect(res.render).toHaveBeenCalledWith('pages/person', {
+      activeNav: 'people',
+      fullName: 'Person not found',
+      popData: null,
+      showComplianceBadge: false,
+      person: null,
+    })
   })
 
   it('does not redirect to an unrecognised redirectTo path', async () => {
