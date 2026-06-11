@@ -225,6 +225,29 @@ Or run tests with the cypress UI:
 
 `npm run int-test-ui`
 
+### Running accessibility tests
+
+Accessibility tests use Playwright and axe. They are intended for local/manual use initially and are not run in the
+GitHub Actions pipeline.
+
+For local running, start WireMock and the test-mode server as described in the integration test section.
+
+The first time you run the tests, install the Playwright Chromium browser:
+
+`npx playwright install chromium`
+
+Then run the accessibility tests in headless mode with:
+
+`npm run test:a11y`
+
+Or run the tests with the Playwright UI:
+
+`npm run test:a11y-ui`
+
+To view the last HTML report:
+
+`npm run test:a11y-report`
+
 ## Change log
 
 A changelog for the service is available [here](./CHANGELOG.md)
