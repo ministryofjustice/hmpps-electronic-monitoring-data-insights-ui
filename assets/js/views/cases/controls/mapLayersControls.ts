@@ -87,10 +87,6 @@ export default class MapLayersControl extends Control {
                   <input class="govuk-radios__input" id="mlc-base-street" name="mlc-base" type="radio" value="street" ${state.baseLayer === 'street' ? 'checked' : ''}>
                   <label class="govuk-label govuk-radios__label" for="mlc-base-street">Street</label>
                 </div>
-                <div class="govuk-radios__item">
-                  <input class="govuk-radios__input" id="mlc-base-satellite" name="mlc-base" type="radio" value="satellite" ${state.baseLayer === 'satellite' ? 'checked' : ''}>
-                  <label class="govuk-label govuk-radios__label" for="mlc-base-satellite">Satellite</label>
-                </div>
             </div>
         </fieldset>
      </div>
