@@ -122,7 +122,7 @@
   "devDependencies": {
     "@axe-core/playwright": "4.11.3",
     "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
-    "@ministryofjustice/eslint-config-hmpps": "^0.0.1-beta.2",
+    "@ministryofjustice/eslint-config-hmpps": "^1.0.3",
     "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.3",
     "@playwright/test": "1.60.0",
     "@tsconfig/node22": "^22.0.1",
