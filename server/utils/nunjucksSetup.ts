@@ -13,7 +13,6 @@ const commonLocale = {
     profileInfoHeader: {
       crnLabel: 'CRN',
       dateOfBirthLabel: 'Date of birth',
-      tierLabel: 'Tier',
     },
   },
 }

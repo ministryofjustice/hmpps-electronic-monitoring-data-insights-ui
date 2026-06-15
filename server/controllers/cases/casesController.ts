@@ -182,7 +182,6 @@ export default class CasesController {
     const popDetails = {
       crn: person.delius_id,
       dateOfBirth: getDateStringFromDateObject(person.date_of_birth),
-      tier: 'B3',
     }
 
     res.render('pages/casesOverview', {

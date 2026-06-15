@@ -23,7 +23,6 @@ const renderPersonLocation = async (): Promise<string> => {
         popData: {
           crn: 'X31092',
           dateOfBirth: '2020-01-01',
-          tier: 'B3',
         },
         showComplianceBadge: false,
         personContext: {

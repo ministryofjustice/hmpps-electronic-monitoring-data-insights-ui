@@ -81,7 +81,6 @@ describe('CasesController', () => {
         popData: {
           crn: 'X123456',
           dateOfBirth: 'Monday, 1 January 1990',
-          tier: 'B3',
         },
         showComplianceBadge: true,
         highlight: null,
