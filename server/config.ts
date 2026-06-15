@@ -104,6 +104,7 @@ const config = {
   environmentName: get('ENVIRONMENT_NAME', ''),
   rateWindowMS: Number(get('RATE_WINDOW_MS', 900000)),
   rateLimitMax: Number(get('RATE_LIMIT_MAX', 100)),
+  enableHeatmap: get('ENABLE_HEATMAP', 'false') === 'true',
 }
 
 export interface ApiConfig {
