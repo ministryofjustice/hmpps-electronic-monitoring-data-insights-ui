@@ -48,6 +48,7 @@ const buildAssets = buildConfig => {
       }),
       sassPlugin({
         quietDeps: true,
+        silenceDeprecations: ['import'],
         loadPaths: [process.cwd(), path.join(process.cwd(), 'node_modules')],
       }),
     ],
