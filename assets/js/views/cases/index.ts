@@ -215,7 +215,6 @@ const initialiseLocationDataView = () => {
     emMap.addLayer(tracksLayer)
     emMap.addLayer(confidenceLayer)
     emMap.addLayer(numbersLayer)
-    emMap.addLayer(heatmapLayer)
 
     emMap.fitToAllLayers({ padding: 80 })
 
