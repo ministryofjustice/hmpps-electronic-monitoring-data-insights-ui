@@ -9,7 +9,7 @@ import CaseLocationActivityService, {
 import DateSearchValidationService from '../../services/dateSearchValidationService'
 import { ValidationResult } from '../../models/ValidationResult'
 import { searchLocationsQuerySchema } from '../../schemas/locationActivity/searchDateFormSchema'
-import { getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
+import { calculateAge, getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
 import casesLocationLocale from '../cases/cases-location.locale.json'
 import { defaultLocationMapControls, LocationMapControls } from '../../types/locationMapControls'
 
@@ -282,6 +282,7 @@ export default class PeopleController {
       popData: {
         crn: deliusId,
         dateOfBirth: personContext.dateOfBirth,
+        age: calculateAge(personContext.dateOfBirth),
         tier: 'B3',
       },
       showComplianceBadge: false,

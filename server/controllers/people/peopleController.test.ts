@@ -210,6 +210,7 @@ describe('PeopleController', () => {
         locale: casesLocationLocale,
         fullName: 'DEVWR0004718',
         popData: {
+          age: 6,
           crn: 'X31092',
           dateOfBirth: '2020-01-01',
           tier: 'B3',

@@ -3,3 +3,11 @@
   margin-top: 0;
   padding-top: 0;
 }
+
+.inline-list-from-tablet {
+  > li {
+    @include govuk-media-query($from: tablet) {
+      display: inline;
+    }
+  }
+}
