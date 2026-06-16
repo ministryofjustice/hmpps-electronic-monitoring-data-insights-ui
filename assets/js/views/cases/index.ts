@@ -190,23 +190,26 @@ const initialiseLocationDataView = () => {
       },
     })
 
-    const heatmapSource = new VectorSource({
-      features: positions.map(
-        position =>
-          new Feature({
-            geometry: new Point(
-              fromLonLat([(position as TrackPosition).longitude, (position as TrackPosition).latitude]),
-            ),
-          }),
-      ),
-    })
+    if (mapContainer.dataset.enableHeatmap === 'true') {
+      const heatmapSource = new VectorSource({
+        features: positions.map(
+          position =>
+            new Feature({
+              geometry: new Point(
+                fromLonLat([(position as TrackPosition).longitude, (position as TrackPosition).latitude]),
+              ),
+            }),
+        ),
+      })
 
-    const heatmapLayer = new HeatmapLayer({
-      source: heatmapSource,
-      blur: 15,
-      radius: 10,
-      zIndex: 2,
-    })
+      const heatmapLayer = new HeatmapLayer({
+        source: heatmapSource,
+        blur: 15,
+        radius: 10,
+        zIndex: 2,
+      })
+      emMap.addLayer(heatmapLayer)
+    }
 
     emMap.addLayer(locationsLayer)
     emMap.addLayer(tracksLayer)
