@@ -38,7 +38,7 @@
       ]
     },
     "transformIgnorePatterns": [
-      "node_modules/(?!(ol|@ministryofjustice/hmpps-electronic-monitoring-components)/)"
+      "node_modules/(?!(ol|earcut|rbush|quickselect|@ministryofjustice/hmpps-electronic-monitoring-components)/)"
     ],
     "collectCoverageFrom": [
       "server/**/*.{ts,js,jsx,mjs}"

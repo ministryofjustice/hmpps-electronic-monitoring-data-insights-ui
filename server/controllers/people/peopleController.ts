@@ -173,7 +173,6 @@ export default class PeopleController {
         ? {
             crn: person.deliusId,
             dateOfBirth: person.dateOfBirth,
-            tier: 'B3',
           }
         : null,
       showComplianceBadge: false,
@@ -283,7 +282,6 @@ export default class PeopleController {
         crn: deliusId,
         dateOfBirth: personContext.dateOfBirth,
         age: calculateAge(personContext.dateOfBirth),
-        tier: 'B3',
       },
       showComplianceBadge: false,
       personContext,

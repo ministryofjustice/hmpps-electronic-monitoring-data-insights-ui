@@ -5,7 +5,6 @@ context('Layout', () => {
   const profileDetails = [
     { label: 'CRN:', value: 'X172591' },
     { label: 'Date of birth:', value: '7 October 1964' },
-    { label: 'Tier:', value: 'B3' },
   ]
 
   beforeEach(() => {

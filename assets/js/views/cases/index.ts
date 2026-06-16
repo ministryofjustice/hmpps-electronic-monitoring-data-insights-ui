@@ -7,6 +7,11 @@ import {
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import { isEmpty } from 'ol/extent'
 import VectorLayer from 'ol/layer/Vector'
+import HeatmapLayer from 'ol/layer/Heatmap'
+import VectorSource from 'ol/source/Vector'
+import { Feature } from 'ol'
+import { Point } from 'ol/geom'
+import { fromLonLat } from 'ol/proj'
 import { queryElement } from '../../utils/utils'
 import createLockRotationControl from './controls/createLockRotationControl'
 import getRotatedDirection from './controls/getRotatedDirection'
@@ -184,6 +189,27 @@ const initialiseLocationDataView = () => {
         textAlign: 'center',
       },
     })
+
+    if (mapContainer.dataset.enableHeatmap === 'true') {
+      const heatmapSource = new VectorSource({
+        features: positions.map(
+          position =>
+            new Feature({
+              geometry: new Point(
+                fromLonLat([(position as TrackPosition).longitude, (position as TrackPosition).latitude]),
+              ),
+            }),
+        ),
+      })
+
+      const heatmapLayer = new HeatmapLayer({
+        source: heatmapSource,
+        blur: 15,
+        radius: 10,
+        zIndex: 2,
+      })
+      emMap.addLayer(heatmapLayer)
+    }
 
     emMap.addLayer(locationsLayer)
     emMap.addLayer(tracksLayer)
