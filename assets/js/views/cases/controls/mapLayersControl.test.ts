@@ -77,15 +77,15 @@ describe('MapLayersControl', () => {
       new MapLayersControl({
         ...opts,
         initialState: {
-          baseLayer: 'satellite',
+          baseLayer: 'street',
           tracks: false,
           confidence: true,
           numbers: false,
         },
       })
 
-      expect((mapContainer.querySelector('#mlc-base-satellite') as HTMLInputElement).checked).toBe(true)
-      expect((mapContainer.querySelector('#mlc-base-street') as HTMLInputElement).checked).toBe(false)
+      expect(mapContainer.querySelector('#mlc-base-satellite') as HTMLInputElement).toBe(null)
+      expect((mapContainer.querySelector('#mlc-base-street') as HTMLInputElement).checked).toBe(true)
       expect((mapContainer.querySelector('#mlc-tracks') as HTMLInputElement).checked).toBe(false)
       expect((mapContainer.querySelector('#mlc-confidence') as HTMLInputElement).checked).toBe(true)
       expect((mapContainer.querySelector('#mlc-numbers') as HTMLInputElement).checked).toBe(false)
@@ -152,7 +152,8 @@ describe('MapLayersControl', () => {
       })
     })
 
-    it('calls onChange with the current state for base layer changes', () => {
+    // TODO: re-enable this test once the satelite option is added back
+    it.skip('calls onChange with the current state for base layer changes', () => {
       const onChange = jest.fn()
       const opts = makeOpts(makeMockMap())
       mapContainer = opts.mapContainer
