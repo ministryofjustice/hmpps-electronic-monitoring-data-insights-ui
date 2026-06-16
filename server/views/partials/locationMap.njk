@@ -32,7 +32,7 @@
 
    {% raw %}
   <template id="overlay-title-mdss-location">
-    <div><strong>{{ positionCardHeader }} {{ displayPointNumber }}</strong></div>
+    <div><strong>{{ positionCardHeader }} {{ displayPointNumber }} HIIIII</strong></div>
   </template>
 
   <template id="overlay-body-mdss-location">
@@ -56,6 +56,13 @@
       <span class="app-map__overlay-label">{{ positionCardGeolocationMechanismLabel }}</span>
       <span class="app-map__overlay-value">{{ displayGeolocationMechanism }}</span>
     </div>
+      <div class="app-map__overlay-row app-map__overlay-nav">
+        <button class="app-map__overlay-nav-btn" data-nav="first" aria-label="Go to first ping">&#171; First</button>
+        <button class="app-map__overlay-nav-btn" data-nav="prev" aria-label="Go to previous ping">&#8592; Previous</button>
+        <span class="app-map__overlay-nav-count">{{ displayPointNumber }} of {{ totalPoints }}</span>
+        <button class="app-map__overlay-nav-btn" data-nav="next" aria-label="Go to next ping">Next &#8594;</button>
+        <button class="app-map__overlay-nav-btn" data-nav="last" aria-label="Go to last ping">Last &#187;</button>    
+      </div>
   </template>
 {% endraw %}
 
@@ -136,6 +143,20 @@
       text-decoration: underline !important;
       font-size: 14px !important;
     }
+
+    .app-map__overlay-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 10px;
+      border-top: 0.5px solid #d9d9d9;
+      border: 10px solid red;
+      background: white;
+      border-radius: 0 0 16px 16px;
+    }
+
+
   `)
             shadowRoot.adoptedStyleSheets = [...shadowRoot.adoptedStyleSheets, sheet]
             return true
