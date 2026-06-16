@@ -31,7 +31,7 @@ export interface DateFilterForm {
 export interface PopData {
   crn: string
   dateOfBirth: string
-  tier: string
+  tier?: string
 }
 
 export interface LocationAlert {
@@ -101,7 +101,6 @@ const defaultDateTimeValue = (): DateTimeValue => ({
 const defaultPopData = (): PopData => ({
   crn: 'X172591',
   dateOfBirth: '1964-10-07',
-  tier: 'B3',
 })
 
 const defaultMapControls = (): LocationMapControls => ({

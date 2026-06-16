@@ -105,7 +105,6 @@ describe('PeopleController', () => {
       popData: {
         crn: firstPerson.deliusId,
         dateOfBirth: firstPerson.dateOfBirth,
-        tier: 'B3',
       },
       showComplianceBadge: false,
       person: firstPerson,
@@ -171,7 +170,6 @@ describe('PeopleController', () => {
       popData: {
         crn: firstPerson.deliusId,
         dateOfBirth: firstPerson.dateOfBirth,
-        tier: 'B3',
       },
       showComplianceBadge: false,
       person: firstPerson,
@@ -212,7 +210,6 @@ describe('PeopleController', () => {
         popData: {
           crn: 'X31092',
           dateOfBirth: '2020-01-01',
-          tier: 'B3',
         },
         showComplianceBadge: false,
         personContext: {
