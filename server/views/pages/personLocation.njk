@@ -1,11 +1,22 @@
 {% extends "../partials/layout.njk" %}
 {% from "components/moj-api-error/macro.njk" import mojApiError %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 
 {% set pageTitle = applicationName + " - Person Location" %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-  {% include "../partials/primaryHeader.njk" %}
+  {{ govukBreadcrumbs({
+    items: [
+      {
+        text: "Cases",
+        href: mpopUrl + "/cases"
+      },
+      {
+        text: fullName
+      }
+    ]
+  }) }}
 {% endblock %}
 
 {% block content %}
@@ -30,6 +41,8 @@
       </div>
     </div>
     {% include "partials/locationMap.njk" %}
-    <p class="govuk-body-m"><a href="/map-help?returnUrl={{ currentUrl }}">{{ locale.links.mapHelp }}</a></p>
+    <p class="govuk-body-m">
+      <a href="/map-help?returnUrl={{ currentUrl }}">{{ locale.links.mapHelp }}</a>
+    </p>
   </div>
 {% endblock %}

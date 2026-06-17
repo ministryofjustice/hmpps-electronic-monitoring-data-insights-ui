@@ -1,17 +1,26 @@
 {%- from "moj/components/primary-navigation/macro.njk" import mojPrimaryNavigation -%}
 
-
 {% set items = [
-    {text: "Home", href: "/",active: activeNav == '/'},
-    {text: "Cases", href: "/cases/1/overview", active: activeNav == 'cases'},
-    {text: "Search", href: "/search", active: activeNav == 'search'}
+  {
+    text: "Home",
+    href: mpopUrl
+  }, {
+    text: "Cases",
+    href: mpopUrl + "/cases",
+    active: activeNav == 'cases'
+  }, {
+    text: "Search",
+    href: mpopUrl + "/search"
+  }, {
+    text: "Alerts",
+    href: mpopUrl + "/alerts"
+  }
 
 ] %}
 
 {{ mojPrimaryNavigation({
   label: "Primary navigation",
   items: items,
-  containerClasses: "app-primary-header--blue-top",
   attributes: {
     "data-qa": "primary-navigation"
   }

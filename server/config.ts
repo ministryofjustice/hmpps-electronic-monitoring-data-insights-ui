@@ -104,6 +104,7 @@ const config = {
   environmentName: get('ENVIRONMENT_NAME', ''),
   rateWindowMS: Number(get('RATE_WINDOW_MS', 900000)),
   rateLimitMax: Number(get('RATE_LIMIT_MAX', 100)),
+  mpopUrl: get('MPOP_URL', 'https://manage-people-on-probation-dev.hmpps.service.justice.gov.uk', requiredInProduction),
   enableHeatmap: get('ENABLE_HEATMAP', 'false') === 'true',
 }
 

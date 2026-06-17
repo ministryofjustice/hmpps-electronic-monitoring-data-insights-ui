@@ -1,4 +1,5 @@
 import {
+  calculateAge,
   formatDate,
   formatDob,
   formatGpsDate,
@@ -97,6 +98,44 @@ describe('formatDate', () => {
 
   it('should format a valid ISO date string correctly', () => {
     expect(formatDate('2023-01-01T12:30:00Z')).toBe('01/01/2023 12:30')
+  })
+})
+
+describe('calculateAge', () => {
+  beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-06-16T12:00:00.000Z'))
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it('should return null if dateString is undefined', () => {
+    expect(calculateAge(undefined)).toBeNull()
+  })
+
+  it('should return null if dateString is null', () => {
+    expect(calculateAge(null)).toBeNull()
+  })
+
+  it('should return null for an invalid date string', () => {
+    expect(calculateAge('not-a-date')).toBeNull()
+  })
+
+  it('should return null for a future date', () => {
+    expect(calculateAge('2027-01-01')).toBeNull()
+  })
+
+  it('should calculate age after the birthday has passed this year', () => {
+    expect(calculateAge('2000-06-15')).toBe(26)
+  })
+
+  it('should calculate age on the birthday', () => {
+    expect(calculateAge('2000-06-16')).toBe(26)
+  })
+
+  it('should calculate age before the birthday has passed this year', () => {
+    expect(calculateAge('2000-06-17')).toBe(25)
   })
 })
 
