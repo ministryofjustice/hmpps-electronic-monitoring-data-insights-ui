@@ -96,12 +96,24 @@ const calculateAge = (dateString?: string | null): number | null => {
 
   const today = dayjs().tz('Europe/London').startOf('day')
 
-  if (dateOfBirth.startOf('day').isAfter(today)) return null
+  const dateOfBirthYear = dateOfBirth.year()
+  const dateOfBirthMonth = dateOfBirth.month()
+  const dateOfBirthDate = dateOfBirth.date()
+  const todayYear = today.year()
+  const todayMonth = today.month()
+  const todayDate = today.date()
 
-  let age = today.year() - dateOfBirth.year()
-  const birthdayThisYear = dateOfBirth.year(today.year()).startOf('day')
+  if (
+    dateOfBirthYear > todayYear ||
+    (dateOfBirthYear === todayYear && dateOfBirthMonth > todayMonth) ||
+    (dateOfBirthYear === todayYear && dateOfBirthMonth === todayMonth && dateOfBirthDate > todayDate)
+  ) {
+    return null
+  }
 
-  if (birthdayThisYear.isAfter(today)) {
+  let age = todayYear - dateOfBirthYear
+
+  if (dateOfBirthMonth > todayMonth || (dateOfBirthMonth === todayMonth && dateOfBirthDate > todayDate)) {
     age -= 1
   }
 
