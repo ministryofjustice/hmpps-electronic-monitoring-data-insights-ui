@@ -90,15 +90,22 @@ const formatDob = (dateString?: string | null): string => {
 const calculateAge = (dateString?: string | null): number | null => {
   if (!dateString) return null
 
-  const dateOfBirth = dayjs(dateString).startOf('day')
+  const dateOfBirth = dayjs(dateString, ['YYYY-MM-DD', 'D/M/YYYY', 'DD/MM/YYYY'], true)
 
   if (!dateOfBirth?.isValid()) return null
 
   const today = dayjs().tz('Europe/London').startOf('day')
 
-  if (dateOfBirth.isAfter(today)) return null
+  if (dateOfBirth.startOf('day').isAfter(today)) return null
 
-  return today.diff(dateOfBirth, 'year')
+  let age = today.year() - dateOfBirth.year()
+  const birthdayThisYear = dateOfBirth.year(today.year()).startOf('day')
+
+  if (birthdayThisYear.isAfter(today)) {
+    age -= 1
+  }
+
+  return age
 }
 
 export {
