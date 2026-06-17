@@ -9,9 +9,9 @@ context('PoP Alert', () => {
     cy.task('stubExampleTime')
   })
 
-  it('Navigates to Cases page via primary navigation and the PoP Alert is present', () => {
+  it('Navigates to Cases page and the PoP Alert is present', () => {
     cy.signIn()
-    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
+    cy.visit('/cases/1/overview')
 
     Page.verifyOnPage(CasesPage)
 
@@ -27,9 +27,9 @@ context('PoP Alert', () => {
     })
   })
 
-  it('Navigates to Cases Notes via primary navigation and PoP Alert is not present', () => {
+  it('Navigates to Cases Notes and PoP Alert is not present', () => {
     cy.signIn()
-    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
+    cy.visit('/cases/1/overview')
     Page.verifyOnPage(CasesPage)
     cy.get('[data-qa=cases-sub-navigation]').contains('a', 'Case notes').click()
     PopAlert.getAlert().should('not.exist')

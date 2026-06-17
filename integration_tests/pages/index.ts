@@ -19,7 +19,7 @@ export default class IndexPage extends Page {
   verifyProfileDetails(details) {
     this.profileInfoHeader().within(() => {
       details.forEach(item => {
-        cy.checkDlItem(item.label, item.value)
+        cy.contains('li', item.label).should('contain.text', item.value)
       })
     })
   }

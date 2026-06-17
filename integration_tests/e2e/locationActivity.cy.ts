@@ -29,8 +29,7 @@ context('Cases', () => {
     cy.session(locatioActivitySessionid, () => {
       cy.signIn()
     })
-    cy.visit('/')
-    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
+    cy.visit('/cases/1/overview')
 
     const casesPage = Page.verifyOnPage(CasesPage)
     casesPage.locationActivityLink().click()
