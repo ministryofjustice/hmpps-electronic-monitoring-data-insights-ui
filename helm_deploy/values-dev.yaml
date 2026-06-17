@@ -17,8 +17,7 @@ generic-service:
     ENVIRONMENT_NAME: DEV
     AUDIT_ENABLED: "false"
     COMPONENT_API_URL: "https://probation-frontend-components-dev.hmpps.service.justice.gov.uk"
-    MPOP_URL: "https://manage-people-on-probation-dev.hmpps.service.justice.gov.uk"
-    ENABLE_HEATMAP: "true"
+    ENABLE_HEATMAP: "false"
 
 generic-prometheus-alerts:
   alertSeverity: hmpps-electronic-monitoring-data-insights-dev
