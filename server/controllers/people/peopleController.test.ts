@@ -203,7 +203,7 @@ describe('PeopleController', () => {
     expect(res.render).toHaveBeenCalledWith(
       'pages/personLocation',
       expect.objectContaining({
-        activeNav: 'people',
+        activeNav: 'cases',
         activeTab: 'locations',
         locale: casesLocationLocale,
         fullName: 'DEVWR0004718',

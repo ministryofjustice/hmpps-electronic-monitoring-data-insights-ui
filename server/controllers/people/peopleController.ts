@@ -274,7 +274,7 @@ export default class PeopleController {
     }
 
     res.render('pages/personLocation', {
-      activeNav: 'people',
+      activeNav: 'cases',
       activeTab: 'locations',
       locale: casesLocationLocale,
       fullName: personContext.fullName,
