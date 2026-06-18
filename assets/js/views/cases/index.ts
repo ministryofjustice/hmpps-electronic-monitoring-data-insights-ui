@@ -7,6 +7,8 @@ import {
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import { isEmpty } from 'ol/extent'
 import VectorLayer from 'ol/layer/Vector'
+import { Point } from 'ol/geom'
+import { Interaction } from 'ol/interaction'
 import { queryElement } from '../../utils/utils'
 import createLockRotationControl from './controls/createLockRotationControl'
 import getRotatedDirection from './controls/getRotatedDirection'
@@ -18,6 +20,13 @@ interface ShadowRootHost extends HTMLElement {
 
 export interface TrackPosition extends Position {
   gpsDate?: string
+  displayPointNumber?: number
+}
+
+export type OverlayInteraction = Interaction & {
+  overlay?: {
+    showAtCoordinate?: (coords: number[], properties?: Record<string, unknown>) => void
+  }
 }
 
 const TIME_GAP_THRESHOLD_MINS = 50
@@ -205,6 +214,80 @@ const initialiseLocationDataView = () => {
       onChange: syncMapControlInputs,
     })
     map.addControl(mapLayersControl)
+
+    let currentPointIndex: number | null = null
+
+    const openOverlayForIndex = (index: number) => {
+      const position = positions[index] as TrackPosition
+      currentPointIndex = index
+
+      const nativeLayers = locationsLayer.getNativeLayer()
+      const vectorLayer = Array.isArray(nativeLayers) ? (nativeLayers[0] as VectorLayer) : null
+      const source = vectorLayer?.getSource?.()
+      if (!source) return
+
+      const feature = source
+        .getFeatures()
+        .find(f => f.getProperties().displayPointNumber === position.displayPointNumber)
+      if (!feature) return
+
+      const geometry = feature.getGeometry()
+      if (!(geometry instanceof Point)) return
+      const coords = geometry.getCoordinates()
+
+      map.getView().animate({ center: coords, duration: 300 })
+
+      const interactions = map.getInteractions().getArray()
+      const clickInteraction = interactions.find((i: OverlayInteraction) => i.overlay?.showAtCoordinate)
+      if (clickInteraction) {
+        ;(clickInteraction as OverlayInteraction).overlay.showAtCoordinate(coords, feature.getProperties())
+      }
+    }
+
+    const shadowRootMap = getShadowRoot(emMap as EmMap)
+
+    shadowRootMap?.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLElement
+      const navLink = target.closest('[data-nav]') as HTMLElement | null
+      if (!navLink) return
+      e.preventDefault()
+
+      const direction = navLink.dataset.nav
+      if (currentPointIndex === null) return
+
+      if (direction === 'prev' && currentPointIndex > 0) {
+        openOverlayForIndex(currentPointIndex - 1)
+      } else if (direction === 'next' && currentPointIndex < positions.length - 1) {
+        openOverlayForIndex(currentPointIndex + 1)
+      }
+    })
+
+    const interactions = map.getInteractions().getArray()
+    const clickInteraction = interactions.find(
+      (i): i is OverlayInteraction => !!(i as OverlayInteraction).overlay?.showAtCoordinate,
+    )
+
+    if (clickInteraction) {
+      const originalShowAtCoordinate = clickInteraction.overlay!.showAtCoordinate!.bind(clickInteraction.overlay)
+      clickInteraction.overlay!.showAtCoordinate = (coords, properties) => {
+        const pointNumber = properties?.displayPointNumber
+        const index = positions.findIndex(p => (p as TrackPosition).displayPointNumber === pointNumber)
+        if (index !== -1) currentPointIndex = index
+        originalShowAtCoordinate(coords, properties)
+      }
+    }
+
+    // emMap.addEventListener('map:overlay:open', () => {
+    //   const shadowRootEmMap = getShadowRoot(emMap as EmMap)
+    //   const titleEl = shadowRootEmMap?.querySelector('.app-map__overlay-title strong')
+    //   if (!titleEl) return
+
+    //   const pointNumber = titleEl.textContent?.match(/\d+/)?.[0]
+    //   if (!pointNumber) return
+
+    //   const index = positions.findIndex(p => String((p as TrackPosition).displayPointNumber) === pointNumber)
+    //   if (index !== -1) currentPointIndex = index
+    // })
 
     emMap.dispatchEvent(
       new CustomEvent('app:map:layers:ready', {

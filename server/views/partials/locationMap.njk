@@ -1,4 +1,22 @@
 {% from "em-map/macro.njk" import emMap %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
+
+
+  {% set paginationHtml %}
+  {{ govukPagination({
+    previous: {
+      text: "Previous",
+      attributes: { "data-nav": "prev", "data-test": "previous-pin-card" },
+      href: "#"
+    },
+    next: {
+      text: "Next",
+      attributes: { "data-nav": "next", "data-test": "next-pin-card" },
+      href: "#"
+    },
+    items: []
+  }) }}
+  {% endset %}
 
 <div class="em-map"
     data-qa="em-map"
@@ -32,7 +50,7 @@
 
    {% raw %}
   <template id="overlay-title-mdss-location">
-    <div><strong>{{ positionCardHeader }} {{ displayPointNumber }} HIIIII</strong></div>
+    <div><strong>{{ positionCardHeader }} {{ displayPointNumber }}</strong></div>
   </template>
 
   <template id="overlay-body-mdss-location">
@@ -56,15 +74,21 @@
       <span class="app-map__overlay-label">{{ positionCardGeolocationMechanismLabel }}</span>
       <span class="app-map__overlay-value">{{ displayGeolocationMechanism }}</span>
     </div>
-      <div class="app-map__overlay-row app-map__overlay-nav">
-        <button class="app-map__overlay-nav-btn" data-nav="first" aria-label="Go to first ping">&#171; First</button>
-        <button class="app-map__overlay-nav-btn" data-nav="prev" aria-label="Go to previous ping">&#8592; Previous</button>
-        <span class="app-map__overlay-nav-count">{{ displayPointNumber }} of {{ totalPoints }}</span>
-        <button class="app-map__overlay-nav-btn" data-nav="next" aria-label="Go to next ping">Next &#8594;</button>
-        <button class="app-map__overlay-nav-btn" data-nav="last" aria-label="Go to last ping">Last &#187;</button>    
-      </div>
   </template>
 {% endraw %}
+
+
+    <script nonce="{{ cspNonce }}">
+        document.addEventListener('DOMContentLoaded', () => {
+          const template = document.getElementById('overlay-body-mdss-location')
+          if (!template) return
+          const navRow = document.createElement('div')
+          navRow.className = 'app-map__overlay-row app-map__overlay-nav'
+          navRow.innerHTML = {{ paginationHtml | dump | safe }}
+          template.content.appendChild(navRow)
+          console.log('xxx>>> template:', template)
+        })
+    </script>
 
     <script nonce="{{ cspNonce }}">
       document.addEventListener('DOMContentLoaded', () => {
@@ -144,16 +168,44 @@
       font-size: 14px !important;
     }
 
+
     .app-map__overlay-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 8px 10px;
-      border-top: 0.5px solid #d9d9d9;
-      border: 10px solid red;
-      background: white;
-      border-radius: 0 0 16px 16px;
+      display: block !important;
+      padding: 0 !important;
+      border-top: 0.5px solid #d9d9d9 !important;
+      border-bottom: none !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .app-map__overlay-nav .govuk-pagination {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 8px 10px !important;
+      box-sizing: border-box !important;
+      border: none !important;   /* remove the red debug border */
+    }
+
+    .app-map__overlay-nav .govuk-pagination__prev,
+    .app-map__overlay-nav .govuk-pagination__next {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .govuk-link.govuk-pagination__link {
+      color: #1a65a6 !important;
+      font-weight: 700;
+    }
+
+    .govuk-pagination__icon--prev {
+        margin-right: 15px !important;
+    }
+
+    .govuk-pagination__icon--next {
+        margin-left: 15px !important;
     }
 
 
