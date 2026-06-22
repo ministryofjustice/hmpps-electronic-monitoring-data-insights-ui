@@ -259,6 +259,10 @@ const initialiseLocationDataView = () => {
         openOverlayForIndex(currentPointIndex - 1)
       } else if (direction === 'next' && currentPointIndex < positions.length - 1) {
         openOverlayForIndex(currentPointIndex + 1)
+      } else if (direction === 'first') {
+        openOverlayForIndex(0)
+      } else if (direction === 'last') {
+        openOverlayForIndex(positions.length - 1)
       }
     })
 
@@ -276,18 +280,6 @@ const initialiseLocationDataView = () => {
         originalShowAtCoordinate(coords, properties)
       }
     }
-
-    // emMap.addEventListener('map:overlay:open', () => {
-    //   const shadowRootEmMap = getShadowRoot(emMap as EmMap)
-    //   const titleEl = shadowRootEmMap?.querySelector('.app-map__overlay-title strong')
-    //   if (!titleEl) return
-
-    //   const pointNumber = titleEl.textContent?.match(/\d+/)?.[0]
-    //   if (!pointNumber) return
-
-    //   const index = positions.findIndex(p => String((p as TrackPosition).displayPointNumber) === pointNumber)
-    //   if (index !== -1) currentPointIndex = index
-    // })
 
     emMap.dispatchEvent(
       new CustomEvent('app:map:layers:ready', {

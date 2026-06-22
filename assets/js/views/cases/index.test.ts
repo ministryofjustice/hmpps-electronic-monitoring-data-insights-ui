@@ -9,6 +9,7 @@ import {
   TextLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
+import { Interaction } from 'ol/interaction'
 import initialiseLocationDataView from './index'
 import * as utils from '../../utils/utils'
 import MapLayersControl from './controls/mapLayersControls'
@@ -18,6 +19,7 @@ interface MockOlMapInstance {
   getView: jest.Mock
   getSize: jest.Mock
   getViewport: jest.Mock
+  getInteractions: jest.Mock
 }
 
 interface MockEmMapElement {
@@ -36,6 +38,8 @@ interface MockShadowRoot {
 
 interface MockEmMapWithShadow extends MockEmMapElement {
   shadowRoot: MockShadowRoot | null
+  addEventListener?: jest.Mock
+  removeEventListener?: jest.Mock
 }
 
 jest.mock('./controls/mapLayersControls', () => jest.fn().mockImplementation(() => ({})))
@@ -97,6 +101,15 @@ describe('initialiseLocationDataView', () => {
       getViewport: jest.fn(() => ({
         addEventListener: jest.fn(),
       })),
+      getInteractions: jest.fn(() => ({
+        getArray: jest.fn((): Interaction[] => [
+          {
+            overlay: {
+              showAtCoordinate: jest.fn(),
+            },
+          } as unknown as Interaction,
+        ]),
+      })),
     }
 
     mockEmMap = {
@@ -106,10 +119,13 @@ describe('initialiseLocationDataView', () => {
       dispatchEvent: jest.fn(),
       fitToAllLayers: jest.fn(),
       getNativeLayer: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
       shadowRoot: {
         adoptedStyleSheets: [],
         querySelector: jest.fn(),
-      },
+        addEventListener: jest.fn(),
+      } as unknown as MockShadowRoot,
     }
     mockMapContainer = document.createElement('div')
     ;(utils.queryElement as jest.Mock).mockImplementation((_root: unknown, selector: string) => {
