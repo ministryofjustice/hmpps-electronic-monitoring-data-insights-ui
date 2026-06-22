@@ -13,7 +13,6 @@ const commonLocale = {
     profileInfoHeader: {
       crnLabel: 'CRN',
       dateOfBirthLabel: 'Date of birth',
-      tierLabel: 'Tier',
     },
   },
 }
@@ -26,6 +25,8 @@ export default function nunjucksSetup(app: express.Express): void {
   app.locals.environmentName = config.environmentName
   app.locals.environmentNameColour = config.environmentName === 'PRE-PRODUCTION' ? 'govuk-tag--green' : ''
   app.locals.common = commonLocale.en
+  app.locals.mpopUrl = config.mpopUrl
+  app.locals.enableHeatmap = config.enableHeatmap
 
   let assetManifest: Record<string, string> = {}
 

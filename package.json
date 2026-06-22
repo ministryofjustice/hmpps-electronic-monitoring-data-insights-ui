@@ -38,7 +38,7 @@
       ]
     },
     "transformIgnorePatterns": [
-      "node_modules/(?!(ol|@ministryofjustice/hmpps-electronic-monitoring-components)/)"
+      "node_modules/(?!(ol|earcut|rbush|quickselect|@ministryofjustice/hmpps-electronic-monitoring-components)/)"
     ],
     "collectCoverageFrom": [
       "server/**/*.{ts,js,jsx,mjs}"
@@ -84,7 +84,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.803.0",
-    "@ministryofjustice/frontend": "^5.1.5",
+    "@ministryofjustice/frontend": "9.0.0",
     "@ministryofjustice/hmpps-auth-clients": "^0.0.1-alpha.4",
     "@ministryofjustice/hmpps-electronic-monitoring-components": "0.2.18-beta.1",
     "@ministryofjustice/hmpps-monitoring": "^0.0.1-beta.2",
@@ -104,7 +104,7 @@
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
     "express-session": "^1.18.1",
-    "govuk-frontend": "^5.11.2",
+    "govuk-frontend": "6.2.0",
     "helmet": "^8.1.0",
     "hmpps-open-layers-map": "^0.8.7",
     "http-errors": "^2.0.0",

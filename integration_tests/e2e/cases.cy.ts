@@ -8,9 +8,9 @@ context('Cases', () => {
     cy.task('stubExampleTime')
   })
 
-  it('Navigates to Cases page via primary navigation and sub navigation is present', () => {
+  it('Navigates to Cases page and sub navigation is present', () => {
     cy.signIn()
-    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
+    cy.visit('/cases/1/overview')
 
     const casesPage = Page.verifyOnPage(CasesPage)
     casesPage.casesSubNav().should('exist')
@@ -18,9 +18,9 @@ context('Cases', () => {
     Page.verifyOnPage(CasesPage)
   })
 
-  it('Navigates to Cases page via primary navigation and curfew badge is present', () => {
+  it('Navigates to Cases page and curfew badge is present', () => {
     cy.signIn()
-    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
+    cy.visit('/cases/1/overview')
 
     const casesPage = Page.verifyOnPage(CasesPage)
     casesPage.casesCurfewBadge().should('exist')
@@ -29,7 +29,7 @@ context('Cases', () => {
 
   it('Navigates between Cases sub navigation tabs', () => {
     cy.signIn()
-    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
+    cy.visit('/cases/1/overview')
 
     // Overview tab (should be active by default)
     cy.get('[aria-current=page]').should('contain.text', 'Overview')
@@ -48,7 +48,7 @@ context('Cases', () => {
 
   it('should display all expected summary keys', () => {
     cy.signIn()
-    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
+    cy.visit('/cases/1/overview')
 
     const expectedKeys = [
       'Name',
@@ -91,7 +91,7 @@ context('Cases', () => {
 
   it('should display all expected summary card titles', () => {
     cy.signIn()
-    cy.get('[data-qa=primary-navigation]').contains('a', 'Cases').click()
+    cy.visit('/cases/1/overview')
 
     const expectedTitles = [
       'Personal details',

@@ -87,10 +87,44 @@ const formatDob = (dateString?: string | null): string => {
   return date?.isValid() ? date.format('DD/MM/YYYY') : ''
 }
 
+const calculateAge = (dateString?: string | null): number | null => {
+  if (!dateString) return null
+
+  const dateOfBirth = dayjs(dateString, ['YYYY-MM-DD', 'D/M/YYYY', 'DD/MM/YYYY'], true)
+
+  if (!dateOfBirth?.isValid()) return null
+
+  const today = dayjs().tz('Europe/London').startOf('day')
+
+  const dateOfBirthYear = dateOfBirth.year()
+  const dateOfBirthMonth = dateOfBirth.month()
+  const dateOfBirthDate = dateOfBirth.date()
+  const todayYear = today.year()
+  const todayMonth = today.month()
+  const todayDate = today.date()
+
+  if (
+    dateOfBirthYear > todayYear ||
+    (dateOfBirthYear === todayYear && dateOfBirthMonth > todayMonth) ||
+    (dateOfBirthYear === todayYear && dateOfBirthMonth === todayMonth && dateOfBirthDate > todayDate)
+  ) {
+    return null
+  }
+
+  let age = todayYear - dateOfBirthYear
+
+  if (dateOfBirthMonth > todayMonth || (dateOfBirthMonth === todayMonth && dateOfBirthDate > todayDate)) {
+    age -= 1
+  }
+
+  return age
+}
+
 export {
   parseDateTimeFromComponents,
   parseDateTimeFromISOString,
   getDateComponents,
+  calculateAge,
   formatDate,
   formatDob,
   formatGpsDate,

@@ -63,6 +63,7 @@ jest.mock('ol/extent', () => ({ isEmpty: jest.fn(() => true) }))
 jest.mock('ol/layer/Vector', () => jest.fn().mockImplementation(() => ({})))
 jest.mock('ol/source/Vector', () => jest.fn().mockImplementation(() => ({})))
 jest.mock('ol/Feature', () => jest.fn().mockImplementation(() => ({})))
+jest.mock('ol/layer/Heatmap', () => jest.fn().mockImplementation(() => ({})))
 jest.mock('ol/geom', () => ({
   LineString: jest.fn().mockImplementation(() => ({})),
 }))

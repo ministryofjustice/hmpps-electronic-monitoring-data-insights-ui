@@ -9,7 +9,7 @@ import CaseLocationActivityService, {
 import DateSearchValidationService from '../../services/dateSearchValidationService'
 import { ValidationResult } from '../../models/ValidationResult'
 import { searchLocationsQuerySchema } from '../../schemas/locationActivity/searchDateFormSchema'
-import { getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
+import { calculateAge, getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
 import casesLocationLocale from '../cases/cases-location.locale.json'
 import { defaultLocationMapControls, LocationMapControls } from '../../types/locationMapControls'
 
@@ -173,7 +173,6 @@ export default class PeopleController {
         ? {
             crn: person.deliusId,
             dateOfBirth: person.dateOfBirth,
-            tier: 'B3',
           }
         : null,
       showComplianceBadge: false,
@@ -275,14 +274,14 @@ export default class PeopleController {
     }
 
     res.render('pages/personLocation', {
-      activeNav: 'people',
+      activeNav: 'cases',
       activeTab: 'locations',
       locale: casesLocationLocale,
       fullName: personContext.fullName,
       popData: {
         crn: deliusId,
         dateOfBirth: personContext.dateOfBirth,
-        tier: 'B3',
+        age: calculateAge(personContext.dateOfBirth),
       },
       showComplianceBadge: false,
       personContext,
