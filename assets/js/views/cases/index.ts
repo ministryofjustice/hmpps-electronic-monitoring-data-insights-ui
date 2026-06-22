@@ -13,6 +13,7 @@ import VectorSource from 'ol/source/Vector'
 import { Feature } from 'ol'
 import { Point } from 'ol/geom'
 import { fromLonLat } from 'ol/proj'
+import { Coordinate } from 'ol/coordinate'
 import { queryElement } from '../../utils/utils'
 import createLockRotationControl from './controls/createLockRotationControl'
 import getRotatedDirection from './controls/getRotatedDirection'
@@ -240,7 +241,28 @@ const initialiseLocationDataView = () => {
     })
     map.addControl(mapLayersControl)
 
+    const updateNavVisibility = (index: number) => {
+      const shadowRootNav = getShadowRoot(emMap as EmMap)
+      if (!shadowRootNav) return
+      const prevLink = shadowRootNav.querySelector('[data-nav="prev"]') as HTMLElement | null
+      const nextLink = shadowRootNav.querySelector('[data-nav="next"]') as HTMLElement | null
+      const prevContainer = prevLink?.closest('.govuk-pagination__prev') as HTMLElement | null
+      const nextContainer = nextLink?.closest('.govuk-pagination__next') as HTMLElement | null
+
+      if (prevContainer) prevContainer.style.visibility = index === 0 ? 'hidden' : 'visible'
+      if (nextContainer) nextContainer.style.visibility = index === positions.length - 1 ? 'hidden' : 'visible'
+    }
+
     let currentPointIndex: number | null = null
+
+    const offsetMapCenterForOverlay = (targetMap: NonNullable<EmMap['olMapInstance']>, coords: Coordinate) => {
+      const view = targetMap.getView()
+      const resolution = view.getResolution() ?? 1
+      const overlayHeightPx = 300
+      const offsetMetres = (overlayHeightPx / 2) * resolution
+      const offsetCenter: [number, number] = [coords[0], coords[1] - offsetMetres]
+      view.animate({ center: offsetCenter, duration: 300 })
+    }
 
     const openOverlayForIndex = (index: number) => {
       const position = positions[index] as TrackPosition
@@ -260,7 +282,7 @@ const initialiseLocationDataView = () => {
       if (!(geometry instanceof Point)) return
       const coords = geometry.getCoordinates()
 
-      map.getView().animate({ center: coords, duration: 300 })
+      offsetMapCenterForOverlay(map, coords)
 
       const interactions = map.getInteractions().getArray()
       const clickInteraction = interactions.find((i: OverlayInteraction) => i.overlay?.showAtCoordinate)
@@ -303,6 +325,7 @@ const initialiseLocationDataView = () => {
         const index = positions.findIndex(p => (p as TrackPosition).displayPointNumber === pointNumber)
         if (index !== -1) currentPointIndex = index
         originalShowAtCoordinate(coords, properties)
+        if (index !== -1) updateNavVisibility(index)
       }
     }
 

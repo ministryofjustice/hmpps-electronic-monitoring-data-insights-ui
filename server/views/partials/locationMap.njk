@@ -30,6 +30,7 @@
 <div class="em-map"
     data-qa="em-map"
     data-enable-heatmap="{{ enableHeatmap }}"
+    data-enable-ping-card-navigation="{{ enablePingCardNavigation }}"
     data-map-control-base-layer="{{ mapControls.baseLayer }}"
     data-map-control-tracks="{{ mapControls.tracks }}"
     data-map-control-confidence="{{ mapControls.confidence }}"
@@ -92,6 +93,11 @@
         document.addEventListener('DOMContentLoaded', () => {
           const template = document.getElementById('overlay-body-mdss-location')
           if (!template) return
+
+          const mapContainer = document.querySelector('[data-qa="em-map"]')
+          const enablePingCardNavigation = mapContainer?.dataset.enablePingCardNavigation === 'true'
+          if (!enablePingCardNavigation) return
+
           const navRow = document.createElement('div')
           navRow.className = 'app-map__overlay-row app-map__overlay-nav'
           navRow.innerHTML = {{ paginationHtml | dump | safe }}
