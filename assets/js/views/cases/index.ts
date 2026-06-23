@@ -7,11 +7,13 @@ import {
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import { isEmpty } from 'ol/extent'
 import VectorLayer from 'ol/layer/Vector'
+import { Interaction } from 'ol/interaction'
 import HeatmapLayer from 'ol/layer/Heatmap'
 import VectorSource from 'ol/source/Vector'
 import { Feature } from 'ol'
 import { Point } from 'ol/geom'
 import { fromLonLat } from 'ol/proj'
+import { Coordinate } from 'ol/coordinate'
 import { queryElement } from '../../utils/utils'
 import createLockRotationControl from './controls/createLockRotationControl'
 import getRotatedDirection from './controls/getRotatedDirection'
@@ -23,6 +25,13 @@ interface ShadowRootHost extends HTMLElement {
 
 export interface TrackPosition extends Position {
   gpsDate?: string
+  displayPointNumber?: number
+}
+
+export type OverlayInteraction = Interaction & {
+  overlay?: {
+    showAtCoordinate?: (coords: number[], properties?: Record<string, unknown>) => void
+  }
 }
 
 const TIME_GAP_THRESHOLD_MINS = 50
@@ -231,6 +240,94 @@ const initialiseLocationDataView = () => {
       onChange: syncMapControlInputs,
     })
     map.addControl(mapLayersControl)
+
+    const updateNavVisibility = (index: number) => {
+      const shadowRootNav = getShadowRoot(emMap as EmMap)
+      if (!shadowRootNav) return
+      const prevLink = shadowRootNav.querySelector('[data-nav="prev"]') as HTMLElement | null
+      const nextLink = shadowRootNav.querySelector('[data-nav="next"]') as HTMLElement | null
+      const prevContainer = prevLink?.closest('.govuk-pagination__prev') as HTMLElement | null
+      const nextContainer = nextLink?.closest('.govuk-pagination__next') as HTMLElement | null
+
+      if (prevContainer) prevContainer.style.visibility = index === 0 ? 'hidden' : 'visible'
+      if (nextContainer) nextContainer.style.visibility = index === positions.length - 1 ? 'hidden' : 'visible'
+    }
+
+    let currentPointIndex: number | null = null
+
+    const offsetMapCenterForOverlay = (targetMap: NonNullable<EmMap['olMapInstance']>, coords: Coordinate) => {
+      const view = targetMap.getView()
+      const resolution = view.getResolution() ?? 1
+      const overlayHeightPx = 300
+      const offsetMetres = (overlayHeightPx / 2) * resolution
+      const offsetCenter: [number, number] = [coords[0], coords[1] - offsetMetres]
+      view.animate({ center: offsetCenter, duration: 300 })
+    }
+
+    const openOverlayForIndex = (index: number) => {
+      const position = positions[index] as TrackPosition
+      currentPointIndex = index
+
+      const nativeLayers = locationsLayer.getNativeLayer()
+      const vectorLayer = Array.isArray(nativeLayers) ? (nativeLayers[0] as VectorLayer) : null
+      const source = vectorLayer?.getSource?.()
+      if (!source) return
+
+      const feature = source
+        .getFeatures()
+        .find(f => f.getProperties().displayPointNumber === position.displayPointNumber)
+      if (!feature) return
+
+      const geometry = feature.getGeometry()
+      if (!(geometry instanceof Point)) return
+      const coords = geometry.getCoordinates()
+
+      offsetMapCenterForOverlay(map, coords)
+
+      const interactions = map.getInteractions().getArray()
+      const clickInteraction = interactions.find((i: OverlayInteraction) => i.overlay?.showAtCoordinate)
+      if (clickInteraction) {
+        ;(clickInteraction as OverlayInteraction).overlay.showAtCoordinate(coords, feature.getProperties())
+      }
+    }
+
+    const shadowRootMap = getShadowRoot(emMap as EmMap)
+
+    shadowRootMap?.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLElement
+      const navLink = target.closest('[data-nav]') as HTMLElement | null
+      if (!navLink) return
+      e.preventDefault()
+
+      const direction = navLink.dataset.nav
+      if (currentPointIndex === null) return
+
+      if (direction === 'prev' && currentPointIndex > 0) {
+        openOverlayForIndex(currentPointIndex - 1)
+      } else if (direction === 'next' && currentPointIndex < positions.length - 1) {
+        openOverlayForIndex(currentPointIndex + 1)
+      } else if (direction === 'first') {
+        openOverlayForIndex(0)
+      } else if (direction === 'last') {
+        openOverlayForIndex(positions.length - 1)
+      }
+    })
+
+    const interactions = map.getInteractions().getArray()
+    const clickInteraction = interactions.find(
+      (i): i is OverlayInteraction => !!(i as OverlayInteraction).overlay?.showAtCoordinate,
+    )
+
+    if (clickInteraction) {
+      const originalShowAtCoordinate = clickInteraction.overlay!.showAtCoordinate!.bind(clickInteraction.overlay)
+      clickInteraction.overlay!.showAtCoordinate = (coords, properties) => {
+        const pointNumber = properties?.displayPointNumber
+        const index = positions.findIndex(p => (p as TrackPosition).displayPointNumber === pointNumber)
+        if (index !== -1) currentPointIndex = index
+        originalShowAtCoordinate(coords, properties)
+        if (index !== -1) updateNavVisibility(index)
+      }
+    }
 
     emMap.dispatchEvent(
       new CustomEvent('app:map:layers:ready', {

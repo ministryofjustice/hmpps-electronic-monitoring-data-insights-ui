@@ -1,0 +1,47 @@
+<nav class="govuk-pagination" aria-label="Pagination">
+      {% if params.previous %}
+
+        <div class="govuk-pagination__prev">
+            <a class="govuk-link govuk-pagination__link" href="{{ params.previous.href }}" rel="prev"
+                {%- for attrName, attrValue in params.previous.attributes %} {{ attrName }}="{{ attrValue }}"{% endfor %}>
+                <span class="govuk-pagination__link-title">
+                    {{ params.previous.text }}
+                </span>      
+            </a>
+        </div>
+    {% endif %}
+
+   {% if params.first or params.last %}
+        <ul class="govuk-pagination__list">
+            {% if params.first %}
+            <li class="govuk-pagination__item">
+            <a class="govuk-link govuk-pagination__link" href="{{ params.first.href }}"
+                {%- for attrName, attrValue in params.first.attributes %} {{ attrName }}="{{ attrValue }}"{% endfor %}>
+                {{ params.first.text }}
+            </a>
+            </li>
+            {% endif %}
+            {% if params.last %}
+            <li class="govuk-pagination__item">
+            <a class="govuk-link govuk-pagination__link" href="{{ params.last.href }}"
+                {%- for attrName, attrValue in params.last.attributes %} {{ attrName }}="{{ attrValue }}"{% endfor %}>
+                {{ params.last.text }}
+            </a>
+            </li>
+            {% endif %}
+        </ul>
+    {% endif %}
+
+    {% if params.next %}
+        <div class="govuk-pagination__next">
+             <a class="govuk-link govuk-pagination__link" href="{{ params.next.href }}" rel="next"
+                {%- for attrName, attrValue in params.next.attributes %} {{ attrName }}="{{ attrValue }}"{% endfor %}>
+                <span class="govuk-pagination__link-title">
+                    {{ params.next.text }}
+                </span>      
+            </a>
+        </div>
+    {% endif %}
+</nav>
+
+
