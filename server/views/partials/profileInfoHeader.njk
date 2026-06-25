@@ -1,5 +1,5 @@
 {%- from "moj/components/badge/macro.njk" import mojBadge -%}
-<header class="profile-info-header">
+<div class="profile-info-header" role="region" aria-label="Person details">
     {% include "../partials/profileInfo.njk" %}
     {% if showComplianceBadge %}
       {{ mojBadge({
@@ -9,4 +9,4 @@
           }) 
       }}
     {% endif %}
-</header>
+</div>
