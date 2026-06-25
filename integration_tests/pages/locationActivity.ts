@@ -7,7 +7,7 @@ export default class LocationActivityPage extends Page {
   }
 
   checkOnPage(): void {
-    cy.get('h2').contains(this.title)
+    cy.get('h1').contains(this.title)
   }
 
   dateSearchForm = (): PageElement => cy.get('[data-qa=date-filter-form]')
