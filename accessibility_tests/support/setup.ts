@@ -3,13 +3,37 @@ import { expect, type Page } from '@playwright/test'
 import auth from '../../integration_tests/mockApis/auth'
 import emdiApi from '../../integration_tests/mockApis/emdiApi'
 import locationActivity from '../../integration_tests/mockApis/locationActivity'
-import { resetStubs } from '../../integration_tests/mockApis/wiremock'
+import { resetStubs, stubFor } from '../../integration_tests/mockApis/wiremock'
 import vectorStyle from '../../integration_tests/fixtures/vectorStyle.json'
 
 export const stubCommonApis = async (): Promise<void> => {
   await resetStubs()
   await auth.stubSignIn()
   await emdiApi.stubExampleTime()
+  await stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: '/components/api/components.*',
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: {
+        header: {
+          html: '<header class="probation-common-header govuk-!-display-none-print" role="banner"><a class="probation-common-header__link" href="/">HMPPS</a></header>',
+          css: [],
+          javascript: [],
+        },
+        footer: {
+          html: '<footer class="govuk-footer" role="contentinfo"></footer>',
+          css: [],
+          javascript: [],
+        },
+      },
+    },
+  })
 }
 
 export const signIn = async (page: Page): Promise<void> => {
@@ -21,7 +45,7 @@ export const signIn = async (page: Page): Promise<void> => {
 }
 
 export const goToCasesPage = async (page: Page): Promise<void> => {
-  await page.locator('[data-qa=primary-navigation]').getByRole('link', { name: 'Cases' }).click()
+  await page.goto('/cases/1/overview')
   await expect(page.getByRole('heading', { name: 'Adam Collins' })).toBeVisible()
 }
 
