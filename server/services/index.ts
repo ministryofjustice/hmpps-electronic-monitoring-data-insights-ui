@@ -3,6 +3,7 @@ import AuditService from './auditService'
 import CaseLocationActivityService from './caseLocationActivityService'
 import DateSearchValidationService from './dateSearchValidationService'
 import EmdiService from './emdiService'
+import FlagService from './flagService'
 import LocationsService from './locationsService'
 import PeopleService from './peopleService'
 import TrailService from './trailService'
@@ -17,6 +18,7 @@ export const services = () => {
   const peopleService = new PeopleService(peopleApiClient)
   const trailService = new TrailService()
   const dateSearchValidationService = new DateSearchValidationService()
+  const flagService = new FlagService()
 
   return {
     applicationInfo,
@@ -27,6 +29,7 @@ export const services = () => {
     peopleService,
     trailService,
     dateSearchValidationService,
+    flagService,
   }
 }
 
