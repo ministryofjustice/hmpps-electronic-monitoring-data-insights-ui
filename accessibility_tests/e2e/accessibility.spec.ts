@@ -38,6 +38,7 @@ test.describe('Accessibility', () => {
     await goToCasesPage(page)
 
     await page.locator('[data-qa=cases-sub-navigation]').getByRole('link', { name: 'Location activity' }).click()
+    await page.locator('#crn').fill('X123456')
     await page.locator('#start-date').fill('01/01/2026')
     await page.locator('#start-hour').fill('10')
     await page.locator('#start-minute').fill('00')
