@@ -8,5 +8,7 @@ export default configureAllowedScripts({
     'node_modules/esbuild@0.25.4': 'ALLOW',
     'node_modules/fsevents@2.3.3': 'ALLOW',
     'node_modules/unrs-resolver@1.7.2': 'ALLOW',
+       // required for open telemetry for app insights
+    'node_modules/@grpc/proto-loader/node_modules/protobufjs@7.6.4': 'ALLOW',
   },
 })

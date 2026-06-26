@@ -36,6 +36,7 @@ export class AgentConfig {
 }
 
 const config = {
+  applicationName: get('APPLICATION_NAME', 'Electronic Monitoring Data Insights'),
   buildNumber: get('BUILD_NUMBER', '1_0_0', requiredInProduction),
   productId: get('PRODUCT_ID', 'UNASSIGNED', requiredInProduction),
   gitRef: get('GIT_REF', 'xxxxxxxxxxxxxxxxxxx', requiredInProduction),
@@ -55,6 +56,9 @@ const config = {
     expiryMinutes: Number(get('WEB_SESSION_TIMEOUT_IN_MINUTES', 120)),
   },
   apis: {
+    appInsights: {
+      connectionString: get('APPLICATIONINSIGHTS_CONNECTION_STRING', null, requiredInProduction),
+    },
     hmppsAuth: {
       url: get('HMPPS_AUTH_URL', 'http://localhost:9090/auth', requiredInProduction),
       healthPath: '/health/ping',

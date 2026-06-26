@@ -26,6 +26,12 @@
   <script type="module" src="{{ '/assets/js/index.js' | assetMap }}"></script>
 {% endblock %}
 
+<script nonce="{{ cspNonce }}">
+    document.addEventListener('DOMContentLoaded', function () {
+      document.initialiseTelemetry('{{ applicationInsightsConnectionString | default(' ') }}', '{{ applicationInsightsRoleName }}', '{{ user.username }}')
+    })
+  </script>
+
 {% block footer %}
   {{ feComponents.footer | safe }}
 {% endblock %}

@@ -40,7 +40,7 @@ export default function createApp(services: Services): express.Application {
     }),
   )
   app.use(appInsightsMiddleware())
-  app.use(setUpHealthChecks(services.applicationInfo))
+  app.use(setUpHealthChecks(services.applicationInfo as Parameters<typeof setUpHealthChecks>[0]))
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
   app.use(setUpWebRequestParsing())
