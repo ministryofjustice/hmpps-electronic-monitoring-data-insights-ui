@@ -36,6 +36,7 @@ export default function setUpWebSecurity(): Router {
             'https://probation-frontend-components-dev.hmpps.service.justice.gov.uk',
             'https://api.os.uk',
             '*.applicationinsights.azure.com/v2/track',
+            'https://js.monitor.azure.com',
           ],
           imgSrc: ["'self'", 'data:', 'blob:', 'https://*.os.uk'],
         },

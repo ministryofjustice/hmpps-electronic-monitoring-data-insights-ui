@@ -1,7 +1,6 @@
 //  setup, defaultClient, TelemetryClient, DistributedTracingModes
 import * as applicationInsights from 'applicationinsights'
 import { defaultName, version, initialiseAppInsights, buildAppInsightsClient } from './azureAppInsights'
-import applicationInfo from '../applicationInfo'
 
 const applicationName = 'mock application name'
 const mockVersion = '1_0_0'
@@ -29,7 +28,9 @@ jest.mock('applicationinsights', () => ({
   __esModule: true,
   setup: jest.fn(() => ({
     setDistributedTracingMode: jest.fn(() => ({
-      start: jest.fn(),
+      enableWebInstrumentation: jest.fn(() => ({
+        start: jest.fn().mockReturnThis(),
+      })),
     })),
   })),
   start: jest.fn().mockReturnThis(),

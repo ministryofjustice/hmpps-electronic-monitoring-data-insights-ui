@@ -7,7 +7,7 @@
   "scripts": {
     "prepare": "husky",
     "watch-ts": "tsc -w",
-    "build": "esbuild server.ts --bundle --outdir=dist && cp package.json dist/",
+    "build": "esbuild server.ts --bundle --outdir=dist --platform=node --packages=external && cp package.json dist/",
     "start": "node $NODE_OPTIONS dist/server.js | bunyan -o short",
     "start:dev": "concurrently -k -p \"[{name}]\" -n \"ESBuild,Node\" -c \"yellow.bold,cyan.bold\" \"node esbuild/esbuild.config.js --build --watch\" \"node esbuild/esbuild.config.js --dev-server\"",
     "start-feature": " node $NODE_DEBUG_OPTION --env-file=feature.env dist/server.js | bunyan -o short",

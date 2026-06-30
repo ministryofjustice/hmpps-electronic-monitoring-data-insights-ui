@@ -24,13 +24,12 @@
 
 {% block bodyEnd %}
   <script type="module" src="{{ '/assets/js/index.js' | assetMap }}"></script>
-{% endblock %}
-
-<script nonce="{{ cspNonce }}">
+  <script nonce="{{ cspNonce }}">
     document.addEventListener('DOMContentLoaded', function () {
-      document.initialiseTelemetry('{{ applicationInsightsConnectionString | default(' ') }}', '{{ applicationInsightsRoleName }}', '{{ user.username }}')
+      document.initialiseTelemetry('{{ applicationInsightsConnectionString }}', '{{ applicationInsightsRoleName }}', '{{ user.username }}')
     })
   </script>
+{% endblock %}
 
 {% block footer %}
   {{ feComponents.footer | safe }}
