@@ -56,8 +56,8 @@ export default class MapLayersControl extends Control {
 
     const openBtn = document.createElement('button')
     openBtn.setAttribute('aria-label', 'Open layers panel')
-    openBtn.className = 'govuk-button govuk-button--secondary mlc-open-btn'
-    openBtn.innerHTML = 'Open control panel &#9656;'
+    openBtn.className = 'govuk-button mlc-open-btn govuk-button--inverse'
+    openBtn.innerHTML = 'Open map controls &#9656;'
     openBtn.setAttribute('data-hidden', 'true')
 
     const panel = document.createElement('div')
@@ -74,9 +74,9 @@ export default class MapLayersControl extends Control {
           <button 
             type="button" 
             class="mlc-panel__close govuk-button govuk-button--secondary" 
-            aria-label="Close control panel"
+            aria-label="Close map controls"
           >
-            Close control panel
+            Close map controls
             <span aria-hidden="true">&#9662;</span>
           </button>
         </div>

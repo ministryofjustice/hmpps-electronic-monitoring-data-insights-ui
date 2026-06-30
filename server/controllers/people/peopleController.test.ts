@@ -303,6 +303,35 @@ describe('PeopleController', () => {
     )
   })
 
+  it('preserves submitted date formatting in the location search form', async () => {
+    setPersonContext()
+    req.query = {
+      start: { date: '2/6/2026', hour: '01', minute: '05' },
+      end: { date: '3/6/2026', hour: '02', minute: '06' },
+    }
+    caseLocationActivityService.getPositions.mockResolvedValue([])
+
+    await controller.location(req as Request, res as Response)
+
+    expect(caseLocationActivityService.getPositions).toHaveBeenCalledWith(
+      user.username,
+      '41591',
+      '2026-06-02T00:05:00.000Z',
+      '2026-06-03T01:06:00.000Z',
+    )
+    expect(res.render).toHaveBeenCalledWith(
+      'pages/personLocation',
+      expect.objectContaining({
+        dateFilterForm: expect.objectContaining({
+          values: {
+            fromDate: { date: '2/6/2026', hour: '01', minute: '05', second: '00' },
+            toDate: { date: '3/6/2026', hour: '02', minute: '06', second: '00' },
+          },
+        }),
+      }),
+    )
+  })
+
   it('renders validation errors for an invalid search and does not fetch locations', async () => {
     setPersonContext()
     req.query = {
