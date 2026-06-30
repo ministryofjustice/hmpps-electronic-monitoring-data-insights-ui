@@ -43,7 +43,6 @@
       {{ locale.map.instructions }}
     </span>
     <div id="map-pan-announce" aria-live="polite" aria-atomic="true" class="govuk-visually-hidden"></div>
-    <div id="map-rotation-status" aria-live="polite" aria-atomic="true" class="govuk-visually-hidden"></div>
     {{
       emMap({
         alerts: alerts,
@@ -53,8 +52,8 @@
         controls: {
           scaleControl: 'bar',
           locationDisplay: 'dms',
-          rotateControl: 'true',
-          zoomSlider: true
+          rotateControl: false,
+          zoomSlider: false
         }
       })
     }}
