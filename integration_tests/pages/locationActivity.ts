@@ -3,7 +3,7 @@ import Page, { PageElement } from './page'
 
 export default class LocationActivityPage extends Page {
   constructor() {
-    super('Location activity')
+    super('GPS Data')
   }
 
   checkOnPage(): void {

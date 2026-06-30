@@ -27,7 +27,7 @@ test.describe('Accessibility', () => {
     await goToCasesPage(page)
 
     await page.locator('[data-qa=cases-sub-navigation]').getByRole('link', { name: 'Location activity' }).click()
-    await expect(page.getByRole('heading', { name: 'Location activity' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'GPS Data' })).toBeVisible()
 
     await expectNoAccessibilityViolations(page)
   })
