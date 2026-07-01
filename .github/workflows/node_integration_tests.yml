@@ -43,10 +43,6 @@ jobs:
 
       - name: Build application
         run: npm run build
-      - name: Verify build output  # add this temporarily
-        run: |
-          ls -la dist/
-          ls -la dist/assets/ || echo "No assets dir"
       - name: Wait for WireMock
         run: |
           for i in {1..30}; do
@@ -75,10 +71,6 @@ jobs:
 
       - name: Run integration tests
         run: npm run int-test
-
-      - name: Print application logs
-        if: failure()
-        run: cat app.log
       - name: Upload integration test artifacts
         if: always()
         uses: actions/upload-artifact@v4
