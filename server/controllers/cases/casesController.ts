@@ -21,6 +21,7 @@ interface LocationDateFilterFormData {
   date: string
   hour: string
   minute: string
+  second?: string
 }
 interface FilterStateProps {
   errors: ValidationResult
@@ -37,11 +38,13 @@ interface QueryParams {
     date?: string
     hour?: string
     minute?: string
+    second?: string
   }
   end?: {
     date?: string
     hour?: string
     minute?: string
+    second?: string
   }
   crn?: string
   mapControls?: Partial<Record<keyof LocationMapControls, unknown>>
@@ -89,6 +92,7 @@ export default class CasesController {
   private buildDateFilterFormValues(
     sessionFormData: LocationBuildProps | undefined,
     queryRange: { fromDate: string; toDate: string },
+    submittedFormData?: LocationBuildProps,
   ): LocationBuildProps {
     const defaultValues = {
       date: '',
@@ -105,15 +109,49 @@ export default class CasesController {
 
     const fromDateRange = queryRange.fromDate ? parseDateTimeFromISOString(queryRange.fromDate) : null
     const toDateRange = queryRange.toDate ? parseDateTimeFromISOString(queryRange.toDate) : null
-    return {
+    const formValues = {
       fromDate: fromDateRange?.isValid() ? getDateComponents(fromDateRange) : defaultValues,
       toDate: toDateRange?.isValid() ? getDateComponents(toDateRange) : defaultValues,
     }
+
+    if (submittedFormData?.fromDate && submittedFormData?.toDate) {
+      return {
+        fromDate: {
+          ...formValues.fromDate,
+          date: submittedFormData.fromDate.date,
+        },
+        toDate: {
+          ...formValues.toDate,
+          date: submittedFormData.toDate.date,
+        },
+      }
+    }
+
+    return formValues
   }
 
   private persistFormState(req: Request, errors: ValidationResult, formData: LocationBuildProps): void {
     req.session!.validationErrors = errors
     req.session!.formData = formData
+  }
+
+  private buildSubmittedDateFilterFormValues(query: QueryParams): LocationBuildProps | undefined {
+    if (!query.start || !query.end) return undefined
+
+    return {
+      fromDate: {
+        date: query.start.date ?? '',
+        hour: query.start.hour ?? '',
+        minute: query.start.minute ?? '',
+        ...(query.start.second ? { second: query.start.second } : {}),
+      },
+      toDate: {
+        date: query.end.date ?? '',
+        hour: query.end.hour ?? '',
+        minute: query.end.minute ?? '',
+        ...(query.end.second ? { second: query.end.second } : {}),
+      },
+    }
   }
 
   private parseBooleanMapControlValue(value: unknown): boolean | undefined {
@@ -286,7 +324,11 @@ export default class CasesController {
           validationErrors = validation.errors || []
         }
 
-        formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
+        formValues = this.buildDateFilterFormValues(
+          sessionFormData,
+          queryRange,
+          this.buildSubmittedDateFilterFormValues(req.query as QueryParams),
+        )
       }
     } else {
       formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)

@@ -5,7 +5,7 @@ const expectNoAccessibilityViolations = async (page: Page): Promise<void> => {
   if ((await page.locator('[data-qa=em-map]').count()) > 0) {
     await page.waitForFunction(() => {
       const map = document.querySelector('em-map') as HTMLElement & { shadowRoot: ShadowRoot | null }
-      return map?.shadowRoot?.querySelector('.ol-zoomslider-thumb')?.getAttribute('aria-label') === 'Adjust map zoom'
+      return !!map?.shadowRoot?.querySelector('.ol-zoom')
     })
   }
 
