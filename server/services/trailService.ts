@@ -65,7 +65,7 @@ export default class TrailService {
         displayAccuracy: formatDisplayValue(position.precision, 'metres', 'N/A'),
         displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
         displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
-        displaySpeed: formatDisplayValue(position.speed, 'Kilometres per hour', 'N/A'),
+        displaySpeed: formatDisplayValue(position.speed, 'kilometres per hour', 'N/A'),
       }))
   }
 

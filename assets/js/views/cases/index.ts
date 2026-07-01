@@ -15,7 +15,6 @@ import { Point } from 'ol/geom'
 import { fromLonLat } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 import { queryElement } from '../../utils/utils'
-import createLockRotationControl from './controls/createLockRotationControl'
 import getRotatedDirection from './controls/getRotatedDirection'
 import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
 
@@ -227,9 +226,6 @@ const initialiseLocationDataView = () => {
 
     emMap.fitToAllLayers({ padding: 80 })
 
-    const lockControl = createLockRotationControl(emMap)
-    map.addControl(lockControl)
-
     const mapLayersControl = new MapLayersControl({
       mapContainer,
       map: emMap,
@@ -336,22 +332,6 @@ const initialiseLocationDataView = () => {
         detail: { message: 'All custom layers added' },
       }),
     )
-    const shadowRoot = getShadowRoot(emMap)
-    if (!shadowRoot) return
-
-    const compassReset = queryElement(shadowRoot, '.ol-rotate-reset') as HTMLElement
-    compassReset.setAttribute('aria-label', 'Reset map orientation to north')
-
-    const zoomSliderThumb = queryElement(shadowRoot, '.ol-zoomslider-thumb') as HTMLElement
-    zoomSliderThumb.setAttribute('aria-label', 'Adjust map zoom')
-
-    const olZoomSlider = queryElement(shadowRoot, '.ol-zoomslider') as HTMLElement | null
-    const olRotate = queryElement(shadowRoot, '.ol-rotate') as HTMLElement | null
-
-    if (olZoomSlider && olRotate && olRotate.parentNode) {
-      olRotate.parentNode.insertBefore(olZoomSlider, olRotate)
-    }
-
     const nativeLayer = locationsLayer.getNativeLayer()
     if (nativeLayer && Array.isArray(nativeLayer)) {
       const layer = nativeLayer[0] as VectorLayer
