@@ -43,7 +43,10 @@ jobs:
 
       - name: Build application
         run: npm run build
-
+      - name: Verify build output  # add this temporarily
+        run: |
+          ls -la dist/
+          ls -la dist/assets/ || echo "No assets dir"
       - name: Wait for WireMock
         run: |
           for i in {1..30}; do
