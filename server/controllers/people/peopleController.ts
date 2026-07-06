@@ -315,6 +315,8 @@ export default class PeopleController {
       locationAlert = { text: casesLocationLocale.alerts.noResults }
     }
 
+    const showLoadingSpinner = hasSearched && positions.length > 0 && !(locationAlert && locationAlert.text)
+
     res.render('pages/personLocation', {
       activeNav: 'cases',
       activeTab: 'locations',
@@ -336,6 +338,7 @@ export default class PeopleController {
         showCrn: false,
       },
       hasSearched,
+      showLoadingSpinner,
       fromDate: queryRange.fromDate,
       toDate: queryRange.toDate,
       locationAlert,

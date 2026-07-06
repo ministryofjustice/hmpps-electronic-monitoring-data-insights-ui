@@ -65,6 +65,11 @@ const syncMapControlInputs = (state: MapControlState) => {
   })
 }
 
+const hasSearchBeenPerformed = (): boolean => {
+  const params = new URLSearchParams(window.location.search)
+  return Boolean(params.get('start[date]')) && Boolean(params.get('end[date]'))
+}
+
 const initialiseDirectionScreenReader = () => {
   const emMap = queryElement(document, 'em-map') as EmMap
   const panAnnounce = queryElement(document, '#map-pan-announce') as HTMLElement
@@ -125,6 +130,11 @@ const initialiseLocationDataView = () => {
       setTimeout(setupMap, 200)
       return
     }
+
+    const loadingModal = queryElement(document, '#bh-map-loading-modal') as HTMLElement
+    map.on('loadend', () => {
+      loadingModal.hidden = true
+    })
     injectShadowFocusStyles(emMap as EmMap)
     const { positions } = emMap
     const mapControlState = getInitialMapControlState(mapContainer)
