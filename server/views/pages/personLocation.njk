@@ -44,18 +44,7 @@
         {% include "partials/mapSearchForm.njk" %}
       </div>
     </div>
-    
-    <div id="bh-map-loading-modal" class="emdi-loading-modal" role="status" aria-live="polite" aria-label="Updating map" {% if not showLoadingSpinner %}hidden{% endif %}>
-    <div class="emdi-loading-modal__wrapper">
-      <div class="emdi-loading-modal__box emdi-loading-modal__box--loading" tabindex="-1">
-        <h2 class="emdi-loading-modal__heading govuk-heading-m">Updating map</h2>
-        <div class="ho-loading-spinner" aria-hidden="true"></div>
-        <p class="govuk-body govuk-!-margin-bottom-0">Loading latest map activity</p>
-      </div>
-    </div>
-    <div class="emdi-loading-modal__backdrop"></div>
-  </div>
-
+    {% include "partials/mapLoadingModal.njk" %}
     {% include "partials/locationMap.njk" %}
     <p class="govuk-body-m">
       <a href="/map-help?returnUrl={{ currentUrl }}">{{ locale.links.mapHelp }}</a>
