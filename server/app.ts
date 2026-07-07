@@ -22,6 +22,7 @@ import routes from './routes'
 import type { Services } from './services'
 import logger from '../logger'
 import config from './config'
+import baseController from './baseController'
 
 export default function createApp(services: Services): express.Application {
   const app = express()
@@ -40,11 +41,12 @@ export default function createApp(services: Services): express.Application {
     }),
   )
   app.use(appInsightsMiddleware())
-  app.use(setUpHealthChecks(services.applicationInfo))
+  app.use(setUpHealthChecks(services.applicationInfo as Parameters<typeof setUpHealthChecks>[0]))
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
   app.use(setUpWebRequestParsing())
   app.use(setUpStaticResources())
+  app.use(baseController())
   nunjucksSetup(app)
   app.use(setUpAuthentication())
   app.use(authorisationMiddleware())
