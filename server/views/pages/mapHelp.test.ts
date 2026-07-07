@@ -31,7 +31,7 @@ describe('mapHelp template', () => {
         confidenceCircles: {
           title: 'View location accuracy',
           image: {
-            src: '/assets/images/confidence-circles.png',
+            src: '/assets/images/location_acc.png',
             alt: 'View location accuracy map',
           },
           'first-pagaraphs': ['First paragraph', 'Second paragraph'],
@@ -46,7 +46,7 @@ describe('mapHelp template', () => {
 
     expect(html).toContain('Help with the map')
     expect(html).toContain('View location accuracy')
-    expect(html).toContain('src="/assets/images/confidence-circles.png"')
+    expect(html).toContain('src="/assets/images/location_acc.png"')
     expect(html).toContain('alt="View location accuracy map"')
     expect(html).toContain('First paragraph')
     expect(html).toContain('Second paragraph')
