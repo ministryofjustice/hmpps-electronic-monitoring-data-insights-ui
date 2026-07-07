@@ -15,7 +15,7 @@
     "locationAccuracy": {
       "title": "Location accuracy",
       "image": {
-        "src": "/assets/images/confidence-circles.png",
+        "src": "/assets/images/location_acc.png",
         "alt": "A section of a map showing a street (Petty France) with a smaller blue circle inside a larger blue circle and a black line with arrows on it that ends in the middle of the smaller of the circles."
       },
       "first-pagaraphs": [
@@ -31,11 +31,10 @@
     "directionOfTravel": {
       "title": "Direction of travel",
       "image": {
-        "src": "/assets/images/direction-information.png",
+        "src": "/assets/images/one_direction.png",
         "alt": ""
       },
-      "first-pagaraphs": [
-        "Each point is joined to the next point in the sequence by a line to form a trail."],
+      "first-pagaraphs": ["Each point is joined to the next point in the sequence by a line to form a trail."],
       "insert": "The trail shown may not reflect the actual route taken.",
       "last-pagaraphs": [
         "Arrows along the trail show the estimated direction of travel, based on the order of the location points.",
@@ -46,7 +45,7 @@
     "dateAndTime": {
       "title": "Date and time of activity",
       "image": {
-        "src": "/assets/images/ping-card-newest.png",
+        "src": "/assets/images/multi.png",
         "alt": "A section of a map with a white box that contains a table with the heading 'Point 14' then rows containing values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', and 'Signal type'"
       },
       "first-pagaraphs": [
@@ -54,12 +53,12 @@
         "To view the timestamp, select the point and open its ping card."
       ]
     },
-      "speedTravel": {
+    "speedTravel": {
       "title": "Speed of travel",
       "image": {
-        "src": "/assets/images/ping-card-newest.png",
+        "src": "/assets/images/multi.png",
         "alt": "A section of a map with a white box that contains a table with the heading 'Point 14' then rows containing values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', and 'Signal type'"
-       },
+      },
       "first-pagaraphs": [
         "To view the estimated speed of travel, select a point to open its ping card.",
         "The value shown reflects the estimated speed of travel at the moment the tag pinged. It does not indicate the speed of travel between points."
@@ -68,7 +67,7 @@
     "signalType": {
       "title": "Signal type (GPS or LBS)",
       "image": {
-        "src": "/assets/images/ping-card-newest.png",
+        "src": "/assets/images/multi.png",
         "alt": "A section of a map with a white box that contains a table with the heading 'Point 14' then rows containing values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', and 'Signal type'"
       },
       "first-pagaraphs": [
@@ -79,23 +78,10 @@
         "To check which signal type was used to detect a location, select the point to open its ping card."
       ]
     },
-    "timeSpent": {
-      "title": "Time spent in a location",
-      "image": {
-        "src": "/assets/images/heatmap.png",
-        "alt": "A section of a map with 2 black lines, one of which starts off straight, then changes direction several times, and in 2 areas, is surrounded by a blob with red centre and a yellow ring around it, and a green area around the yellow ring."
-      },
-      "first-pagaraphs": [
-        "Heatmaps give a sense of how much time was spent at a location by showing the level of activity detected there.",
-        "Red areas show where the highest amount of activity was detected.",
-        "Yellow areas indicate lower levels of activity in comparison to red areas.",
-        "Green areas indicate the lowest levels of activity detected."
-      ]
-    },
     "missingTrailData": {
       "title": "Missing trail data",
       "image": {
-        "src": "/assets/images/missing-data-new.png",
+        "src": "/assets/images/missing_data.png",
         "alt": "A section of a map with a black line that's dotted and straight in one area, and curved and continuous in another. "
       },
       "first-pagaraphs": [
