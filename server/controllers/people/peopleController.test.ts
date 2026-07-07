@@ -231,6 +231,7 @@ describe('PeopleController', () => {
           showCrn: false,
         },
         hasSearched: false,
+        showLoadingSpinner: false,
         fromDate: '',
         toDate: '',
         locationAlert: null,
@@ -289,6 +290,7 @@ describe('PeopleController', () => {
       expect.objectContaining({
         positions: annotatedPositions,
         hasSearched: true,
+        showLoadingSpinner: true,
         fromDate: '2026-01-12T10:00:00.000Z',
         toDate: '2026-01-14T11:00:00.000Z',
         locationAlert: null,
@@ -346,6 +348,7 @@ describe('PeopleController', () => {
       'pages/personLocation',
       expect.objectContaining({
         hasSearched: true,
+        showLoadingSpinner: false,
         locationAlert: null,
         dateFilterForm: expect.objectContaining({
           showCrn: false,

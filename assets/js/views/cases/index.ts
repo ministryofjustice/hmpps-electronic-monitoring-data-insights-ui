@@ -125,6 +125,11 @@ const initialiseLocationDataView = () => {
       setTimeout(setupMap, 200)
       return
     }
+
+    const loadingModal = queryElement(document, '#bh-map-loading-modal') as HTMLElement
+    map.on('loadend', () => {
+      loadingModal.hidden = true
+    })
     injectShadowFocusStyles(emMap as EmMap)
     const { positions } = emMap
     const mapControlState = getInitialMapControlState(mapContainer)

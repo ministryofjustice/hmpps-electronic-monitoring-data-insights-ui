@@ -16,6 +16,7 @@ import MapLayersControl from './controls/mapLayersControls'
 
 interface MockOlMapInstance {
   addControl: jest.Mock
+  on: jest.Mock
   getView: jest.Mock
   getSize: jest.Mock
   getViewport: jest.Mock
@@ -83,10 +84,12 @@ describe('initialiseLocationDataView', () => {
   let mockEmMap: MockEmMapWithShadow
   let mockMap: MockOlMapInstance
   let mockMapContainer: HTMLElement
+  let mockLoadingModal: HTMLElement
 
   beforeEach(() => {
     mockMap = {
       addControl: jest.fn(),
+      on: jest.fn(),
       getView: jest.fn(() => ({
         fit: jest.fn(),
         getRotation: jest.fn(() => 0),
@@ -122,9 +125,14 @@ describe('initialiseLocationDataView', () => {
       } as unknown as MockShadowRoot,
     }
     mockMapContainer = document.createElement('div')
+
+    mockLoadingModal = document.createElement('div')
+    mockLoadingModal.id = 'bh-map-loading-modal'
+    mockLoadingModal.hidden = false
     ;(utils.queryElement as jest.Mock).mockImplementation((_root: unknown, selector: string) => {
       if (selector === '[data-qa="em-map"]') return mockMapContainer
       if (selector === 'em-map') return mockEmMap as unknown as EmMap
+      if (selector === '#bh-map-loading-modal') return mockLoadingModal
       return mockEmMap as unknown as EmMap
     })
   })
@@ -255,6 +263,31 @@ describe('initialiseLocationDataView', () => {
       const { adoptedStyleSheets } = mockEmMap.shadowRoot as MockShadowRoot
       expect(adoptedStyleSheets).toHaveLength(2)
       expect(adoptedStyleSheets[0]).toBe(existingSheet)
+    })
+  })
+
+  describe('loading modal', () => {
+    it('should register a loadend listener on the map', () => {
+      initialiseLocationDataView()
+      expect(mockMap.on).toHaveBeenCalledWith('loadend', expect.any(Function))
+    })
+
+    it('should hide the loading modal when the map fires loadend', () => {
+      mockLoadingModal.hidden = false
+
+      initialiseLocationDataView()
+
+      const loadendHandler = (mockMap.on as jest.Mock).mock.calls.find(([event]) => event === 'loadend')?.[1]
+
+      expect(loadendHandler).toBeDefined()
+      loadendHandler()
+
+      expect(mockLoadingModal.hidden).toBe(true)
+    })
+
+    it('should query the loading modal from the document, not the map container', () => {
+      initialiseLocationDataView()
+      expect(utils.queryElement).toHaveBeenCalledWith(document, '#bh-map-loading-modal')
     })
   })
 })
