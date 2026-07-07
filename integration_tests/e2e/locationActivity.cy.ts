@@ -87,6 +87,8 @@ context('Cases', () => {
         startMinute: '00',
       })
 
+      locationPage.endDateInput().clear()
+
       locationPage.submitButton().click()
 
       cy.get('.govuk-error-summary').should('exist')
@@ -334,6 +336,23 @@ context('Cases', () => {
       it('should not include a rotation status live region', () => {
         cy.get('#map-rotation-status').should('not.exist')
       })
+    })
+  })
+
+  describe('Date auto-fill behaviour', () => {
+    it('should automatically set the end date to match the start date when end date is empty', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+      locationPage.startDateInput().type('01/01/2026')
+      locationPage.startDateInput().blur()
+      locationPage.endDateInput().should('have.value', '01/01/2026')
+    })
+
+    it('should not change the end date if it is already set when start date is changed', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+      locationPage.startDateInput().type('01/01/2026')
+      locationPage.endDateInput().clear().type('02/01/2026')
+      locationPage.startDateInput().focus().blur()
+      locationPage.endDateInput().should('have.value', '02/01/2026')
     })
   })
 })
