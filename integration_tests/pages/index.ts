@@ -9,6 +9,8 @@ export default class IndexPage extends Page {
 
   headerPhaseBanner = (): PageElement => cy.get('[data-qa=header-phase-banner]')
 
+  servicePhaseBanner = (): PageElement => cy.get('[data-qa=service-phase-banner]')
+
   // The data-qa attribute is not avaialable in the 3rd party header and footer
   fallbackHeader = (): PageElement => cy.get('.probation-common-fallback-header')
 
