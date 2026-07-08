@@ -104,3 +104,18 @@
     </div>
   </div>
 </div>
+
+<script nonce="{{ cspNonce }}">
+  document.addEventListener('DOMContentLoaded', () => {
+    const startDateInput = document.getElementById('start-date')
+    const endDateInput = document.getElementById('end-date')
+
+    if (!startDateInput || !endDateInput) return
+
+    startDateInput.addEventListener('change', () => {
+      if (!endDateInput.value.trim()) {
+        endDateInput.value = startDateInput.value
+      }
+    })
+  })
+</script>
