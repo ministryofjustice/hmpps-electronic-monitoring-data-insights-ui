@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import HomeController from './homeController'
 import AuditService, { Page } from '../../services/auditService'
 import { user } from '../../routes/testutils/appSetup'
-import mockPopDetails from '../mocks/popDetails'
 
 jest.mock('../../services/auditService')
 
@@ -35,9 +34,6 @@ describe('HomeController', () => {
       })
       expect(res.render).toHaveBeenCalledWith('pages/index', {
         activeNav: '/',
-        popData: mockPopDetails,
-        showComplianceBadge: true,
-        alert: true,
       })
     })
   })

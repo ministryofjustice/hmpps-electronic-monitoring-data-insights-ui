@@ -2,11 +2,6 @@ import IndexPage from '../pages/index'
 import Page from '../pages/page'
 
 context('Layout', () => {
-  const profileDetails = [
-    { label: 'CRN:', value: 'X172591' },
-    { label: 'Date of birth:', value: '7 October 1964' },
-  ]
-
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -42,9 +37,10 @@ context('Layout', () => {
       .should('have.attr', 'href', 'mailto:emdisupport@justice.gov.uk?subject=EMDI problem')
   })
 
-  it('Should display the PoP info header labels and values', () => {
+  it('Does not display scaffold PoP details on the home page', () => {
     cy.signIn()
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.verifyProfileDetails(profileDetails)
+    indexPage.profileInfoHeader().should('not.exist')
+    cy.contains('Richard Marks').should('not.exist')
   })
 })

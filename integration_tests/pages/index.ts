@@ -2,7 +2,12 @@ import Page, { PageElement } from './page'
 
 export default class IndexPage extends Page {
   constructor() {
-    super('This site is under construction...')
+    super('')
+  }
+
+  checkOnPage(): void {
+    cy.location('pathname').should('eq', '/')
+    cy.title().should('contain', 'Home')
   }
 
   headerUserName = (): PageElement => cy.get('[data-qa=header-user-name]')
@@ -17,12 +22,4 @@ export default class IndexPage extends Page {
   fallbackFooter = (): PageElement => cy.get('.probation-common-fallback-footer')
 
   profileInfoHeader = (): PageElement => cy.get('[data-qa=profile-info-header__subject-details]')
-
-  verifyProfileDetails(details) {
-    this.profileInfoHeader().within(() => {
-      details.forEach(item => {
-        cy.contains('li', item.label).should('contain.text', item.value)
-      })
-    })
-  }
 }
