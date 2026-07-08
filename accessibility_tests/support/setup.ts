@@ -41,7 +41,8 @@ export const signIn = async (page: Page): Promise<void> => {
   const signInUrl = await auth.getSignInUrl()
 
   await page.goto(signInUrl)
-  await expect(page.getByRole('heading', { name: 'This site is under construction...' })).toBeVisible()
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page).toHaveTitle(/Home/)
 }
 
 export const goToCasesPage = async (page: Page): Promise<void> => {

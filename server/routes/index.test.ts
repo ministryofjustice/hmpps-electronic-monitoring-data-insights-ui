@@ -38,7 +38,9 @@ describe('GET /', () => {
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('This site is under construction...')
+        expect(res.text).toContain('HMPPS Electronic Monitoring Data Insights Ui - Home')
+        expect(res.text).not.toContain('This site is under construction...')
+        expect(res.text).not.toContain('Richard Marks')
         expect(auditService.logPageView).toHaveBeenCalledWith(Page.HOME_PAGE, {
           who: user.username,
           correlationId: expect.any(String),

@@ -1,15 +1,17 @@
 {%- from "moj/components/primary-navigation/macro.njk" import mojPrimaryNavigation -%}
 {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
 
-{{ govukPhaseBanner({
-  tag: {
-    text: "Beta"
-  },
-  html: 'This is a new service. <a href="https://www.smartsurvey.co.uk/t/CF3MFT/" target="_blank">Give feedback (opens in a new tab)</a> to help us improve it, <a class="govuk-link" href="mailto:emdisupport@justice.gov.uk?subject=EMDI problem">report a problem</a>.',
-  attributes: {
-    "data-qa": "service-phase-banner"
-  }
-}) }}
+<div role="region" aria-label="Service information">
+  {{ govukPhaseBanner({
+    tag: {
+      text: "Beta"
+    },
+    html: 'This is a new service. <a href="https://www.smartsurvey.co.uk/t/CF3MFT/" target="_blank">Give feedback (opens in a new tab)</a> to help us improve it, <a class="govuk-link" href="mailto:emdisupport@justice.gov.uk?subject=EMDI problem">report a problem</a>.',
+    attributes: {
+      "data-qa": "service-phase-banner"
+    }
+  }) }}
+</div>
 
 {% set items = [
   {
