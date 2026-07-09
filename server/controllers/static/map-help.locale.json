@@ -5,49 +5,50 @@
       "first-pagaraphs": [
         "The map shows where the person on probation has been, using signals (‘pings’) sent from their GPS tag.",
         "The tag uses satellite signals to record its location. It usually pings around once a minute, sending this location information to the Electronic Monitoring Service.",
-        "Each ping appears as a point on the map that indicates the person’s most likely location."
-      ],
-      "insert": "Map data is around 95% accurate. The map may sometimes show a ping in the wrong location.",
-      "last-pagaraphs": [
-        "You can filter the map to view the person’s movements for specific dates and times. The most recent activity shown is about 5 minutes behind real time."
+        "Each ping appears as a point on the map that indicates the person’s most likely location.",
+        "You can filter the map to view the person’s movements for specific dates and times. The most recent activity shown is about 10 minutes behind real time."
       ]
     },
     "locationAccuracy": {
       "title": "Location accuracy",
       "image": {
         "src": "/assets/images/confidence-circles.png",
-        "alt": "A section of a map showing a street (Petty France) with a smaller blue circle inside a larger blue circle and a black line with arrows on it that ends in the middle of the smaller of the circles."
+        "alt": "Map with a blue circle with a dot in its centre attached to a bent line with arrows on it"
       },
       "first-pagaraphs": [
         "Location accuracy can vary. It may be reduced if, for example, satellite signals are blocked or the tag’s battery is low.",
-        "Each map point is surrounded by a ‘confidence circle’ that indicates how certain the system is about the person’s location.",
-        "The circle shows the area where the tag may have been when it pinged, with the most likely location at the centre.",
-        "The smaller the circle, the more confidence there is that the location shown is accurate.",
-        "To view a circle’s exact size, select the point at its centre to open a ping card (pop-up box).",
+        "Each map point is surrounded by a ‘confidence circle’ that shows how certain the system is about the person’s location.",
+        "The confidence circle covers the area where the tag may have been when it pinged, with the most likely location at the centre.",
+        "The smaller the circle, the more certainty there is that the location shown is accurate."
+      ],
+       "insert": "The confidence circles are around 95% accurate. This means that the true location of each ping will fall within the confidence circle around 95% of the time.",
+      "last-pagaraphs": [
+        "To view the exact size of a confidence circle, select the point at its centre to open the ping card (pop-up box).",
         "Under ‘Accuracy’, you can view the distance from the centre to the edge of the circle, measured in metres.",
-        "You can add or remove confidence circles using the ‘View location accuracy’ checkbox in the top right-hand menu."
+        "You can add or remove confidence circles from the map using the ‘View location accuracy’ checkbox in the map controls."
       ]
     },
     "directionOfTravel": {
       "title": "Direction of travel",
       "image": {
         "src": "/assets/images/direction-information.png",
-        "alt": ""
+        "alt": "Map with a blue line with black arrows and 2 blue dots on it that runs alongside a street"
       },
       "first-pagaraphs": [
-        "Each point is joined to the next point in the sequence by a line to form a trail."],
-      "insert": "The trail shown may not reflect the actual route taken.",
+        "Each point is joined to the next point in the sequence to form a trail."
+         ],
+      "insert": "The trail is formed by joining the points with a straight line. It's aimed at making the points easier to view and is not intended to show the actual route taken.",
       "last-pagaraphs": [
-        "Arrows along the trail show the estimated direction of travel, based on the order of the location points.",
-        "You can view the order of the points by selecting ‘Point numbers’ in the top right-hand menu.",
-        "To add or remove the arrows, use the 'Direction of travel' checkbox in the top right-hand menu."
-      ]
+          "Arrows along the trail show the estimated direction of travel, based on the order of the location points.",
+          "You can view the order of the points by selecting ‘Point numbers’ in the map controls.",
+          "To add or remove the arrows, use the 'Direction of travel' checkbox in the map controls."
+        ]
     },
     "dateAndTime": {
       "title": "Date and time of activity",
       "image": {
         "src": "/assets/images/ping-card-newest.png",
-        "alt": "A section of a map with a white box that contains a table with the heading 'Point 14' then rows containing values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', and 'Signal type'"
+        "alt": "Box containing a number and values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', 'Signal type'"
       },
       "first-pagaraphs": [
         "Each point has a timestamp that shows when the tag pinged in that location.",
@@ -58,7 +59,7 @@
       "title": "Speed of travel",
       "image": {
         "src": "/assets/images/ping-card-newest.png",
-        "alt": "A section of a map with a white box that contains a table with the heading 'Point 14' then rows containing values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', and 'Signal type'"
+        "alt": "Box containing a number and values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', 'Signal type’"
        },
       "first-pagaraphs": [
         "To view the estimated speed of travel, select a point to open its ping card.",
@@ -69,34 +70,21 @@
       "title": "Signal type (GPS or LBS)",
       "image": {
         "src": "/assets/images/ping-card-newest.png",
-        "alt": "A section of a map with a white box that contains a table with the heading 'Point 14' then rows containing values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', and 'Signal type'"
+        "alt": "Box containing a number and values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', 'Signal type'"
       },
       "first-pagaraphs": [
         "When the tag is unable to connect to GPS satellite signals, it uses local cellular network towers to estimate its location instead.",
-        "This is known as LBS tracking.",
+        "This is known as LBS (location-based services) tracking.",
         "Because cellular towers are spaced further apart than GPS satellites, LBS is less accurate than GPS tracking.",
         "With LBS tracking, the tag will usually ping around once every 3 minutes.",
         "To check which signal type was used to detect a location, select the point to open its ping card."
-      ]
-    },
-    "timeSpent": {
-      "title": "Time spent in a location",
-      "image": {
-        "src": "/assets/images/heatmap.png",
-        "alt": "A section of a map with 2 black lines, one of which starts off straight, then changes direction several times, and in 2 areas, is surrounded by a blob with red centre and a yellow ring around it, and a green area around the yellow ring."
-      },
-      "first-pagaraphs": [
-        "Heatmaps give a sense of how much time was spent at a location by showing the level of activity detected there.",
-        "Red areas show where the highest amount of activity was detected.",
-        "Yellow areas indicate lower levels of activity in comparison to red areas.",
-        "Green areas indicate the lowest levels of activity detected."
       ]
     },
     "missingTrailData": {
       "title": "Missing trail data",
       "image": {
         "src": "/assets/images/missing-data-new.png",
-        "alt": "A section of a map with a black line that's dotted and straight in one area, and curved and continuous in another. "
+        "alt": "Map with a blue dotted line with arrows on it, which starts on a grey line then runs across a green area"
       },
       "first-pagaraphs": [
         "Missing trail data usually means that either the tag is not working or that it cannot get a signal.",
