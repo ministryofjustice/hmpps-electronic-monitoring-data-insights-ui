@@ -67,6 +67,7 @@ export interface LocationPageRenderData {
   toDate: string
   currentUrl?: string
   mapControls: LocationMapControls
+  isMapLoading?: boolean
 }
 
 export interface LocationApiResponse {
@@ -330,6 +331,7 @@ export const buildLocationPageInitialState = (
     toDate: '',
     positions: [],
     locationAlert: null,
+    isMapLoading: false,
     dateFilterForm: buildDateFilterForm({
       crn,
       ...(overrides.dateFilterForm || {}),
@@ -353,6 +355,7 @@ export const buildLocationPageWithValidationErrors = (
     fromDate: '2026-01-12T10:00:00.000Z',
     toDate: '2026-01-14T11:00:00.000Z',
     positions: [],
+    isMapLoading: false,
     locationAlert: {
       text: 'No location data found for the selected date range.',
     },
@@ -418,6 +421,7 @@ export const buildLocationPageWithServiceError = (
     locationAlert: {
       text: 'Unable to fetch location data. Please try again later.',
     },
+    isMapLoading: false,
     currentUrl: encodeURIComponent(`/cases/${crn}/location?fromDate=${fromDate}&toDate=${toDate}`),
     ...overrides,
   })

@@ -84,7 +84,7 @@ describe('initialiseLocationDataView', () => {
   let mockEmMap: MockEmMapWithShadow
   let mockMap: MockOlMapInstance
   let mockMapContainer: HTMLElement
-  let mockLoadingModal: HTMLElement
+  let mockUpdateButton: HTMLButtonElement
 
   beforeEach(() => {
     mockMap = {
@@ -126,13 +126,13 @@ describe('initialiseLocationDataView', () => {
     }
     mockMapContainer = document.createElement('div')
 
-    mockLoadingModal = document.createElement('div')
-    mockLoadingModal.id = 'bh-map-loading-modal'
-    mockLoadingModal.hidden = false
+    mockUpdateButton = document.createElement('button')
+    mockUpdateButton.id = 'update-map-button'
+    mockUpdateButton.hidden = false
     ;(utils.queryElement as jest.Mock).mockImplementation((_root: unknown, selector: string) => {
       if (selector === '[data-qa="em-map"]') return mockMapContainer
       if (selector === 'em-map') return mockEmMap as unknown as EmMap
-      if (selector === '#bh-map-loading-modal') return mockLoadingModal
+      if (selector === '#update-map-button') return mockUpdateButton
       return mockEmMap as unknown as EmMap
     })
   })
@@ -266,14 +266,14 @@ describe('initialiseLocationDataView', () => {
     })
   })
 
-  describe('loading modal', () => {
+  describe('Update Map Button', () => {
     it('should register a loadend listener on the map', () => {
       initialiseLocationDataView()
       expect(mockMap.on).toHaveBeenCalledWith('loadend', expect.any(Function))
     })
 
-    it('should hide the loading modal when the map fires loadend', () => {
-      mockLoadingModal.hidden = false
+    it('should enable the update button when the map fires loadend', () => {
+      mockUpdateButton.disabled = true
 
       initialiseLocationDataView()
 
@@ -282,12 +282,7 @@ describe('initialiseLocationDataView', () => {
       expect(loadendHandler).toBeDefined()
       loadendHandler()
 
-      expect(mockLoadingModal.hidden).toBe(true)
-    })
-
-    it('should query the loading modal from the document, not the map container', () => {
-      initialiseLocationDataView()
-      expect(utils.queryElement).toHaveBeenCalledWith(document, '#bh-map-loading-modal')
+      expect(mockUpdateButton.disabled).toBe(false)
     })
   })
 })

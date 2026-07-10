@@ -336,6 +336,7 @@ export default class CasesController {
     if (!locationAlert && hasSearched && positions.length === 0) {
       locationAlert = { text: casesLocationLocale.alerts.noResults }
     }
+    const isMapLoading = hasSearched && positions.length > 0 && !(locationAlert && locationAlert.text)
     res.render('pages/casesLocation', {
       activeNav: 'Location activity',
       activeTab: 'location-activity',
@@ -357,6 +358,7 @@ export default class CasesController {
       toDate: queryRange.toDate,
       locationAlert,
       mapControls,
+      isMapLoading,
       currentUrl: encodeURIComponent(String(req.originalUrl)),
     })
   }
