@@ -90,7 +90,7 @@ describe('Routes', () => {
         expect(res.text).toContain('Missing trail data')
         expect(res.text).toContain('/assets/images/location_acc.png')
         expect(res.text).toContain(
-          'Map data is around 95% accurate. The map may sometimes show a ping in the wrong location.',
+          'The confidence circles are around 95% accurate. This means that the true location of each ping will fall within the confidence circle around 95% of the time.',
         )
         expect(res.text).toContain('The trail shown may not reflect the actual route taken.')
         expect(auditService.logPageView).toHaveBeenCalledWith(Page.MAP_HELP_PAGE, {
