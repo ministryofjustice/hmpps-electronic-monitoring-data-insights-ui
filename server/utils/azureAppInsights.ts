@@ -6,7 +6,7 @@ import {
   type TelemetryClient,
 } from 'applicationinsights'
 import { RequestHandler } from 'express'
-import type { ApplicationInfo } from '../applicationInfo'
+import applicationInfo from '../applicationInfo'
 
 type WebInstrumentationConfig = {
   name: string
@@ -29,6 +29,16 @@ function addWebInstrumentationConfig(): void {
   })
 }
 
+export function defaultName(): string {
+  const { applicationName: name } = applicationInfo()
+  return name
+}
+
+export function version(): string {
+  const { version: buildNumber } = applicationInfo()
+  return buildNumber
+}
+
 export function initialiseAppInsights(): void {
   if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
     // eslint-disable-next-line no-console
@@ -44,25 +54,21 @@ export function initialiseAppInsights(): void {
   }
 }
 
-export function buildAppInsightsClient(
-  { applicationName, buildNumber }: ApplicationInfo,
-  overrideName?: string,
-): TelemetryClient {
-  if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
-    defaultClient.context.tags['ai.cloud.role'] = overrideName || applicationName
-    defaultClient.context.tags['ai.application.ver'] = buildNumber
-
-    defaultClient.addTelemetryProcessor(({ tags, data }, contextObjects) => {
-      const operationNameOverride = contextObjects.correlationContext?.customProperties?.getProperty('operationName')
-      if (operationNameOverride) {
-        /*  eslint-disable no-param-reassign */
-        tags['ai.operation.name'] = operationNameOverride
-        data.baseData.name = operationNameOverride
-        /*  eslint-enable no-param-reassign */
+export function buildAppInsightsClient(applicationName = defaultName()): TelemetryClient {
+  const appInsightsConnectionString = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING
+  if (appInsightsConnectionString) {
+    defaultClient.context.tags['ai.cloud.role'] = applicationName
+    defaultClient.context.tags['ai.application.ver'] = version()
+    defaultClient.addTelemetryProcessor(envelope => {
+      const telemetryItem = envelope.data.baseData
+      if (telemetryItem?.url) {
+        const excludedRequestUrls = ['/ping', '/metrics', '/health', '/info']
+        if (excludedRequestUrls.some(url => telemetryItem.url.includes(url))) {
+          return false
+        }
       }
       return true
     })
-
     return defaultClient
   }
   return null

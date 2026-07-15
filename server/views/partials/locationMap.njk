@@ -1,8 +1,36 @@
 {% from "em-map/macro.njk" import emMap %}
+{% from "../components/ping-card-navigation/macro.njk" import pingCardNavigation %}
+
+  {% set paginationHtml %}
+    {{ pingCardNavigation({
+        previous: {
+          text: "Previous",
+          attributes: { "data-nav": "prev", "data-test": "previous-pin-card" },
+          href: "#"
+        },
+        next: {
+          text: "Next",
+          attributes: { "data-nav": "next", "data-test": "next-pin-card" },
+          href: "#"
+        },
+        first: {
+          text: "First",
+          attributes: { "data-nav": "first", "data-test": "first-pin-card" },
+          href: "#"
+        },
+        last: {
+          text: "Last",
+          attributes: { "data-nav": "last", "data-test": "last-pin-card" },
+          href: "#"
+        }
+      }) 
+    }}
+  {% endset %}
 
 <div class="em-map"
     data-qa="em-map"
     data-enable-heatmap="{{ enableHeatmap }}"
+    data-enable-ping-card-navigation="{{ enablePingCardNavigation }}"
     data-map-control-base-layer="{{ mapControls.baseLayer }}"
     data-map-control-tracks="{{ mapControls.tracks }}"
     data-map-control-confidence="{{ mapControls.confidence }}"
@@ -15,7 +43,6 @@
       {{ locale.map.instructions }}
     </span>
     <div id="map-pan-announce" aria-live="polite" aria-atomic="true" class="govuk-visually-hidden"></div>
-    <div id="map-rotation-status" aria-live="polite" aria-atomic="true" class="govuk-visually-hidden"></div>
     {{
       emMap({
         alerts: alerts,
@@ -24,9 +51,9 @@
         usesInternalOverlays: true,
         controls: {
           scaleControl: 'bar',
-          locationDisplay: 'dms',
-          rotateControl: 'true',
-          zoomSlider: true
+          locationDisplay: false,
+          rotateControl: false,
+          zoomSlider: false
         }
       })
     }}
@@ -59,6 +86,23 @@
     </div>
   </template>
 {% endraw %}
+
+
+    <script nonce="{{ cspNonce }}">
+        document.addEventListener('DOMContentLoaded', () => {
+          const template = document.getElementById('overlay-body-mdss-location')
+          if (!template) return
+
+          const mapContainer = document.querySelector('[data-qa="em-map"]')
+          const enablePingCardNavigation = mapContainer?.dataset.enablePingCardNavigation === 'true'
+          if (!enablePingCardNavigation) return
+
+          const navRow = document.createElement('div')
+          navRow.className = 'app-map__overlay-row app-map__overlay-nav'
+          navRow.innerHTML = {{ paginationHtml | dump | safe }}
+          template.content.appendChild(navRow)
+        })
+    </script>
 
     <script nonce="{{ cspNonce }}">
       document.addEventListener('DOMContentLoaded', () => {
@@ -137,6 +181,92 @@
       text-decoration: underline !important;
       font-size: 14px !important;
     }
+
+
+    .app-map__overlay-nav {
+      display: block !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border-top: 0.5px solid #d9d9d9 !important;
+      border-bottom: none !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .app-map__overlay-nav .govuk-pagination {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 8px 10px !important;
+      box-sizing: border-box !important;
+      border: none !important;
+      gap: 8px !important;
+    }
+
+    .app-map__overlay-nav .govuk-pagination__prev,
+    .app-map__overlay-nav .govuk-pagination__next {
+      margin: 0 !important;
+      padding: 0 !important;
+      flex: 0 0 auto !important;
+    }
+
+    .app-map__overlay-nav .govuk-pagination__prev .govuk-pagination__link,
+    .app-map__overlay-nav .govuk-pagination__next .govuk-pagination__link {
+      display: flex !important;
+      align-items: center !important;
+    }
+
+    .app-map__overlay-nav .govuk-pagination__list {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 16px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      flex: 1 1 auto !important;
+    }
+
+    .app-map__overlay-nav .govuk-pagination__list .govuk-pagination__item {
+      list-style: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .govuk-link.govuk-pagination__link {
+      color: #1a65a6 !important;
+      font-weight: 700;
+    }
+
+    .app-map__overlay-nav .govuk-pagination__prev .govuk-pagination__link::before,
+    .app-map__overlay-nav .govuk-pagination__next .govuk-pagination__link::after {
+      content: "";
+      display: inline-block;
+      width: 0.8em;
+      height: 0.7em;
+      vertical-align: middle;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+    }
+
+    .app-map__overlay-nav .govuk-pagination__prev .govuk-pagination__link::before {
+      margin-right: 8px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='13' width='15' viewBox='0 0 15 13'%3E%3Cpath fill='%231d70b8' d='m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z'%3E%3C/path%3E%3C/svg%3E");
+    }
+
+    .app-map__overlay-nav .govuk-pagination__next .govuk-pagination__link::after {
+      margin-left: 8px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='13' width='15' viewBox='0 0 15 13'%3E%3Cpath fill='%231d70b8' d='m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z'%3E%3C/path%3E%3C/svg%3E");
+    }
+
+    .app-map__overlay-nav .govuk-pagination__prev .govuk-pagination__link,
+    .app-map__overlay-nav .govuk-pagination__next .govuk-pagination__link {
+      display: inline-flex !important;
+      align-items: center !important;
+    }
+
   `)
             shadowRoot.adoptedStyleSheets = [...shadowRoot.adoptedStyleSheets, sheet]
             return true

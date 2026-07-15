@@ -27,7 +27,7 @@ test.describe('Accessibility', () => {
     await goToCasesPage(page)
 
     await page.locator('[data-qa=cases-sub-navigation]').getByRole('link', { name: 'Location activity' }).click()
-    await expect(page.getByRole('heading', { name: 'Location activity' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'GPS Data' })).toBeVisible()
 
     await expectNoAccessibilityViolations(page)
   })
@@ -38,6 +38,7 @@ test.describe('Accessibility', () => {
     await goToCasesPage(page)
 
     await page.locator('[data-qa=cases-sub-navigation]').getByRole('link', { name: 'Location activity' }).click()
+    await page.locator('#crn').fill('X123456')
     await page.locator('#start-date').fill('01/01/2026')
     await page.locator('#start-hour').fill('10')
     await page.locator('#start-minute').fill('00')
@@ -53,14 +54,7 @@ test.describe('Accessibility', () => {
     await expect(page.locator('#map-instructions')).not.toBeEmpty()
     await expect(page.locator('#map-pan-announce')).toHaveAttribute('aria-live', 'polite')
     await expect(page.locator('#map-pan-announce')).toHaveAttribute('aria-atomic', 'true')
-    await expect(page.locator('#map-rotation-status')).toHaveAttribute('aria-live', 'polite')
-    await expect(page.locator('#map-rotation-status')).toHaveAttribute('aria-atomic', 'true')
-
-    const lockRotationButton = page.locator('#lock-rotation-btn')
-    await expect(lockRotationButton).toBeVisible()
-    await expect(lockRotationButton).toHaveAttribute('aria-pressed', 'false')
-    await lockRotationButton.click()
-    await expect(lockRotationButton).toHaveAttribute('aria-pressed', 'true')
-    await expect(page.locator('#map-rotation-status')).toContainText('Map rotation locked')
+    await expect(page.locator('#lock-rotation-btn')).toHaveCount(0)
+    await expect(page.locator('#map-rotation-status')).toHaveCount(0)
   })
 })

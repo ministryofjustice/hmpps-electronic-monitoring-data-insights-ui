@@ -19,6 +19,7 @@ $govuk-suppressed-warnings: (
 @import './components/map';
 @import './components//map-search';
 @import './components/map-layer-control';
+@import './components/map-spinner';
 @import './overrides/local';
 @import './overrides/overview';
 @import './overrides/map-help';

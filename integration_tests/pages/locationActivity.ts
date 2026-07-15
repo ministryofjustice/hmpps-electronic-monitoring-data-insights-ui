@@ -3,11 +3,11 @@ import Page, { PageElement } from './page'
 
 export default class LocationActivityPage extends Page {
   constructor() {
-    super('Location activity')
+    super('GPS Data')
   }
 
   checkOnPage(): void {
-    cy.get('h2').contains(this.title)
+    cy.get('h1').contains(this.title)
   }
 
   dateSearchForm = (): PageElement => cy.get('[data-qa=date-filter-form]')
@@ -50,25 +50,25 @@ export default class LocationActivityPage extends Page {
     endMinute?: string
   }): void => {
     if (crn) {
-      this.crnInput().type(crn)
+      this.crnInput().clear().type(crn)
     }
     if (startDate) {
-      this.startDateInput().type(startDate)
+      this.startDateInput().clear().type(startDate)
     }
     if (startHour) {
-      this.startHourInput().type(startHour)
+      this.startHourInput().clear().type(startHour)
     }
     if (startMinute) {
-      this.startMinuteInput().type(startMinute)
+      this.startMinuteInput().clear().type(startMinute)
     }
     if (endDate) {
-      this.endDateInput().type(endDate)
+      this.endDateInput().clear().type(endDate)
     }
     if (endHour) {
-      this.endHourInput().type(endHour)
+      this.endHourInput().clear().type(endHour)
     }
     if (endMinute) {
-      this.endMinuteInput().type(endMinute)
+      this.endMinuteInput().clear().type(endMinute)
     }
   }
 

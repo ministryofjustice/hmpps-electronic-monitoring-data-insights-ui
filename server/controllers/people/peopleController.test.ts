@@ -231,6 +231,7 @@ describe('PeopleController', () => {
           showCrn: false,
         },
         hasSearched: false,
+        showLoadingSpinner: false,
         fromDate: '',
         toDate: '',
         locationAlert: null,
@@ -289,6 +290,7 @@ describe('PeopleController', () => {
       expect.objectContaining({
         positions: annotatedPositions,
         hasSearched: true,
+        showLoadingSpinner: true,
         fromDate: '2026-01-12T10:00:00.000Z',
         toDate: '2026-01-14T11:00:00.000Z',
         locationAlert: null,
@@ -297,6 +299,35 @@ describe('PeopleController', () => {
           values: {
             fromDate: { date: '12/01/2026', hour: '10', minute: '00', second: '00' },
             toDate: { date: '14/01/2026', hour: '11', minute: '00', second: '00' },
+          },
+        }),
+      }),
+    )
+  })
+
+  it('preserves submitted date formatting in the location search form', async () => {
+    setPersonContext()
+    req.query = {
+      start: { date: '2/6/2026', hour: '01', minute: '05' },
+      end: { date: '3/6/2026', hour: '02', minute: '06' },
+    }
+    caseLocationActivityService.getPositions.mockResolvedValue([])
+
+    await controller.location(req as Request, res as Response)
+
+    expect(caseLocationActivityService.getPositions).toHaveBeenCalledWith(
+      user.username,
+      '41591',
+      '2026-06-02T00:05:00.000Z',
+      '2026-06-03T01:06:00.000Z',
+    )
+    expect(res.render).toHaveBeenCalledWith(
+      'pages/personLocation',
+      expect.objectContaining({
+        dateFilterForm: expect.objectContaining({
+          values: {
+            fromDate: { date: '2/6/2026', hour: '01', minute: '05', second: '00' },
+            toDate: { date: '3/6/2026', hour: '02', minute: '06', second: '00' },
           },
         }),
       }),
@@ -317,6 +348,7 @@ describe('PeopleController', () => {
       'pages/personLocation',
       expect.objectContaining({
         hasSearched: true,
+        showLoadingSpinner: false,
         locationAlert: null,
         dateFilterForm: expect.objectContaining({
           showCrn: false,

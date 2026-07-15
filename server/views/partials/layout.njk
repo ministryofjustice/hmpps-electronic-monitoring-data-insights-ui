@@ -24,6 +24,13 @@
 
 {% block bodyEnd %}
   <script type="module" src="{{ '/assets/js/index.js' | assetMap }}"></script>
+  <script nonce="{{ cspNonce }}">
+    document.addEventListener('DOMContentLoaded', function () {
+      if (typeof document.initialiseTelemetry === 'function') {
+        document.initialiseTelemetry('{{ applicationInsightsConnectionString }}', '{{ applicationInsightsRoleName }}', '{{ user.username }}')
+      }
+    })
+  </script>
 {% endblock %}
 
 {% block footer %}

@@ -9,15 +9,18 @@ import {
   TextLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
+import { Interaction } from 'ol/interaction'
 import initialiseLocationDataView from './index'
 import * as utils from '../../utils/utils'
 import MapLayersControl from './controls/mapLayersControls'
 
 interface MockOlMapInstance {
   addControl: jest.Mock
+  on: jest.Mock
   getView: jest.Mock
   getSize: jest.Mock
   getViewport: jest.Mock
+  getInteractions: jest.Mock
 }
 
 interface MockEmMapElement {
@@ -36,6 +39,8 @@ interface MockShadowRoot {
 
 interface MockEmMapWithShadow extends MockEmMapElement {
   shadowRoot: MockShadowRoot | null
+  addEventListener?: jest.Mock
+  removeEventListener?: jest.Mock
 }
 
 jest.mock('./controls/mapLayersControls', () => jest.fn().mockImplementation(() => ({})))
@@ -72,7 +77,6 @@ jest.mock('ol/style', () => ({
 }))
 
 jest.mock('./controls/layerVisibilityToggle', () => jest.fn())
-jest.mock('./controls/createLockRotationControl', () => jest.fn(() => ({})))
 jest.mock('./controls/getRotatedDirection', () => jest.fn())
 jest.mock('../../utils/utils')
 
@@ -80,16 +84,12 @@ describe('initialiseLocationDataView', () => {
   let mockEmMap: MockEmMapWithShadow
   let mockMap: MockOlMapInstance
   let mockMapContainer: HTMLElement
-  const mockCompassReset = { setAttribute: jest.fn() }
-  const mockZoomSliderThumb = { setAttribute: jest.fn() }
-  const mockInsertBefore = jest.fn()
-  const mockParentNode = { insertBefore: mockInsertBefore }
-  const mockOlZoomSlider = { setAttribute: jest.fn() }
-  const mockOlRotate = { parentNode: mockParentNode }
+  let mockLoadingModal: HTMLElement
 
   beforeEach(() => {
     mockMap = {
       addControl: jest.fn(),
+      on: jest.fn(),
       getView: jest.fn(() => ({
         fit: jest.fn(),
         getRotation: jest.fn(() => 0),
@@ -97,6 +97,15 @@ describe('initialiseLocationDataView', () => {
       getSize: jest.fn(() => [800, 600]),
       getViewport: jest.fn(() => ({
         addEventListener: jest.fn(),
+      })),
+      getInteractions: jest.fn(() => ({
+        getArray: jest.fn((): Interaction[] => [
+          {
+            overlay: {
+              showAtCoordinate: jest.fn(),
+            },
+          } as unknown as Interaction,
+        ]),
       })),
     }
 
@@ -107,19 +116,23 @@ describe('initialiseLocationDataView', () => {
       dispatchEvent: jest.fn(),
       fitToAllLayers: jest.fn(),
       getNativeLayer: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
       shadowRoot: {
         adoptedStyleSheets: [],
         querySelector: jest.fn(),
-      },
+        addEventListener: jest.fn(),
+      } as unknown as MockShadowRoot,
     }
     mockMapContainer = document.createElement('div')
+
+    mockLoadingModal = document.createElement('div')
+    mockLoadingModal.id = 'bh-map-loading-modal'
+    mockLoadingModal.hidden = false
     ;(utils.queryElement as jest.Mock).mockImplementation((_root: unknown, selector: string) => {
       if (selector === '[data-qa="em-map"]') return mockMapContainer
       if (selector === 'em-map') return mockEmMap as unknown as EmMap
-      if (selector === '.ol-rotate-reset') return mockCompassReset
-      if (selector === '.ol-zoomslider-thumb') return mockZoomSliderThumb
-      if (selector === '.ol-zoomslider') return mockOlZoomSlider
-      if (selector === '.ol-rotate') return mockOlRotate
+      if (selector === '#bh-map-loading-modal') return mockLoadingModal
       return mockEmMap as unknown as EmMap
     })
   })
@@ -204,9 +217,10 @@ describe('initialiseLocationDataView', () => {
     expect(TextLayer).toHaveBeenCalled()
   })
 
-  it('should add lock rotation control to the map', () => {
+  it('should add map layers control to the map', () => {
     initialiseLocationDataView()
-    expect(mockMap.addControl).toHaveBeenCalled()
+    expect(MapLayersControl).toHaveBeenCalled()
+    expect(mockMap.addControl).toHaveBeenCalledTimes(1)
   })
 
   it('should dispatch app:map:layers:ready event', () => {
@@ -252,35 +266,28 @@ describe('initialiseLocationDataView', () => {
     })
   })
 
-  describe('shadow DOM aria labels', () => {
-    it('should set aria-label on compass reset button', () => {
+  describe('loading modal', () => {
+    it('should register a loadend listener on the map', () => {
       initialiseLocationDataView()
-      expect(mockCompassReset.setAttribute).toHaveBeenCalledWith('aria-label', 'Reset map orientation to north')
+      expect(mockMap.on).toHaveBeenCalledWith('loadend', expect.any(Function))
     })
 
-    it('should set aria-label on zoom slider thumb', () => {
-      initialiseLocationDataView()
-      expect(mockZoomSliderThumb.setAttribute).toHaveBeenCalledWith('aria-label', 'Adjust map zoom')
-    })
-  })
+    it('should hide the loading modal when the map fires loadend', () => {
+      mockLoadingModal.hidden = false
 
-  describe('zoom slider tab order', () => {
-    it('should move the zoom slider before the rotate control in the DOM', () => {
       initialiseLocationDataView()
-      expect(mockInsertBefore).toHaveBeenCalledWith(mockOlZoomSlider, mockOlRotate)
+
+      const loadendHandler = (mockMap.on as jest.Mock).mock.calls.find(([event]) => event === 'loadend')?.[1]
+
+      expect(loadendHandler).toBeDefined()
+      loadendHandler()
+
+      expect(mockLoadingModal.hidden).toBe(true)
     })
 
-    it('should not throw if zoom slider or rotate control is missing', () => {
-      ;(utils.queryElement as jest.Mock).mockImplementation((_root: unknown, selector: string) => {
-        if (selector === '[data-qa="em-map"]') return mockMapContainer
-        if (selector === 'em-map') return mockEmMap as unknown as EmMap
-        if (selector === '.ol-rotate-reset') return mockCompassReset
-        if (selector === '.ol-zoomslider-thumb') return mockZoomSliderThumb
-        if (selector === '.ol-zoomslider') return null
-        if (selector === '.ol-rotate') return null
-        return mockEmMap as unknown as EmMap
-      })
-      expect(() => initialiseLocationDataView()).not.toThrow()
+    it('should query the loading modal from the document, not the map container', () => {
+      initialiseLocationDataView()
+      expect(utils.queryElement).toHaveBeenCalledWith(document, '#bh-map-loading-modal')
     })
   })
 })

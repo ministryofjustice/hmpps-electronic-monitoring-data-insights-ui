@@ -1,14 +1,14 @@
 {% import "components/date-time-picker/macro.njk" as dtp %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
- {% from "govuk/components/input/macro.njk" import govukInput %}
- {%- from "moj/components/alert/macro.njk" import mojAlert -%}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{%- from "moj/components/alert/macro.njk" import mojAlert -%}
 
 {% set form = dateFilterForm %}
 {% set errors = form.errors or {} %}
 
 {% if form.errorSummary and form.errorSummary | length %}
-    {{ govukErrorSummary({
+  {{ govukErrorSummary({
         titleText: locale.search.errorSummaryTitle,
         errorList: form.errorSummary
     }) }}
@@ -21,31 +21,31 @@
   {% if "start" in error.field %}
     {% set hasStartErrors = true %}
   {% endif %}
-  
+
   {% if "end" in error.field %}
     {% set hasEndErrors = true %}
   {% endif %}
 {% endfor %}
 
 <div class="govuk-width-container">
-    <div class="govuk-grid-row govuk-!-margin-bottom-3 govuk-!-margin-right-0 govuk-!-margin-left-0">
-        <h3 class="govuk-heading-s">{{ locale.search.heading }}</h3>
-        <div class="map-search govuk-!-padding-4">
-            <form
+  <div class="govuk-grid-row govuk-!-margin-bottom-3 govuk-!-margin-right-0 govuk-!-margin-left-0">
+    <h2 class="govuk-heading-s">{{ locale.search.heading }}</h2>
+    <div class="map-search govuk-!-padding-4">
+      <form
                 id="dateFilterForm"
                 data-qa="date-filter-form"
                 action="{{ form.action }}"
                 class="map-search__form govuk-form-group govuk-!-margin-bottom-0"
                 method="get">
-                <input type="hidden" name="_csrf" value="{{ csrftoken }}" />
-                <input type="hidden" name="mapControls[baseLayer]" value="{{ mapControls.baseLayer }}" data-map-control-input="baseLayer" />
-                <input type="hidden" name="mapControls[tracks]" value="{{ mapControls.tracks }}" data-map-control-input="tracks" />
-                <input type="hidden" name="mapControls[confidence]" value="{{ mapControls.confidence }}" data-map-control-input="confidence" />
-                <input type="hidden" name="mapControls[numbers]" value="{{ mapControls.numbers }}" data-map-control-input="numbers" />
+        <input type="hidden" name="_csrf" value="{{ csrftoken }}"/>
+        <input type="hidden" name="mapControls[baseLayer]" value="{{ mapControls.baseLayer }}" data-map-control-input="baseLayer"/>
+        <input type="hidden" name="mapControls[tracks]" value="{{ mapControls.tracks }}" data-map-control-input="tracks"/>
+        <input type="hidden" name="mapControls[confidence]" value="{{ mapControls.confidence }}" data-map-control-input="confidence"/>
+        <input type="hidden" name="mapControls[numbers]" value="{{ mapControls.numbers }}" data-map-control-input="numbers"/>
 
-                {% if form.showCrn != false %}
-                    <div class="govuk-form-group">
-                    {{
+        {% if form.showCrn != false %}
+          <div class="govuk-form-group">
+            {{
                         govukInput({
                             label: {
                             text: locale.search.crn,
@@ -57,11 +57,12 @@
                             value: form.crn
                         })
                     }}
-                    </div>
-                {% endif %}
-                <div class="govuk-grid-row">  
-                    <div class="govuk-grid-column-one-third">
-                        {{ dtp.date_time_picker({
+          </div>
+        {% endif %}
+        <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-one-third">
+            {{ dtp.date_time_picker({
                             id: "start",
                             name: "start",
                             labelText: locale.search.dateFrom,
@@ -71,9 +72,9 @@
                             minute: form.values.fromDate.minute,
                             errors: errors if hasStartErrors else []
                         }) }}
-                    </div>
-                    <div class="govuk-grid-column-one-third">
-                        {{ dtp.date_time_picker({
+          </div>
+          <div class="govuk-grid-column-one-third">
+            {{ dtp.date_time_picker({
                             id: "end",
                             name: "end",
                             labelText: locale.search.dateTo,
@@ -83,20 +84,38 @@
                             minute: form.values.toDate.minute,
                             errors: errors if hasEndErrors else []
                         }) }}
-                    </div>
-                     <div class="govuk-grid-column-one-third">
-                        <div class="map-search__form-actions">
-                            <div class="govuk-button-group">
-                                {{ govukButton({
+          </div>  
+        </div>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-one-third">
+            <div class="govuk-!-margin-top-6 map-search__form-actions">
+              <div class="govuk-button-group">
+                {{ govukButton({
                                     text: locale.search.update,
                                     classes: "govuk-!-margin-right-2 govuk-!-margin-bottom-0"
                                 }) }}
-                                <a href="{{ form.action }}" class="govuk-link govuk-link--no-visited-state">{{ locale.search.clear }}</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
+                <a href="{{ form.action }}" class="govuk-link govuk-link--no-visited-state">{{ locale.search.clear }}</a>
+              </div>
+            </div>
+          </div>
         </div>
+        </div>
+      </form>
     </div>
+  </div>
 </div>
+
+<script nonce="{{ cspNonce }}">
+  document.addEventListener('DOMContentLoaded', () => {
+    const startDateInput = document.getElementById('start-date')
+    const endDateInput = document.getElementById('end-date')
+
+    if (!startDateInput || !endDateInput) return
+
+    startDateInput.addEventListener('change', () => {
+      if (!endDateInput.value.trim()) {
+        endDateInput.value = startDateInput.value
+      }
+    })
+  })
+</script>

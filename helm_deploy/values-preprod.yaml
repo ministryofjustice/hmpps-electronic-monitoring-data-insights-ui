@@ -18,7 +18,8 @@ generic-service:
     AUDIT_ENABLED: "false"
     COMPONENT_API_URL: "https://probation-frontend-components-preprod.hmpps.service.justice.gov.uk"
     MPOP_URL: "https://manage-people-on-probation-preprod.hmpps.service.justice.gov.uk"
-    ENABLE_HEATMAP: "false"
+    FLIPT_URL: "https://feature-toggles-preprod.hmpps.service.justice.gov.uk"
+    FLIPT_NAMESPACE: "hmpps-electronic-monitoring-data-insights"
 
 generic-prometheus-alerts:
   alertSeverity: hmpps-electronic-monitoring-data-insights-preprod

@@ -4,9 +4,6 @@ import Page from '../pages/page'
 
 context('Cases', () => {
   const locatioActivitySessionid = 'location-activity-session-id'
-  const waitForLockButton = () => {
-    return cy.get('#lock-rotation-btn', { includeShadowDom: true, timeout: 10000 }).should('exist').and('be.visible')
-  }
 
   beforeEach(() => {
     cy.task('reset')
@@ -89,6 +86,8 @@ context('Cases', () => {
         startHour: '10',
         startMinute: '00',
       })
+
+      locationPage.endDateInput().clear()
 
       locationPage.submitButton().click()
 
@@ -309,10 +308,6 @@ context('Cases', () => {
   })
 
   describe('Map screen reader accessibility', () => {
-    beforeEach(() => {
-      waitForLockButton()
-    })
-
     describe('Map region', () => {
       it('should have a region landmark with a label', () => {
         cy.get('[data-qa=em-map]').should('have.attr', 'role', 'region')
@@ -333,30 +328,31 @@ context('Cases', () => {
       })
     })
 
-    describe('Rotation lock announcements', () => {
-      it('should have a live region for rotation status', () => {
-        cy.get('#map-rotation-status').should('have.attr', 'aria-live', 'polite')
-        cy.get('#map-rotation-status').should('have.attr', 'aria-atomic', 'true')
+    describe('Rotation controls', () => {
+      it('should not show an orientation lock control', () => {
+        cy.get('#lock-rotation-btn', { includeShadowDom: true }).should('not.exist')
       })
 
-      it('should announce when rotation is locked', () => {
-        cy.get('#lock-rotation-btn').click()
-        cy.get('#map-rotation-status').should('contain.text', 'Map rotation locked')
+      it('should not include a rotation status live region', () => {
+        cy.get('#map-rotation-status').should('not.exist')
       })
+    })
+  })
 
-      it('should announce when rotation is unlocked', () => {
-        cy.get('#lock-rotation-btn').click()
-        cy.get('#lock-rotation-btn').click()
-        cy.get('#map-rotation-status').should('contain.text', 'Map rotation unlocked')
-      })
+  describe('Date auto-fill behaviour', () => {
+    it('should automatically set the end date to match the start date when end date is empty', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+      locationPage.startDateInput().type('01/01/2026')
+      locationPage.startDateInput().blur()
+      locationPage.endDateInput().should('have.value', '01/01/2026')
+    })
 
-      it('should toggle aria-pressed on lock button', () => {
-        cy.get('#lock-rotation-btn').should('have.attr', 'aria-pressed', 'false')
-        cy.get('#lock-rotation-btn').click()
-        cy.get('#lock-rotation-btn').should('have.attr', 'aria-pressed', 'true')
-        cy.get('#lock-rotation-btn').click()
-        cy.get('#lock-rotation-btn').should('have.attr', 'aria-pressed', 'false')
-      })
+    it('should not change the end date if it is already set when start date is changed', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+      locationPage.startDateInput().type('01/01/2026')
+      locationPage.endDateInput().clear().type('02/01/2026')
+      locationPage.startDateInput().focus().blur()
+      locationPage.endDateInput().should('have.value', '02/01/2026')
     })
   })
 })

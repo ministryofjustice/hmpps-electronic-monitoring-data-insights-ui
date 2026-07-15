@@ -19,6 +19,7 @@ interface LocationDateFilterFormData {
   date: string
   hour: string
   minute: string
+  second?: string
 }
 
 interface FilterStateProps {
@@ -36,11 +37,13 @@ interface QueryParams {
     date?: string
     hour?: string
     minute?: string
+    second?: string
   }
   end?: {
     date?: string
     hour?: string
     minute?: string
+    second?: string
   }
   mapControls?: Partial<Record<keyof LocationMapControls, unknown>>
 }
@@ -88,6 +91,7 @@ export default class PeopleController {
   private buildDateFilterFormValues(
     sessionFormData: LocationBuildProps | undefined,
     queryRange: { fromDate: string; toDate: string },
+    submittedFormData?: LocationBuildProps,
   ): LocationBuildProps {
     const defaultValues = {
       date: '',
@@ -104,16 +108,50 @@ export default class PeopleController {
 
     const fromDateRange = queryRange.fromDate ? parseDateTimeFromISOString(queryRange.fromDate) : null
     const toDateRange = queryRange.toDate ? parseDateTimeFromISOString(queryRange.toDate) : null
-    return {
+    const formValues = {
       fromDate: fromDateRange?.isValid() ? getDateComponents(fromDateRange) : defaultValues,
       toDate: toDateRange?.isValid() ? getDateComponents(toDateRange) : defaultValues,
     }
+
+    if (submittedFormData?.fromDate && submittedFormData?.toDate) {
+      return {
+        fromDate: {
+          ...formValues.fromDate,
+          date: submittedFormData.fromDate.date,
+        },
+        toDate: {
+          ...formValues.toDate,
+          date: submittedFormData.toDate.date,
+        },
+      }
+    }
+
+    return formValues
   }
 
   private parseBooleanMapControlValue(value: unknown): boolean | undefined {
     if (value === 'true') return true
     if (value === 'false') return false
     return undefined
+  }
+
+  private buildSubmittedDateFilterFormValues(query: QueryParams): LocationBuildProps | undefined {
+    if (!query.start || !query.end) return undefined
+
+    return {
+      fromDate: {
+        date: query.start.date ?? '',
+        hour: query.start.hour ?? '',
+        minute: query.start.minute ?? '',
+        ...(query.start.second ? { second: query.start.second } : {}),
+      },
+      toDate: {
+        date: query.end.date ?? '',
+        hour: query.end.hour ?? '',
+        minute: query.end.minute ?? '',
+        ...(query.end.second ? { second: query.end.second } : {}),
+      },
+    }
   }
 
   private buildLocationMapControls(req: Request): LocationMapControls {
@@ -263,7 +301,11 @@ export default class PeopleController {
           validationErrors = validation.errors || []
         }
 
-        formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
+        formValues = this.buildDateFilterFormValues(
+          sessionFormData,
+          queryRange,
+          this.buildSubmittedDateFilterFormValues(req.query as QueryParams),
+        )
       }
     } else {
       formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
@@ -272,6 +314,8 @@ export default class PeopleController {
     if (!locationAlert && hasSearched && validationErrors.length === 0 && positions.length === 0) {
       locationAlert = { text: casesLocationLocale.alerts.noResults }
     }
+
+    const showLoadingSpinner = hasSearched && positions.length > 0 && !(locationAlert && locationAlert.text)
 
     res.render('pages/personLocation', {
       activeNav: 'cases',
@@ -294,6 +338,7 @@ export default class PeopleController {
         showCrn: false,
       },
       hasSearched,
+      showLoadingSpinner,
       fromDate: queryRange.fromDate,
       toDate: queryRange.toDate,
       locationAlert,

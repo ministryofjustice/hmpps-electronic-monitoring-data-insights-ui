@@ -38,7 +38,9 @@ describe('GET /', () => {
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('This site is under construction...')
+        expect(res.text).toContain('HMPPS Electronic Monitoring Data Insights Ui - Home')
+        expect(res.text).not.toContain('This site is under construction...')
+        expect(res.text).not.toContain('Richard Marks')
         expect(auditService.logPageView).toHaveBeenCalledWith(Page.HOME_PAGE, {
           who: user.username,
           correlationId: expect.any(String),
@@ -86,7 +88,7 @@ describe('Routes', () => {
         expect(res.text).toContain('View location accuracy')
         expect(res.text).toContain('Direction of travel')
         expect(res.text).toContain('Missing trail data')
-        expect(res.text).toContain('/assets/images/confidence-circles.png')
+        expect(res.text).toContain('/assets/images/location_acc.png')
         expect(res.text).toContain(
           'Map data is around 95% accurate. The map may sometimes show a ping in the wrong location.',
         )

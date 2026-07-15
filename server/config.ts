@@ -36,6 +36,7 @@ export class AgentConfig {
 }
 
 const config = {
+  applicationName: get('APPLICATION_NAME', 'Electronic Monitoring Data Insights'),
   buildNumber: get('BUILD_NUMBER', '1_0_0', requiredInProduction),
   productId: get('PRODUCT_ID', 'UNASSIGNED', requiredInProduction),
   gitRef: get('GIT_REF', 'xxxxxxxxxxxxxxxxxxx', requiredInProduction),
@@ -55,6 +56,9 @@ const config = {
     expiryMinutes: Number(get('WEB_SESSION_TIMEOUT_IN_MINUTES', 120)),
   },
   apis: {
+    appInsights: {
+      connectionString: get('APPLICATIONINSIGHTS_CONNECTION_STRING', null, requiredInProduction),
+    },
     hmppsAuth: {
       url: get('HMPPS_AUTH_URL', 'http://localhost:9090/auth', requiredInProduction),
       healthPath: '/health/ping',
@@ -105,7 +109,10 @@ const config = {
   rateWindowMS: Number(get('RATE_WINDOW_MS', 900000)),
   rateLimitMax: Number(get('RATE_LIMIT_MAX', 100)),
   mpopUrl: get('MPOP_URL', 'https://manage-people-on-probation-dev.hmpps.service.justice.gov.uk', requiredInProduction),
-  enableHeatmap: get('ENABLE_HEATMAP', 'false') === 'true',
+  flipt: {
+    url: get('FLIPT_URL', 'http://localhost:8100', requiredInProduction),
+    namespace: get('FLIPT_NAMESPACE', 'hmpps-electronic-monitoring-data-insights', requiredInProduction),
+  },
 }
 
 export interface ApiConfig {
