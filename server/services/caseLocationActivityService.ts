@@ -4,6 +4,11 @@ import { formatGpsDate } from '../utils/date'
 import LocationsService, { type Location } from './locationsService'
 import casesLocationLocale from '../controllers/cases/cases-location.locale.json'
 
+const KILOMETRES_PER_MILE = 1.609344
+
+const convertKilometresPerHourToMilesPerHour = (speed: number | null): number | null =>
+  typeof speed === 'number' ? Math.round((speed / KILOMETRES_PER_MILE) * 100) / 100 : speed
+
 export interface CaseLocationBasePosition {
   positionId: number
   latitude: number
@@ -85,7 +90,11 @@ export default class CaseLocationActivityService {
         displayAccuracy: formatDisplayValue(position.precision, ' metres', 'N/A'),
         displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
         displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
-        displaySpeed: formatDisplayValue(position.speed, ' kilometres per hour', 'N/A'),
+        displaySpeed: formatDisplayValue(
+          convertKilometresPerHourToMilesPerHour(position.speed),
+          ' miles per hour',
+          'N/A',
+        ),
         displayGeolocationMechanism: position.geolocationMechanism,
         positionCardHeader: casesLocationLocale.overlay.point,
         positionCardAccuracyLabel: casesLocationLocale.overlay.accuracy,

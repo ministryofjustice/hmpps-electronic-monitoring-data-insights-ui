@@ -337,7 +337,7 @@ export default class CasesController {
       locationAlert = { text: casesLocationLocale.alerts.noResults }
     }
     res.render('pages/casesLocation', {
-      activeNav: 'Location activity',
+      activeNav: 'cases',
       activeTab: 'location-activity',
       locale: casesLocationLocale,
       popData: mockPopDetails,

@@ -91,6 +91,15 @@ describe('TrailService', () => {
       expect(result[0].displayLongitude).toBe('N/A')
       expect(result[0].displayGpsDate).toBe('N/A')
       expect(result[0].displayAccuracy).toBe('N/A')
+      expect(result[0].displaySpeed).toBe('N/A')
+    })
+
+    it('should convert speed from kilometres per hour to miles per hour', () => {
+      const positions = [{ gpsDate: undefined, speed: 16.09344 }] as Position[]
+
+      const result = trailService.annotatePositionsWithDisplayProperties(positions)
+
+      expect(result[0].displaySpeed).toBe('10 miles per hour')
     })
   })
 })

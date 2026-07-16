@@ -2,6 +2,11 @@ import { formatDisplayValue } from '../presenters/helpers/formatters'
 import GeolocationMechanism from '../types/entities/geolocationMechanism'
 import { formatGpsDate } from '../utils/date'
 
+const KILOMETRES_PER_MILE = 1.609344
+
+const convertKilometresPerHourToMilesPerHour = (speed: number | null | undefined): number | null | undefined =>
+  typeof speed === 'number' ? Math.round((speed / KILOMETRES_PER_MILE) * 100) / 100 : speed
+
 export interface Position {
   positionId: number
   latitude: number
@@ -28,6 +33,7 @@ export interface PositionCardData extends Position {
   displayAccuracy: string
   displayLatitude: string
   displayLongitude: string
+  displaySpeed: string
 }
 
 export interface PositionData {
@@ -65,7 +71,11 @@ export default class TrailService {
         displayAccuracy: formatDisplayValue(position.precision, 'metres', 'N/A'),
         displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
         displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
-        displaySpeed: formatDisplayValue(position.speed, 'kilometres per hour', 'N/A'),
+        displaySpeed: formatDisplayValue(
+          convertKilometresPerHourToMilesPerHour(position.speed),
+          ' miles per hour',
+          'N/A',
+        ),
       }))
   }
 
