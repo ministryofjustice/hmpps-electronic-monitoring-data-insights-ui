@@ -1,36 +1,10 @@
 {% from "em-map/macro.njk" import emMap %}
-{% from "../components/ping-card-navigation/macro.njk" import pingCardNavigation %}
-
-  {% set paginationHtml %}
-    {{ pingCardNavigation({
-        previous: {
-          text: "Previous",
-          attributes: { "data-nav": "prev", "data-test": "previous-pin-card" },
-          href: "#"
-        },
-        next: {
-          text: "Next",
-          attributes: { "data-nav": "next", "data-test": "next-pin-card" },
-          href: "#"
-        },
-        first: {
-          text: "First",
-          attributes: { "data-nav": "first", "data-test": "first-pin-card" },
-          href: "#"
-        },
-        last: {
-          text: "Last",
-          attributes: { "data-nav": "last", "data-test": "last-pin-card" },
-          href: "#"
-        }
-      }) 
-    }}
-  {% endset %}
 
 <div class="em-map"
     data-qa="em-map"
     data-enable-heatmap="{{ enableHeatmap }}"
-    data-enable-ping-card-navigation="{{ enablePingCardNavigation }}"
+    data-enable-ping-card-navigation="true"
+    data-ping-card-navigation-variant="true"
     data-map-control-base-layer="{{ mapControls.baseLayer }}"
     data-map-control-tracks="{{ mapControls.tracks }}"
     data-map-control-confidence="{{ mapControls.confidence }}"
@@ -60,7 +34,40 @@
 
    {% raw %}
   <template id="overlay-title-mdss-location">
-    <div><strong>{{ positionCardHeader }} {{ displayPointNumber }}</strong></div>
+     <div class="app-map__overlay-header-nav">  
+       
+          <button type="button" class="ping-card-navigation__button" aria-label="First point" rel="prev"  data-nav="first" aria-label="First point" data-test="first-pin-card">
+            <span class="govuk-visually-hidden">First point</span>
+            <svg width="44" height="40" viewBox="0 0 44 40" fill="none" focusable="false" aria-hidden="true" role="img">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M23.1643 20L28.9572 14.2071L27.5429 12.7929L20.3358 20L27.5429 27.2071L28.9572 25.7929L23.1643 20Z" fill="currentColor"></path>
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M17.1643 20L22.9572 14.2071L21.5429 12.7929L14.3358 20L21.5429 27.2071L22.9572 25.7929L17.1643 20Z" fill="currentColor"></path>
+            </svg>
+          </button>
+      
+          <button type="button" class="ping-card-navigation__button" aria-label="Previous point" rel="prev" data-nav="prev" aria-label="Previous point" data-test="previous-pin-card"> 
+            <span class="govuk-visually-hidden">Previous point</span>
+            <svg width="44" height="40" viewBox="0 0 44 40" fill="none" focusable="false" aria-hidden="true" role="img">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M20.5729 20L25.7865 14.2071L24.5137 12.7929L18.0273 20L24.5137 27.2071L25.7865 25.7929L20.5729 20Z" fill="currentColor"></path>
+            </svg>
+          </button>
+      
+      <strong>{{ positionCardHeader }} {{ displayPointNumber }} {{ positionCardHeaderConjuction }} {{ displayTotalPoints }}</strong>  
+    
+       <button type="button" class="ping-card-navigation__button" aria-label="Next point" data-nav="next" data-test="next-pin-card">
+          <span class="govuk-visually-hidden">Next point</span>
+          <svg width="44" height="40" viewBox="0 0 44 40" fill="none" focusable="false" aria-hidden="true" role="img">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M23.4271 20L18.2135 14.2071L19.4863 12.7929L25.9727 20L19.4863 27.2071L18.2135 25.7929L23.4271 20Z" fill="currentColor"></path>
+          </svg>
+        </button>
+
+        <button type="button" class="ping-card-navigation__button" aria-label="Last point" data-nav="last" data-test="last-pin-card" >
+          <span class="govuk-visually-hidden">Last point</span>
+          <svg width="44" height="40" viewBox="0 0 44 40" fill="none" focusable="false" aria-hidden="true" role="img">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M20.8357 20L15.0428 14.2071L16.4571 12.7929L23.6642 20L16.4571 27.2071L15.0428 25.7929L20.8357 20Z" fill="currentColor"></path>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M26.8357 20L21.0428 14.2071L22.4571 12.7929L29.6642 20L22.4571 27.2071L21.0428 25.7929L26.8357 20Z" fill="currentColor"></path>
+          </svg>
+        </button>
+    </div>
   </template>
 
   <template id="overlay-body-mdss-location">
@@ -88,21 +95,6 @@
 {% endraw %}
 
 
-    <script nonce="{{ cspNonce }}">
-        document.addEventListener('DOMContentLoaded', () => {
-          const template = document.getElementById('overlay-body-mdss-location')
-          if (!template) return
-
-          const mapContainer = document.querySelector('[data-qa="em-map"]')
-          const enablePingCardNavigation = mapContainer?.dataset.enablePingCardNavigation === 'true'
-          if (!enablePingCardNavigation) return
-
-          const navRow = document.createElement('div')
-          navRow.className = 'app-map__overlay-row app-map__overlay-nav'
-          navRow.innerHTML = {{ paginationHtml | dump | safe }}
-          template.content.appendChild(navRow)
-        })
-    </script>
 
     <script nonce="{{ cspNonce }}">
       document.addEventListener('DOMContentLoaded', () => {
@@ -119,13 +111,30 @@
     .app-map__overlay {
       border-radius: 16px !important;
       /* Removed overflow: hidden to allow the triangle pointer to show */
-      min-width: 284px !important;
+      min-width: 320px !important;
       filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15)) !important;
     }
 
     /* Ensure the header still respects the border radius since we removed overflow:hidden */
     .app-map__overlay-header {
+      position: relative !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 12px 40px  0px 40px!important;
+      box-sizing: border-box !important;
       border-radius: 16px 16px 0 0 !important;
+    }
+
+    .app-map__overlay-title {
+      flex: 0 0 auto !important;
+      width: 100% !important;
+    }
+
+    .app-map__overlay-close {
+      position: absolute !important;
+      top: 12px !important;
+      right: 12px !important;
     }
 
     .app-map__overlay-body {
@@ -138,11 +147,10 @@
       background-color: transparent !important;
       border-top: none !important;
       border-bottom: 0.5px solid #d9d9d9 !important;
-      padding: 5px 10px !important; /* Increased slightly for better look */
+      padding: 2px 10px !important; 
       margin: 0 !important;
       display: flex !important;
       align-items: center !important;
-      /* Gap controls the space between label and value */
       gap: 15px !important;
     }
 
@@ -266,6 +274,66 @@
       display: inline-flex !important;
       align-items: center !important;
     }
+
+
+    .ping-card-navigation__button {
+        position: relative;
+        width: 44px;
+        height: 40px;
+        margin: 0;
+        padding: 0;
+        border-width: 0;
+        outline: 2px solid rgba(0, 0, 0, 0);
+        outline-offset: -2px;
+        color: var(--govuk-text-colour, #0b0c0c);
+        background-color: transparent;
+        font-family: "GDS Transport", arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-weight: 400;
+        font-size: 1rem;
+        line-height: 1.25;
+    }
+
+    .govuk-visually-hidden {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      clip: rect(0 0 0 0) !important;
+      -webkit-clip-path: inset(50%) !important;
+      clip-path: inset(50%) !important;
+      border: 0 !important;
+      white-space: nowrap !important;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .app-map__overlay-header-nav {
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      gap: 0 !important;
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+      overflow: hidden !important;
+    }
+
+
+
+.app-map__overlay-header-nav strong {
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  margin: 0 6px !important;
+}
 
   `)
             shadowRoot.adoptedStyleSheets = [...shadowRoot.adoptedStyleSheets, sheet]

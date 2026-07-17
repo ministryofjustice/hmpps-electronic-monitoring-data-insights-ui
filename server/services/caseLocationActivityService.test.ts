@@ -84,6 +84,7 @@ describe('CaseLocationActivityService', () => {
         displaySpeed: '2 kilometres per hour',
         displayGeolocationMechanism: 'Unknown',
         positionCardHeader: 'Point',
+        positionCardHeaderConjuction: 'of',
         positionCardAccuracyLabel: 'Accuracy',
         positionCardDateTimeLabel: 'Date, time',
         positionCardLatLngLabel: 'Lat, Long',
