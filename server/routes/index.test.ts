@@ -92,7 +92,9 @@ describe('Routes', () => {
         expect(res.text).toContain(
           'The confidence circles are around 95% accurate. This means that the true location of each ping will fall within the confidence circle around 95% of the time.',
         )
-        expect(res.text).toContain('The trail shown may not reflect the actual route taken.')
+        expect(res.text).toContain(
+          'The trail is formed by joining the points with a straight line. It&#39;s aimed at making the points easier to view and is not intended to show the actual route taken.',
+        )
         expect(auditService.logPageView).toHaveBeenCalledWith(Page.MAP_HELP_PAGE, {
           who: user.username,
           correlationId: expect.any(String),

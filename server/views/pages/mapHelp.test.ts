@@ -1,5 +1,6 @@
 import express from 'express'
 import nunjucksSetup from '../../utils/nunjucksSetup'
+import mapHelpLocale from '../../controllers/static/map-help.locale.json'
 
 const renderMapHelp = async (locale: unknown): Promise<string> => {
   const app = express()
@@ -24,6 +25,24 @@ const renderMapHelp = async (locale: unknown): Promise<string> => {
 }
 
 describe('mapHelp template', () => {
+  it('renders the Guide to the map content and descriptive image text', async () => {
+    const html = await renderMapHelp(mapHelpLocale)
+
+    expect(html).toContain(
+      'Each point is joined to the next point in the sequence by a straight line to form a ‘trail’.',
+    )
+    expect(html).toContain(
+      'The trail is formed by joining the points with a straight line. It&#39;s aimed at making the points easier to view and is not intended to show the actual route taken.',
+    )
+
+    Object.values(mapHelpLocale.content)
+      .filter(section => 'image' in section)
+      .forEach(section => {
+        expect(section.image.alt).not.toBe('')
+        expect(html).toContain(`alt="${section.image.alt.replace(/'/g, '&#39;')}"`)
+      })
+  })
+
   it('renders sections with all supported content types', async () => {
     const html = await renderMapHelp({
       title: 'Help with the map',

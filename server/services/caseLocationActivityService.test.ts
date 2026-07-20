@@ -1,4 +1,4 @@
-import CaseLocationActivityService from './caseLocationActivityService'
+import CaseLocationActivityService, { CaseLocationBasePosition } from './caseLocationActivityService'
 import LocationsService from './locationsService'
 
 describe('CaseLocationActivityService', () => {
@@ -60,7 +60,7 @@ describe('CaseLocationActivityService', () => {
         latitude: 51.5,
         longitude: -0.1,
         precision: 10,
-        speed: 2,
+        speed: 16.09344,
         direction: null,
         timestamp: '',
         geolocationMechanism: 'Unknown',
@@ -81,7 +81,7 @@ describe('CaseLocationActivityService', () => {
         displayAccuracy: '10 metres',
         displayLatitude: '51.5',
         displayLongitude: '-0.1',
-        displaySpeed: '2 kilometres per hour',
+        displaySpeed: '10 miles per hour',
         displayGeolocationMechanism: 'Unknown',
         positionCardHeader: 'Point',
         positionCardAccuracyLabel: 'Accuracy',
@@ -91,6 +91,30 @@ describe('CaseLocationActivityService', () => {
         positionCardGeolocationMechanismLabel: 'Signal type',
       }),
     )
+  })
+
+  it('uses N/A when the speed is unavailable', () => {
+    const position: CaseLocationBasePosition = {
+      positionId: 1,
+      latitude: 51.5,
+      longitude: -0.1,
+      precision: null,
+      speed: null,
+      direction: null,
+      timestamp: '',
+      geolocationMechanism: 'Unknown',
+      sequenceNumber: 1,
+      deviceId: null,
+      hdop: null,
+      geometry: null,
+      satellite: null,
+      lbs: null,
+      gpsDate: null,
+    }
+
+    const result = caseLocationActivityService.annotatePositionsWithDisplayProperties([position])
+
+    expect(result[0].displaySpeed).toBe('N/A')
   })
 
   it('filters out locations without coordinates', async () => {

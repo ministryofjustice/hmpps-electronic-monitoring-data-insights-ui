@@ -275,7 +275,7 @@ export const buildLocationPageRenderData = (
   overrides: Partial<LocationPageRenderData> = {},
 ): LocationPageRenderData => {
   const defaults: LocationPageRenderData = {
-    activeNav: 'Location activity',
+    activeNav: 'cases',
     activeTab: 'location-activity',
     alert: true,
     dateFilterForm: defaultDateFilterForm(),

@@ -65,7 +65,8 @@ describe('personLocation template', () => {
   it('renders the map search page without a CRN input', async () => {
     const html = await renderPersonLocation()
 
-    expect(html).toContain('GPS Data')
+    expect(html).toContain('GPS data')
+    expect(html).toContain('Electronic monitoring - GPS data')
     expect(html).toContain('data-qa="em-map"')
     expect(html).toContain('action="/people/X31092/locations"')
     expect(html).not.toContain('name="crn"')
