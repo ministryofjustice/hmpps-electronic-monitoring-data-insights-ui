@@ -17,6 +17,7 @@ import { Coordinate } from 'ol/coordinate'
 import { queryElement } from '../../utils/utils'
 import getRotatedDirection from './controls/getRotatedDirection'
 import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
+import { getNavVisibilityState, resolveNavTargetIndex } from '../../utils/pingCard'
 
 interface ShadowRootHost extends HTMLElement {
   shadowRoot: ShadowRoot | null
@@ -245,13 +246,16 @@ const initialiseLocationDataView = () => {
     const updateNavVisibility = (index: number) => {
       const shadowRootNav = getShadowRoot(emMap as EmMap)
       if (!shadowRootNav) return
-      const prevLink = shadowRootNav.querySelector('[data-nav="prev"]') as HTMLElement | null
-      const nextLink = shadowRootNav.querySelector('[data-nav="next"]') as HTMLElement | null
-      const prevContainer = prevLink?.closest('.govuk-pagination__prev') as HTMLElement | null
-      const nextContainer = nextLink?.closest('.govuk-pagination__next') as HTMLElement | null
+      const firstBtn = shadowRootNav.querySelector('[data-nav="first"]') as HTMLButtonElement | null
+      const prevBtn = shadowRootNav.querySelector('[data-nav="prev"]') as HTMLButtonElement | null
+      const nextBtn = shadowRootNav.querySelector('[data-nav="next"]') as HTMLButtonElement | null
+      const lastBtn = shadowRootNav.querySelector('[data-nav="last"]') as HTMLButtonElement | null
 
-      if (prevContainer) prevContainer.style.visibility = index === 0 ? 'hidden' : 'visible'
-      if (nextContainer) nextContainer.style.visibility = index === positions.length - 1 ? 'hidden' : 'visible'
+      const state = getNavVisibilityState(index, positions.length)
+      if (firstBtn) firstBtn.style.visibility = state.first
+      if (prevBtn) prevBtn.style.visibility = state.prev
+      if (nextBtn) nextBtn.style.visibility = state.next
+      if (lastBtn) lastBtn.style.visibility = state.last
     }
 
     let currentPointIndex: number | null = null
@@ -301,17 +305,8 @@ const initialiseLocationDataView = () => {
       e.preventDefault()
 
       const direction = navLink.dataset.nav
-      if (currentPointIndex === null) return
-
-      if (direction === 'prev' && currentPointIndex > 0) {
-        openOverlayForIndex(currentPointIndex - 1)
-      } else if (direction === 'next' && currentPointIndex < positions.length - 1) {
-        openOverlayForIndex(currentPointIndex + 1)
-      } else if (direction === 'first') {
-        openOverlayForIndex(0)
-      } else if (direction === 'last') {
-        openOverlayForIndex(positions.length - 1)
-      }
+      const targetIndex = resolveNavTargetIndex(direction, currentPointIndex, positions.length)
+      if (targetIndex !== null) openOverlayForIndex(targetIndex)
     })
 
     const interactions = map.getInteractions().getArray()
