@@ -26,8 +26,8 @@ test.describe('Accessibility', () => {
     await signIn(page)
     await goToCasesPage(page)
 
-    await page.locator('[data-qa=cases-sub-navigation]').getByRole('link', { name: 'Location activity' }).click()
-    await expect(page.getByRole('heading', { name: 'GPS Data' })).toBeVisible()
+    await page.locator('[data-qa=cases-sub-navigation]').getByRole('link', { name: 'GPS data' }).click()
+    await expect(page.getByRole('heading', { name: 'GPS data' })).toBeVisible()
 
     await expectNoAccessibilityViolations(page)
   })
@@ -37,7 +37,7 @@ test.describe('Accessibility', () => {
     await signIn(page)
     await goToCasesPage(page)
 
-    await page.locator('[data-qa=cases-sub-navigation]').getByRole('link', { name: 'Location activity' }).click()
+    await page.locator('[data-qa=cases-sub-navigation]').getByRole('link', { name: 'GPS data' }).click()
     await page.locator('#crn').fill('X123456')
     await page.locator('#start-date').fill('01/01/2026')
     await page.locator('#start-hour').fill('10')
