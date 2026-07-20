@@ -16,6 +16,7 @@ const renderMapSearchForm = async (showCrn?: boolean): Promise<string> => {
           tracks: true,
           confidence: true,
           numbers: true,
+          heatmap: false,
         },
         dateFilterForm: {
           action: '/people/X31092/locations',

@@ -6,7 +6,6 @@ import FeatureFlags from '../models/FeatureFlags'
 describe('evaluateFeatureFlags', () => {
   it('adds evaluated flags to response locals', async () => {
     const flags = new FeatureFlags()
-    flags.enableHeatmap = true
     flags.enablePingCardNavigation = false
 
     const flagService = {
@@ -26,7 +25,6 @@ describe('evaluateFeatureFlags', () => {
 
     expect(flagService.getFlags).toHaveBeenCalledWith({ username: 'USER1' })
     expect(res.locals.flags).toEqual(flags)
-    expect(res.locals.enableHeatmap).toEqual(true)
     expect(res.locals.enablePingCardNavigation).toEqual(false)
     expect(next).toHaveBeenCalledWith()
   })
@@ -49,7 +47,6 @@ describe('evaluateFeatureFlags', () => {
     await evaluateFeatureFlags(flagService)(req, res, next)
 
     expect(res.locals.flags).toEqual(new FeatureFlags())
-    expect(res.locals.enableHeatmap).toEqual(false)
     expect(res.locals.enablePingCardNavigation).toEqual(false)
     expect(next).toHaveBeenCalledWith()
   })
