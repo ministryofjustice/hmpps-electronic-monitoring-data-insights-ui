@@ -129,10 +129,8 @@
     const updateMapButton = document.getElementById('update-map-button')
 
     form?.addEventListener('submit', () => {
-      console.log('Form submitted, disabling update map button', updateMapButton)
       if (updateMapButton) {
         updateMapButton.disabled = true
-         console.log('disabled = ', updateMapButton)
       }
     })
   })
