@@ -126,10 +126,11 @@ const initialiseLocationDataView = () => {
       return
     }
 
-    const loadingModal = queryElement(document, '#bh-map-loading-modal') as HTMLElement
+    const updateMapButton = queryElement(document, '#update-map-button') as HTMLButtonElement
     map.on('loadend', () => {
-      loadingModal.hidden = true
+      updateMapButton.disabled = false
     })
+
     injectShadowFocusStyles(emMap as EmMap)
     const { positions } = emMap
     const mapControlState = getInitialMapControlState(mapContainer)

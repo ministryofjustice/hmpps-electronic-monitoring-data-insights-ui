@@ -355,4 +355,30 @@ context('Cases', () => {
       locationPage.endDateInput().should('have.value', '02/01/2026')
     })
   })
+
+  describe('Update map button', () => {
+    it('should re-enable the update map button once the map finishes loading', () => {
+      const locationData = [
+        {
+          timestamp: '2026-01-01T12:00:00Z',
+          latitude: 51.5074,
+          longitude: -0.1278,
+          geolocationMechanism: 'GPS',
+        },
+      ]
+      cy.task('stubGetLocations', { crn: 'X123456', locations: locationData })
+
+      cy.visit(
+        '/cases/1/location-activity?start[date]=01/01/2026&start[hour]=10&start[minute]=00&end[date]=02/01/2026&end[hour]=15&end[minute]=30',
+      )
+
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+      locationPage.submitButton().should('not.be.disabled')
+    })
+
+    it('should not disable the update map button on initial page load with no search performed', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+      locationPage.submitButton().should('not.be.disabled')
+    })
+  })
 })
