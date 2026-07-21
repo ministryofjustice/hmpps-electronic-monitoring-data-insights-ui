@@ -31,6 +31,7 @@ export interface CaseLocationPosition extends CaseLocationBasePosition {
   overlayTitleTemplateId: string
   overlayBodyTemplateId: string
   displayPointNumber: number
+  displayTotalPoints: number
   displayGpsDate: string
   displayAccuracy: string
   displayLatitude: string
@@ -38,6 +39,7 @@ export interface CaseLocationPosition extends CaseLocationBasePosition {
   displaySpeed: string
   displayGeolocationMechanism: string
   positionCardHeader: string
+  positionCardHeaderConjuction: string
   positionCardAccuracyLabel: string
   positionCardDateTimeLabel: string
   positionCardLatLngLabel: string
@@ -86,6 +88,7 @@ export default class CaseLocationActivityService {
         overlayTitleTemplateId: 'overlay-title-mdss-location',
         overlayBodyTemplateId: 'overlay-body-mdss-location',
         displayPointNumber: index + 1,
+        displayTotalPoints: positions.length,
         displayGpsDate: formatGpsDate(position.gpsDate) || 'N/A',
         displayAccuracy: formatDisplayValue(position.precision, ' metres', 'N/A'),
         displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
@@ -97,6 +100,7 @@ export default class CaseLocationActivityService {
         ),
         displayGeolocationMechanism: position.geolocationMechanism,
         positionCardHeader: casesLocationLocale.overlay.point,
+        positionCardHeaderConjuction: casesLocationLocale.overlay.conjuction,
         positionCardAccuracyLabel: casesLocationLocale.overlay.accuracy,
         positionCardDateTimeLabel: casesLocationLocale.overlay.dateTime,
         positionCardLatLngLabel: casesLocationLocale.overlay.latLng,

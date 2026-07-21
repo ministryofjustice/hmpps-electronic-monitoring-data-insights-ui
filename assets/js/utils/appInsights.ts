@@ -20,8 +20,6 @@ document.initialiseTelemetry = (applicationInsightsConnectionString, application
     return
   }
 
-  console.log('Configuring AppInsights')
-
   const clickPluginInstance = new ClickAnalyticsPlugin()
   const contentName = (element: HTMLElement): string => {
     const id = element.getAttribute('data-ai-id')
