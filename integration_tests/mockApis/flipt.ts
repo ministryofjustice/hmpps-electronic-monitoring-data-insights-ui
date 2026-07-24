@@ -32,7 +32,7 @@ export default {
           namespace: {
             key: 'hmpps-electronic-monitoring-data-insights',
           },
-          flags: [flag('enable-heatmap', enableHeatmap), flag('enable-ping-card-navigation', enablePingCardNavigation)],
+          flags: [flag('enable-ping-card-navigation', enablePingCardNavigation)],
         },
       },
     }),
