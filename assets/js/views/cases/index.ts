@@ -1,10 +1,13 @@
 import { EmMap, Position } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
+
 import {
+  type ComposableLayer,
   LocationsLayer,
   TracksLayer,
   CirclesLayer,
   TextLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
+
 import { isEmpty } from 'ol/extent'
 import VectorLayer from 'ol/layer/Vector'
 import { Interaction } from 'ol/interaction'
@@ -18,20 +21,30 @@ import { queryElement } from '../../utils/utils'
 import getRotatedDirection from './controls/getRotatedDirection'
 import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
 
-class ComposableHeatmapLayer {
+type MapAdapter = Parameters<ComposableLayer<HeatmapLayer>['attach']>[0]
+type AttachOptions = Parameters<ComposableLayer<HeatmapLayer>['attach']>[1]
+
+class ComposableHeatmapLayer implements ComposableLayer<HeatmapLayer> {
   id = 'heatmapLayer'
+
   private layer: HeatmapLayer
 
   constructor(layer: HeatmapLayer) {
     this.layer = layer
   }
 
-  attach(map: NonNullable<EmMap['olMapInstance']>) {
-    map.addLayer(this.layer)
+  attach(adapter: MapAdapter, _options?: AttachOptions) {
+    if (!adapter.openlayers) {
+      throw new Error('ComposableHeatmapLayer only supports the OpenLayers adapter')
+    }
+    adapter.openlayers.map.addLayer(this.layer)
   }
 
-  detach(map: NonNullable<EmMap['olMapInstance']>) {
-    map.removeLayer(this.layer)
+  detach(adapter: MapAdapter) {
+    if (!adapter.openlayers) {
+      throw new Error('ComposableHeatmapLayer only supports the OpenLayers adapter')
+    }
+    adapter.openlayers.map.removeLayer(this.layer)
   }
 
   getNativeLayer() {
@@ -42,7 +55,6 @@ class ComposableHeatmapLayer {
     return this.layer
   }
 }
-
 interface ShadowRootHost extends HTMLElement {
   shadowRoot: ShadowRoot | null
 }
@@ -240,15 +252,17 @@ const initialiseLocationDataView = () => {
       ),
     })
 
-    const heatmapLayer = new ComposableHeatmapLayer({
-      source: heatmapSource,
-      blur: 15,
-      radius: 10,
-      visible: mapControlState.heatmap,
-      zIndex: 2,
-    })
-    emMap.addLayer(heatmapLayer)
+    const heatmapLayer = new ComposableHeatmapLayer(
+      new HeatmapLayer({
+        source: heatmapSource,
+        blur: 15,
+        radius: 10,
+        visible: mapControlState.heatmap,
+        zIndex: 2,
+      }),
+    )
 
+    emMap.addLayer(heatmapLayer)
     emMap.addLayer(locationsLayer)
     emMap.addLayer(tracksLayer)
     emMap.addLayer(confidenceLayer)

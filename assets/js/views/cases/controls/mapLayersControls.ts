@@ -127,14 +127,25 @@ export default class MapLayersControl extends Control {
       }),
     )
 
-    const bindCheckbox = (id: string, stateKey: 'tracks' | 'confidence' | 'numbers', layer?: ComposableLayer) => {
+    const bindCheckbox = (
+      id: string,
+      stateKey: 'tracks' | 'confidence' | 'numbers' | 'heatmap',
+      layer?: ComposableLayer,
+    ) => {
       const input = panel.querySelector(id) as HTMLInputElement | null
       if (!input || !layer) return
-      const nativeLayer = opts.map.getNativeLayer(layer.id)
-      ;(nativeLayer as BaseLayer | undefined)?.setVisible(state[stateKey])
+
+      const raw = layer.getNativeLayer()
+      const nativeLayers: BaseLayer[] = (() => {
+        if (Array.isArray(raw)) return raw
+        if (raw) return [raw]
+        return []
+      })()
+
+      nativeLayers.forEach(l => l.setVisible(state[stateKey]))
       input.addEventListener('change', () => {
         state[stateKey] = input.checked
-        ;(nativeLayer as BaseLayer | undefined)?.setVisible(input.checked)
+        nativeLayers.forEach(l => l.setVisible(input.checked))
         notifyChange()
       })
     }
