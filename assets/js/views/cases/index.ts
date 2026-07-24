@@ -78,6 +78,7 @@ const defaultMapControlState: MapControlState = {
   tracks: true,
   confidence: true,
   numbers: true,
+  heatmap: false,
 }
 
 const parseBooleanDataValue = (value: string | undefined): boolean | undefined => {
@@ -91,6 +92,7 @@ const getInitialMapControlState = (mapContainer: HTMLElement): MapControlState =
   tracks: parseBooleanDataValue(mapContainer.dataset.mapControlTracks) ?? defaultMapControlState.tracks,
   confidence: parseBooleanDataValue(mapContainer.dataset.mapControlConfidence) ?? defaultMapControlState.confidence,
   numbers: parseBooleanDataValue(mapContainer.dataset.mapControlNumbers) ?? defaultMapControlState.numbers,
+  heatmap: parseBooleanDataValue(mapContainer.dataset.mapControlHeatmap) ?? defaultMapControlState.heatmap,
 })
 
 const syncMapControlInputs = (state: MapControlState) => {
