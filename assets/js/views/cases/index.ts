@@ -18,6 +18,31 @@ import { queryElement } from '../../utils/utils'
 import getRotatedDirection from './controls/getRotatedDirection'
 import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
 
+class ComposableHeatmapLayer {
+  id = 'heatmapLayer'
+  private layer: HeatmapLayer
+
+  constructor(layer: HeatmapLayer) {
+    this.layer = layer
+  }
+
+  attach(map: NonNullable<EmMap['olMapInstance']>) {
+    map.addLayer(this.layer)
+  }
+
+  detach(map: NonNullable<EmMap['olMapInstance']>) {
+    map.removeLayer(this.layer)
+  }
+
+  getNativeLayer() {
+    return this.layer
+  }
+
+  getPrimaryLayer() {
+    return this.layer
+  }
+}
+
 interface ShadowRootHost extends HTMLElement {
   shadowRoot: ShadowRoot | null
 }
@@ -41,6 +66,7 @@ const defaultMapControlState: MapControlState = {
   tracks: true,
   confidence: true,
   numbers: true,
+  heatmap: false,
 }
 
 const parseBooleanDataValue = (value: string | undefined): boolean | undefined => {
@@ -54,6 +80,7 @@ const getInitialMapControlState = (mapContainer: HTMLElement): MapControlState =
   tracks: parseBooleanDataValue(mapContainer.dataset.mapControlTracks) ?? defaultMapControlState.tracks,
   confidence: parseBooleanDataValue(mapContainer.dataset.mapControlConfidence) ?? defaultMapControlState.confidence,
   numbers: parseBooleanDataValue(mapContainer.dataset.mapControlNumbers) ?? defaultMapControlState.numbers,
+  heatmap: parseBooleanDataValue(mapContainer.dataset.mapControlHeatmap) ?? defaultMapControlState.heatmap,
 })
 
 const syncMapControlInputs = (state: MapControlState) => {
@@ -204,26 +231,25 @@ const initialiseLocationDataView = () => {
       },
     })
 
-    if (mapContainer.dataset.enableHeatmap === 'true') {
-      const heatmapSource = new VectorSource({
-        features: positions.map(
-          position =>
-            new Feature({
-              geometry: new Point(
-                fromLonLat([(position as TrackPosition).longitude, (position as TrackPosition).latitude]),
-              ),
-            }),
-        ),
-      })
+    const heatmapSource = new VectorSource({
+      features: positions.map(
+        position =>
+          new Feature({
+            geometry: new Point(
+              fromLonLat([(position as TrackPosition).longitude, (position as TrackPosition).latitude]),
+            ),
+          }),
+      ),
+    })
 
-      const heatmapLayer = new HeatmapLayer({
-        source: heatmapSource,
-        blur: 15,
-        radius: 10,
-        zIndex: 2,
-      })
-      emMap.addLayer(heatmapLayer)
-    }
+    const heatmapLayer = new ComposableHeatmapLayer({
+      source: heatmapSource,
+      blur: 15,
+      radius: 10,
+      visible: mapControlState.heatmap,
+      zIndex: 2,
+    })
+    emMap.addLayer(heatmapLayer)
 
     emMap.addLayer(locationsLayer)
     emMap.addLayer(tracksLayer)
@@ -238,6 +264,7 @@ const initialiseLocationDataView = () => {
       tracksLayer,
       confidenceLayer,
       numbersLayer,
+      heatmapLayer,
       initialState: mapControlState,
       onChange: syncMapControlInputs,
     })

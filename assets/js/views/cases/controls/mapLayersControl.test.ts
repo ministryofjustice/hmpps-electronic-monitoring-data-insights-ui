@@ -81,6 +81,7 @@ describe('MapLayersControl', () => {
           tracks: false,
           confidence: true,
           numbers: false,
+          heatmap: false,
         },
       })
 

@@ -10,6 +10,7 @@ export interface MapControlState {
   tracks: boolean
   confidence: boolean
   numbers: boolean
+  heatmap: boolean
 }
 
 interface MapLayersControlOptions {
@@ -18,6 +19,7 @@ interface MapLayersControlOptions {
   tracksLayer: ComposableLayer
   confidenceLayer?: ComposableLayer
   numbersLayer?: ComposableLayer
+  heatmapLayer?: ComposableLayer
   mapContainer: HTMLElement
   map: EmMap
   initialState?: MapControlState
@@ -29,6 +31,7 @@ const defaultMapControlState: MapControlState = {
   tracks: true,
   confidence: true,
   numbers: true,
+  heatmap: false,
 }
 
 export default class MapLayersControl extends Control {
@@ -108,6 +111,10 @@ export default class MapLayersControl extends Control {
               <input class="govuk-checkboxes__input" id="mlc-numbers" type="checkbox" ${state.numbers ? 'checked' : ''}>
               <label class="govuk-label govuk-checkboxes__label" for="mlc-numbers">Point numbers</label>
             </div>
+              <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" id="mlc-heatmap" type="checkbox" ${state.heatmap ? 'checked' : ''}>
+              <label class="govuk-label govuk-checkboxes__label" for="mlc-heatmap">Heatmap</label>
+            </div>
           </div>
         </fieldset>
       </div>`
@@ -127,7 +134,7 @@ export default class MapLayersControl extends Control {
       }),
     )
 
-    const bindCheckbox = (id: string, stateKey: 'tracks' | 'confidence' | 'numbers', layer?: ComposableLayer) => {
+    const bindCheckbox = (id: string, stateKey: 'tracks' | 'confidence' | 'numbers' | 'heatmap', layer?: ComposableLayer) => {
       const input = panel.querySelector(id) as HTMLInputElement | null
       if (!input || !layer) return
       const nativeLayer = opts.map.getNativeLayer(layer.id)
@@ -142,6 +149,7 @@ export default class MapLayersControl extends Control {
     bindCheckbox('#mlc-tracks', 'tracks', opts.tracksLayer)
     bindCheckbox('#mlc-confidence', 'confidence', opts.confidenceLayer)
     bindCheckbox('#mlc-numbers', 'numbers', opts.numbersLayer)
+    bindCheckbox('#mlc-heatmap', 'heatmap', opts.heatmapLayer)
 
     panel.querySelector('.mlc-panel__close')?.addEventListener('click', () => {
       toggle(panel, openBtn)
