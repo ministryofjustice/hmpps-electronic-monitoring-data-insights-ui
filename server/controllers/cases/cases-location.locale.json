@@ -6,6 +6,7 @@
   },
   "overlay": {
     "point": "Point",
+    "conjuction": "of",
     "accuracy": "Accuracy",
     "dateTime": "Date, time",
     "latLng": "Lat, Long",
