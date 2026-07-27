@@ -15,10 +15,8 @@ const flag = (key: string, enabled: boolean) => ({
 
 export default {
   stubFeatureFlags: ({
-    enableHeatmap = true,
     enablePingCardNavigation = true,
   }: {
-    enableHeatmap?: boolean
     enablePingCardNavigation?: boolean
   } = {}): SuperAgentRequest =>
     stubFor({
