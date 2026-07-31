@@ -15,21 +15,25 @@ jest.mock('ol/control/Control', () => {
 jest.mock('@ministryofjustice/hmpps-electronic-monitoring-components/map', () => ({}))
 jest.mock('@ministryofjustice/hmpps-electronic-monitoring-components/map/layers', () => ({}))
 
+const makeLayer = (id: string): ComposableLayer => ({ id }) as unknown as ComposableLayer
+
 const makeNativeLayer = (visible = true) => ({
   getVisible: jest.fn(() => visible),
   setVisible: jest.fn(),
 })
 
-const makeLayer = (id: string, nativeLayer: ReturnType<typeof makeNativeLayer> = makeNativeLayer()): ComposableLayer =>
-  ({
-    id,
-    getNativeLayer: jest.fn(() => nativeLayer),
-    getPrimaryLayer: jest.fn(() => nativeLayer),
-    attach: jest.fn(),
-    detach: jest.fn(),
-  }) as unknown as ComposableLayer
+const makeMockMap = (visible = true): EmMap => {
+  const layers = {
+    tracks: makeNativeLayer(visible),
+    confidence: makeNativeLayer(visible),
+    numbers: makeNativeLayer(visible),
+    exclusion: makeNativeLayer(visible),
+  }
 
-const makeMockMap = (): EmMap => ({}) as unknown as EmMap
+  return {
+    getNativeLayer: jest.fn((id: keyof typeof layers) => layers[id]),
+  } as unknown as EmMap
+}
 
 const makeOpts = (map: EmMap) => ({
   tracksLayer: makeLayer('tracks'),
@@ -78,7 +82,8 @@ describe('MapLayersControl', () => {
           tracks: false,
           confidence: true,
           numbers: false,
-          heatmap: false,
+          heatmap: true,
+          exclusion: false,
         },
       })
 
@@ -93,14 +98,15 @@ describe('MapLayersControl', () => {
       const tracksNativeLayer = makeNativeLayer()
       const confidenceNativeLayer = makeNativeLayer()
       const numbersNativeLayer = makeNativeLayer()
-
-      const opts = {
-        tracksLayer: makeLayer('tracks', tracksNativeLayer),
-        confidenceLayer: makeLayer('confidence', confidenceNativeLayer),
-        numbersLayer: makeLayer('numbers', numbersNativeLayer),
-        mapContainer: document.createElement('div'),
-        map: makeMockMap(),
-      }
+      const map = {
+        getNativeLayer: jest.fn((id: string) => {
+          if (id === 'tracks') return tracksNativeLayer
+          if (id === 'confidence') return confidenceNativeLayer
+          if (id === 'numbers') return numbersNativeLayer
+          return undefined
+        }),
+      } as unknown as EmMap
+      const opts = makeOpts(map)
 
       // eslint-disable-next-line no-new
       new MapLayersControl({
@@ -110,7 +116,8 @@ describe('MapLayersControl', () => {
           tracks: false,
           confidence: true,
           numbers: false,
-          heatmap: false,
+          heatmap: true,
+          exclusion: false,
         },
       })
 
@@ -135,6 +142,7 @@ describe('MapLayersControl', () => {
           confidence: true,
           numbers: true,
           heatmap: true,
+          exclusion: false,
         },
         onChange,
       })
@@ -148,7 +156,7 @@ describe('MapLayersControl', () => {
         tracks: false,
         confidence: true,
         numbers: true,
-        heatmap: true,
+        exclusion: false,
       })
     })
 

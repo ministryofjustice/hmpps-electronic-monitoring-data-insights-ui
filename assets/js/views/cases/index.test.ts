@@ -181,6 +181,7 @@ describe('initialiseLocationDataView', () => {
           confidence: true,
           numbers: false,
           heatmap: false,
+          exclusion: false,
         },
         onChange: expect.any(Function),
       }),

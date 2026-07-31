@@ -6,6 +6,7 @@ import {
   TracksLayer,
   CirclesLayer,
   TextLayer,
+  ComposableLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 
 import { isEmpty } from 'ol/extent'
@@ -17,6 +18,8 @@ import { Feature } from 'ol'
 import { Point } from 'ol/geom'
 import { fromLonLat } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
+import GeoJSON from 'ol/format/GeoJSON'
+import { Fill, Stroke, Style } from 'ol/style'
 import { queryElement } from '../../utils/utils'
 import getRotatedDirection from './controls/getRotatedDirection'
 import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
@@ -80,6 +83,7 @@ const defaultMapControlState: MapControlState = {
   confidence: true,
   numbers: true,
   heatmap: false,
+  exclusion: false,
 }
 
 const parseBooleanDataValue = (value: string | undefined): boolean | undefined => {
@@ -94,6 +98,7 @@ const getInitialMapControlState = (mapContainer: HTMLElement): MapControlState =
   confidence: parseBooleanDataValue(mapContainer.dataset.mapControlConfidence) ?? defaultMapControlState.confidence,
   numbers: parseBooleanDataValue(mapContainer.dataset.mapControlNumbers) ?? defaultMapControlState.numbers,
   heatmap: parseBooleanDataValue(mapContainer.dataset.mapControlHeatmap) ?? defaultMapControlState.heatmap,
+  exclusion: parseBooleanDataValue(mapContainer.dataset.mapControlExclusion) ?? defaultMapControlState.exclusion,
 })
 
 const syncMapControlInputs = (state: MapControlState) => {
@@ -266,6 +271,48 @@ const initialiseLocationDataView = () => {
     )
 
     emMap.addLayer(heatmapLayer)
+    let exclusionLayer: ComposableLayer | undefined
+    const exclusionZonesData = mapContainer.dataset.exclusionZones
+
+    if (exclusionZonesData) {
+      try {
+        const exclusionZones = JSON.parse(exclusionZonesData)
+        const polygonZones = (Array.isArray(exclusionZones) ? exclusionZones : []).filter(
+          zone => zone?.geometry?.type === 'Polygon',
+        )
+
+        if (polygonZones.length > 0) {
+          const features = new GeoJSON().readFeatures(
+            {
+              type: 'FeatureCollection',
+              features: polygonZones.map(zone => ({
+                type: 'Feature',
+                properties: { name: zone.name, address: zone.address },
+                geometry: zone.geometry,
+              })),
+            },
+            { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' },
+          )
+
+          const rawExclusionLayer = new VectorLayer({
+            source: new VectorSource({ features }),
+            style: new Style({
+              fill: new Fill({ color: 'rgba(255, 0, 0, 0.3)' }),
+              stroke: new Stroke({ color: 'rgba(255, 0, 0, 1)', width: 2 }),
+            }),
+            zIndex: 5,
+            visible: mapControlState.exclusion,
+          })
+          ;(rawExclusionLayer as unknown as { id: string }).id = 'exclusionLayer'
+
+          exclusionLayer = emMap.addLayer(rawExclusionLayer) as unknown as ComposableLayer
+        }
+      } catch (error) {
+        /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+        console.error('Error parsing exclusion zone data:', error)
+      }
+    }
+
     emMap.addLayer(locationsLayer)
     emMap.addLayer(tracksLayer)
     emMap.addLayer(confidenceLayer)
@@ -280,6 +327,7 @@ const initialiseLocationDataView = () => {
       confidenceLayer,
       numbersLayer,
       heatmapLayer,
+      exclusionLayer,
       initialState: mapControlState,
       onChange: syncMapControlInputs,
     })

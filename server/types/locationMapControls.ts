@@ -6,6 +6,7 @@ export interface LocationMapControls {
   confidence: boolean
   numbers: boolean
   heatmap: boolean
+  exclusion: boolean
 }
 
 export const defaultLocationMapControls: LocationMapControls = {
@@ -14,4 +15,5 @@ export const defaultLocationMapControls: LocationMapControls = {
   confidence: true,
   numbers: true,
   heatmap: false,
+  exclusion: false,
 }
