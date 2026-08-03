@@ -21,7 +21,8 @@ interface MapLayersControlOptions {
   confidenceLayer?: ComposableLayer
   numbersLayer?: ComposableLayer
   heatmapLayer?: ComposableLayer
-  exclusionLayer?: ComposableLayer
+  exclusionLayer?: BaseLayer
+  enableExclusionZones?: boolean
   mapContainer: HTMLElement
   map: EmMap
   initialState?: MapControlState
@@ -59,7 +60,7 @@ export default class MapLayersControl extends Control {
 
   private static createPanel(opts: MapLayersControlOptions): { panel: HTMLElement; openBtn: HTMLElement } {
     const state: MapControlState = { ...defaultMapControlState, ...opts.initialState }
-
+    console.log('xxx MapLayersControl initial state:', state)
     const openBtn = document.createElement('button')
     openBtn.setAttribute('aria-label', 'Open layers panel')
     openBtn.className = 'govuk-button mlc-open-btn govuk-button--inverse'
@@ -122,7 +123,9 @@ export default class MapLayersControl extends Control {
           </div>
         </fieldset>
       </div>
-
+      ${
+        opts.enableExclusionZones
+          ? `  
       <hr class="govuk-section-break govuk-section-break--visible mlc-panel__divider">
       <div class="govuk-form-group govuk-!-margin-bottom-0">
         <fieldset class="govuk-fieldset">
@@ -134,9 +137,9 @@ export default class MapLayersControl extends Control {
             </div>
           </div>
         </fieldset>
-      </div>
-      `
-
+      </div>`
+          : ``
+      }`
     const notifyChange = () => opts.onChange?.({ ...state })
 
     opts.streetLayer?.setVisible(state.baseLayer === 'street')
@@ -175,11 +178,25 @@ export default class MapLayersControl extends Control {
       })
     }
 
+    const bindNativeLayerCheckbox = (id: string, stateKey: 'exclusion', layer?: BaseLayer) => {
+      const input = panel.querySelector(id) as HTMLInputElement | null
+      if (!input) return
+      if (!layer) {
+        return
+      }
+      layer.setVisible(state[stateKey])
+      input.addEventListener('change', () => {
+        state[stateKey] = input.checked
+        layer.setVisible(input.checked)
+        notifyChange()
+      })
+    }
+
     bindCheckbox('#mlc-tracks', 'tracks', opts.tracksLayer)
     bindCheckbox('#mlc-confidence', 'confidence', opts.confidenceLayer)
     bindCheckbox('#mlc-numbers', 'numbers', opts.numbersLayer)
     bindCheckbox('#mlc-heatmap', 'heatmap', opts.heatmapLayer)
-    bindCheckbox('#mlc-exclusion', 'exclusion', opts.exclusionLayer)
+    bindNativeLayerCheckbox('#mlc-exclusion', 'exclusion', opts.exclusionLayer)
 
     panel.querySelector('.mlc-panel__close')?.addEventListener('click', () => {
       toggle(panel, openBtn)

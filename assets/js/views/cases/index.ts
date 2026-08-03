@@ -1,12 +1,10 @@
 import { EmMap, Position } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
 
 import {
-  type ComposableLayer,
   LocationsLayer,
   TracksLayer,
   CirclesLayer,
   TextLayer,
-  ComposableLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 
 import { isEmpty } from 'ol/extent'
@@ -271,10 +269,9 @@ const initialiseLocationDataView = () => {
     )
 
     emMap.addLayer(heatmapLayer)
-    let exclusionLayer: ComposableLayer | undefined
+    let exclusionLayer: VectorLayer | undefined
     const exclusionZonesData = mapContainer.dataset.exclusionZones
-
-    if (exclusionZonesData) {
+    if (exclusionZonesData && mapContainer.dataset.enableExclusionZones === 'true') {
       try {
         const exclusionZones = JSON.parse(exclusionZonesData)
         const polygonZones = (Array.isArray(exclusionZones) ? exclusionZones : []).filter(
@@ -294,7 +291,7 @@ const initialiseLocationDataView = () => {
             { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' },
           )
 
-          const rawExclusionLayer = new VectorLayer({
+          exclusionLayer = new VectorLayer({
             source: new VectorSource({ features }),
             style: new Style({
               fill: new Fill({ color: 'rgba(255, 0, 0, 0.3)' }),
@@ -303,9 +300,8 @@ const initialiseLocationDataView = () => {
             zIndex: 5,
             visible: mapControlState.exclusion,
           })
-          ;(rawExclusionLayer as unknown as { id: string }).id = 'exclusionLayer'
 
-          exclusionLayer = emMap.addLayer(rawExclusionLayer) as unknown as ComposableLayer
+          map.addLayer(exclusionLayer) // native ol.Map, not emMap.addLayer
         }
       } catch (error) {
         /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
@@ -328,6 +324,7 @@ const initialiseLocationDataView = () => {
       numbersLayer,
       heatmapLayer,
       exclusionLayer,
+      enableExclusionZones: mapContainer.dataset.enableExclusionZones === 'true',
       initialState: mapControlState,
       onChange: syncMapControlInputs,
     })

@@ -56,6 +56,8 @@ describe('PeopleController', () => {
       searchPeople: jest.fn(),
     } as unknown as jest.Mocked<PeopleService>
 
+    peopleExclusionService = { getExclusionZone: jest.fn() } as unknown as jest.Mocked<PeopleExclusionService>
+
     req = {
       id: 'test-correlation-id',
       params: { delius_id: 'X31092' },
@@ -238,12 +240,14 @@ describe('PeopleController', () => {
         fromDate: '',
         toDate: '',
         locationAlert: null,
+        exclusionZones: null,
         mapControls: {
           baseLayer: 'street',
           tracks: true,
           confidence: true,
           numbers: true,
           heatmap: false,
+          exclusion: false,
         },
         currentUrl: encodeURIComponent('/people/X31092/locations'),
       }),
@@ -299,6 +303,7 @@ describe('PeopleController', () => {
         fromDate: '2026-01-12T10:00:00.000Z',
         toDate: '2026-01-14T11:00:00.000Z',
         locationAlert: null,
+        exclusionZones: null,
         dateFilterForm: expect.objectContaining({
           showCrn: false,
           values: {
@@ -356,6 +361,7 @@ describe('PeopleController', () => {
         hasSearched: true,
         isMapLoading: false,
         locationAlert: null,
+        exclusionZones: null,
         dateFilterForm: expect.objectContaining({
           showCrn: false,
           errors: expect.arrayContaining([
