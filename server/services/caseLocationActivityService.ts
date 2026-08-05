@@ -3,6 +3,7 @@ import GeolocationMechanism from '../types/entities/geolocationMechanism'
 import { formatGpsDate } from '../utils/date'
 import LocationsService, { type Location } from './locationsService'
 import casesLocationLocale from '../controllers/cases/cases-location.locale.json'
+import { GetLocationsOptions } from '../data/locationsApiClient'
 
 const KILOMETRES_PER_MILE = 1.609344
 
@@ -74,8 +75,9 @@ export default class CaseLocationActivityService {
     personIdentifier: string,
     from: string,
     to: string,
+    options: GetLocationsOptions = {},
   ): Promise<CaseLocationBasePosition[]> {
-    const result = await this.locationsService.getLocations(username, personIdentifier, from, to)
+    const result = await this.locationsService.getLocations(username, personIdentifier, from, to, options)
 
     return result.locations.filter(hasCoordinates).map((location, index) => this.mapLocation(location, index))
   }

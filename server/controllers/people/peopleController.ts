@@ -282,11 +282,13 @@ export default class PeopleController {
         if (validation.success) {
           if (personContext.personId) {
             try {
+              const crn = deliusId
               positions = await this.caseLocationActivityService.getPositions(
                 res.locals.user.username,
                 personContext.personId,
                 queryResult.data.fromDate,
                 queryResult.data.toDate,
+                { crn },
               )
               positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
             } catch (error) {

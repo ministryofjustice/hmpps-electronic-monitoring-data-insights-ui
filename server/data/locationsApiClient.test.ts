@@ -6,6 +6,7 @@ describe('LocationsApiClient', () => {
   const authenticationClient = {} as AuthenticationClient
   const username = 'user1'
   const personId = '41591'
+  const crn = 'X31092'
   const positionId = '98765'
   const from = '2026-03-24T00:00:00Z'
   const to = '2026-03-25T00:00:00Z'
@@ -43,8 +44,7 @@ describe('LocationsApiClient', () => {
     it('calls the locations endpoint with personId and date range using the system token for the username', async () => {
       const getSpy = jest.spyOn(locationsApiClient, 'get').mockResolvedValue(locationsResponse)
 
-      const result = await locationsApiClient.getLocations(username, personId, from, to)
-      const crn = personId
+      const result = await locationsApiClient.getLocations(username, personId, from, to, { crn })
       expect(result).toEqual(locationsResponse)
       expect(getSpy).toHaveBeenCalledWith(
         {
@@ -58,12 +58,11 @@ describe('LocationsApiClient', () => {
     it('includes nextToken when provided', async () => {
       const getSpy = jest.spyOn(locationsApiClient, 'get').mockResolvedValue(locationsResponse)
 
-      await locationsApiClient.getLocations(username, personId, from, to, nextToken)
-      const crn = personId
+      await locationsApiClient.getLocations(username, personId, from, to, { nextToken })
       expect(getSpy).toHaveBeenCalledWith(
         {
           path: `/people/${personId}/locations`,
-          query: { from, to, crn, nextToken },
+          query: { from, to, nextToken },
         },
         asSystem(username),
       )
