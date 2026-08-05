@@ -44,12 +44,12 @@ describe('LocationsApiClient', () => {
       const getSpy = jest.spyOn(locationsApiClient, 'get').mockResolvedValue(locationsResponse)
 
       const result = await locationsApiClient.getLocations(username, personId, from, to)
-
+      const crn = personId
       expect(result).toEqual(locationsResponse)
       expect(getSpy).toHaveBeenCalledWith(
         {
           path: `/people/${personId}/locations`,
-          query: { from, to },
+          query: { from, to, crn },
         },
         asSystem(username),
       )
@@ -59,11 +59,11 @@ describe('LocationsApiClient', () => {
       const getSpy = jest.spyOn(locationsApiClient, 'get').mockResolvedValue(locationsResponse)
 
       await locationsApiClient.getLocations(username, personId, from, to, nextToken)
-
+      const crn = personId
       expect(getSpy).toHaveBeenCalledWith(
         {
           path: `/people/${personId}/locations`,
-          query: { from, to, nextToken },
+          query: { from, to, crn, nextToken },
         },
         asSystem(username),
       )

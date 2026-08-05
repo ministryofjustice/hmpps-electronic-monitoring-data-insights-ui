@@ -30,7 +30,7 @@ describe('LocationsApiClient integration', () => {
       reqheaders: { authorization: `Bearer ${systemToken}` },
     })
       .get(`/people/${personId}/locations`)
-      .query({ from, to, nextToken })
+      .query({ from, to, crn: personId, nextToken })
       .reply(200, {
         locations: [
           {
