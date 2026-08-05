@@ -13,6 +13,7 @@ describe('LocationsApiClient integration', () => {
   const positionId = '98765'
   const from = '2026-03-24T00:00:00Z'
   const to = '2026-03-25T00:00:00Z'
+  const crn = 'X31092'
   const nextToken = 'next-page-token'
 
   let locationsApiClient: LocationsApiClient
@@ -30,7 +31,7 @@ describe('LocationsApiClient integration', () => {
       reqheaders: { authorization: `Bearer ${systemToken}` },
     })
       .get(`/people/${personId}/locations`)
-      .query({ from, to, crn: personId, nextToken })
+      .query({ from, to, crn, nextToken })
       .reply(200, {
         locations: [
           {
@@ -51,7 +52,7 @@ describe('LocationsApiClient integration', () => {
         nextToken: null,
       })
 
-    const result = await locationsApiClient.getLocations(username, personId, from, to, nextToken)
+    const result = await locationsApiClient.getLocations(username, personId, from, to, { crn, nextToken })
 
     expect(authenticationClient.getToken).toHaveBeenCalledWith(username)
     expect(result).toEqual({

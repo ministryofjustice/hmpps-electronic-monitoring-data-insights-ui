@@ -284,6 +284,7 @@ describe('PeopleController', () => {
       '41591',
       '2026-01-12T10:00:00.000Z',
       '2026-01-14T11:00:00.000Z',
+      { crn: 'X31092' },
     )
     expect(res.render).toHaveBeenCalledWith(
       'pages/personLocation',
@@ -320,6 +321,7 @@ describe('PeopleController', () => {
       '41591',
       '2026-06-02T00:05:00.000Z',
       '2026-06-03T01:06:00.000Z',
+      { crn: 'X31092' },
     )
     expect(res.render).toHaveBeenCalledWith(
       'pages/personLocation',

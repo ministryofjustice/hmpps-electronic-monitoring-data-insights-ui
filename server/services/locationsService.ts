@@ -1,5 +1,5 @@
 import type LocationsApiClient from '../data/locationsApiClient'
-import type { ApiLocation } from '../data/locationsApiClient'
+import type { ApiLocation, GetLocationsOptions } from '../data/locationsApiClient'
 
 export type Location = {
   id: number | null
@@ -29,9 +29,10 @@ export default class LocationsService {
     personIdentifier: string,
     from: string,
     to: string,
+    options: GetLocationsOptions = {},
     nextToken?: string,
   ): Promise<LocationsResult> {
-    const response = await this.locationsApiClient.getLocations(username, personIdentifier, from, to, nextToken)
+    const response = await this.locationsApiClient.getLocations(username, personIdentifier, from, to, options)
 
     return {
       locations: response.locations.map(location => this.mapLocation(location)),

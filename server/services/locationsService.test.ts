@@ -59,13 +59,13 @@ describe('LocationsService', () => {
         nextToken,
       })
 
-      const result = await locationsService.getLocations(username, personIdentifier, from, to, nextToken)
+      const result = await locationsService.getLocations(username, personIdentifier, from, to, { nextToken })
 
       expect(result).toEqual<LocationsResult>({
         locations: [mappedLocation],
         nextToken,
       })
-      expect(locationsApiClient.getLocations).toHaveBeenCalledWith(username, personIdentifier, from, to, nextToken)
+      expect(locationsApiClient.getLocations).toHaveBeenCalledWith(username, personIdentifier, from, to, { nextToken })
     })
   })
 

@@ -23,6 +23,11 @@ export type ApiLocationsResponse = {
   nextToken: string | null
 }
 
+export type GetLocationsOptions = {
+  crn?: string
+  nextToken?: string
+}
+
 export default class LocationsApiClient extends RestClient {
   constructor(authenticationClient: AuthenticationClient) {
     super('Locations API', config.apis.emdiApi, logger, authenticationClient)
@@ -33,15 +38,16 @@ export default class LocationsApiClient extends RestClient {
     personIdentifier: string,
     from: string,
     to: string,
-    nextToken?: string,
+    options: GetLocationsOptions = {},
   ): Promise<ApiLocationsResponse> {
+    const { crn, nextToken } = options
     return this.get<ApiLocationsResponse>(
       {
         path: `/people/${personIdentifier}/locations`,
         query: {
           from,
           to,
-          crn: personIdentifier,
+          ...(crn ? { crn } : {}),
           ...(nextToken ? { nextToken } : {}),
         },
       },
