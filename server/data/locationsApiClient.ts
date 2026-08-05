@@ -41,6 +41,7 @@ export default class LocationsApiClient extends RestClient {
         query: {
           from,
           to,
+          crn: personIdentifier,
           ...(nextToken ? { nextToken } : {}),
         },
       },
