@@ -6,6 +6,7 @@ import { user } from '../../routes/testutils/appSetup'
 import AuditService, { Page } from '../../services/auditService'
 import CaseLocationActivityService, { type CaseLocationBasePosition } from '../../services/caseLocationActivityService'
 import DateSearchValidationService from '../../services/dateSearchValidationService'
+import PeopleExclusionService from '../../services/peopleExclusionService'
 import casesLocationLocale from '../cases/cases-location.locale.json'
 import PeopleController from './peopleController'
 
@@ -16,6 +17,7 @@ describe('PeopleController', () => {
   let auditService: jest.Mocked<AuditService>
   let caseLocationActivityService: { getPositions: jest.Mock; annotatePositionsWithDisplayProperties: jest.Mock }
   let dateSearchValidationService: jest.Mocked<DateSearchValidationService>
+  let peopleExclusionService: jest.Mocked<PeopleExclusionService>
   let controller: PeopleController
   let req: Partial<Request>
   let res: Partial<Response>
@@ -54,6 +56,8 @@ describe('PeopleController', () => {
       searchPeople: jest.fn(),
     } as unknown as jest.Mocked<PeopleService>
 
+    peopleExclusionService = { getExclusionZone: jest.fn() } as unknown as jest.Mocked<PeopleExclusionService>
+
     req = {
       id: 'test-correlation-id',
       params: { delius_id: 'X31092' },
@@ -73,6 +77,7 @@ describe('PeopleController', () => {
       auditService,
       caseLocationActivityService as unknown as CaseLocationActivityService,
       dateSearchValidationService,
+      peopleExclusionService,
     )
   })
 
@@ -235,11 +240,13 @@ describe('PeopleController', () => {
         fromDate: '',
         toDate: '',
         locationAlert: null,
+        exclusionZones: null,
         mapControls: {
           baseLayer: 'street',
           tracks: true,
           confidence: true,
           numbers: true,
+          exclusion: false,
         },
         currentUrl: encodeURIComponent('/people/X31092/locations'),
       }),
@@ -295,6 +302,7 @@ describe('PeopleController', () => {
         fromDate: '2026-01-12T10:00:00.000Z',
         toDate: '2026-01-14T11:00:00.000Z',
         locationAlert: null,
+        exclusionZones: null,
         dateFilterForm: expect.objectContaining({
           showCrn: false,
           values: {
@@ -352,6 +360,7 @@ describe('PeopleController', () => {
         hasSearched: true,
         isMapLoading: false,
         locationAlert: null,
+        exclusionZones: null,
         dateFilterForm: expect.objectContaining({
           showCrn: false,
           errors: expect.arrayContaining([
