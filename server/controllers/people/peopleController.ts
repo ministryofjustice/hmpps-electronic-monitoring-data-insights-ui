@@ -169,7 +169,7 @@ export default class PeopleController {
       ...(baseLayer ? { baseLayer } : {}),
     }
 
-    ;(['tracks', 'confidence', 'numbers'] as const).forEach(key => {
+    ;(['tracks', 'confidence', 'numbers', 'heatmap'] as const).forEach(key => {
       const value = this.parseBooleanMapControlValue(queryControls[key])
       if (value !== undefined) {
         controls[key] = value

@@ -16,9 +16,7 @@ describe('FlagService', () => {
   })
 
   it('returns feature flags based on Flipt boolean evaluation results', async () => {
-    evaluateBoolean
-      .mockReturnValueOnce({ flagKey: 'enable-heatmap', enabled: true })
-      .mockReturnValueOnce({ flagKey: 'enable-ping-card-navigation', enabled: false })
+    evaluateBoolean.mockReturnValueOnce({ flagKey: 'enable-ping-card-navigation', enabled: false })
 
     const flags = await new FlagService().getFlags({ username: 'USER1' })
 
@@ -27,42 +25,27 @@ describe('FlagService', () => {
       url: 'http://localhost:8100',
       updateInterval: 120,
     })
+
     expect(evaluateBoolean).toHaveBeenNthCalledWith(1, {
-      flagKey: 'enable-heatmap',
-      entityId: 'user1',
-      context: {
-        username: 'user1',
-      },
-    })
-    expect(evaluateBoolean).toHaveBeenNthCalledWith(2, {
       flagKey: 'enable-ping-card-navigation',
       entityId: 'user1',
       context: {
         username: 'user1',
       },
     })
-    expect(flags.enableHeatmap).toEqual(true)
     expect(flags.enablePingCardNavigation).toEqual(false)
   })
 
   it('defaults a flag to false when Flipt does not return the requested flag key', async () => {
-    evaluateBoolean
-      .mockReturnValueOnce({ flagKey: 'enable-heatmap', enabled: true })
-      .mockReturnValueOnce({ flagKey: 'unexpected-flag', enabled: true })
+    evaluateBoolean.mockReturnValueOnce({ flagKey: 'unexpected-flag', enabled: true })
 
     const flags = await new FlagService().getFlags({})
 
-    expect(evaluateBoolean).toHaveBeenCalledWith({
-      flagKey: 'enable-heatmap',
-      entityId: 'anonymous',
-      context: {},
-    })
     expect(evaluateBoolean).toHaveBeenCalledWith({
       flagKey: 'enable-ping-card-navigation',
       entityId: 'anonymous',
       context: {},
     })
-    expect(flags.enableHeatmap).toEqual(true)
     expect(flags.enablePingCardNavigation).toEqual(false)
   })
 })
