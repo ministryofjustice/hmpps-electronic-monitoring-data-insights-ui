@@ -1,4 +1,5 @@
 {%- from "moj/components/primary-navigation/macro.njk" import mojPrimaryNavigation -%}
+{% from "../components/technical-updates-banner/macro.njk" import templateUpdateBanner %}
 {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
 
 <div role="region" aria-label="Service information">
@@ -11,6 +12,16 @@
       "data-qa": "service-phase-banner"
     }
   }) }}
+  {{
+  templateUpdateBanner({
+      version: "1.0.0",
+      heading: "New features",
+      message: "We’re updating the service all the time,",
+      linkHref: "/whats-new",
+      linkText: "find out more on the What’s new page.",
+      hideText: "Hide message"
+    })  
+  }}
 </div>
 
 {% set items = [
@@ -30,7 +41,6 @@
   }
 
 ] %}
-
 {{ mojPrimaryNavigation({
   label: "Primary navigation",
   items: items,
