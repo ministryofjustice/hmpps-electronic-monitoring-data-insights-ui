@@ -57,4 +57,7 @@ export default function nunjucksSetup(app: express.Express): void {
   njkEnv.addFilter('formatSimpleDate', date => formatDate(date, 'simple'))
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
+  njkEnv.addFilter('throw', (message: string) => {
+    throw new Error(message)
+  })
 }

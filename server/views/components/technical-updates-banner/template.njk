@@ -1,0 +1,26 @@
+  
+  {% if not  params.version %}
+    {{ "technicalUpdatesBanner: 'version' param is required" | throw }}
+  {% endif %}
+
+  {% set version = params.version %}
+  {% set heading = params.heading | default("New features") %}
+  {% set message = params.message | default("We’re updating the service all the time,") %}
+  {% set linkHref = params.linkHref | default("whats-new") %}
+  {% set linkText = params.linkText | default("find out more on the What’s new page.") %}
+  {% set hideText = params.hideText | default("Hide message") %}
+
+
+  <div class="govuk-grid-row technical-updates-banner" id="technical-updates-banner" data-banner-version="{{ version }}">
+    <div class="govuk-grid-column-full technical-updates-column" role="region" aria-label="Technical updates banner">
+      <div class="govuk-width-container govuk-body technical-updates-container">
+        <div class="technical-updates-content">
+          <strong class="technical-updates-whats-new">{{ heading }}</strong>
+          <span>
+            {{ message }} <a class="govuk-link govuk-link--inverse" href="{{ linkHref }}">{{ linkText }}</a>
+          </span>
+        </div>
+        <a id="hide-message" class="technical-updates-hide-message govuk-link govuk-link--inverse" href="#" aria-current="page">{{ hideText }}</a>
+      </div>
+    </div>
+  </div>
