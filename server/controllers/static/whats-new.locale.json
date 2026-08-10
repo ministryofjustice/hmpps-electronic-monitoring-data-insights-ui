@@ -1,0 +1,95 @@
+{
+  "title": "What’s new",
+  "content": {
+    "guide": {
+      "first-pagaraphs": [
+        "Welcome to our service updates",
+        "View highlights of what's new and what's improved for Electronic monitoring.",
+        "If you have any feedback or questions on the service or any of these updates, email <a href='mailto:mpop-digital-team@justice.gov.uk'>emdisupport@justice.gov.uk</a>."
+      ]
+    },
+    "locationAccuracy": {
+      "title": "Location accuracy",
+      "image": {
+        "src": "/assets/images/location_acc.png",
+        "alt": "Map with a blue circle with a dot in its centre that is attached to a bent line with arrows on it"
+      },
+      "first-pagaraphs": [
+        "Location accuracy can vary. It may be reduced if, for example, satellite signals are blocked or the tag’s battery is low.",
+        "Each map point is surrounded by a ‘confidence circle’ that shows how certain the system is about the person’s location.",
+        "The confidence circle covers the area where the tag may have been when it pinged, with the most likely location at the centre.",
+        "The smaller the circle, the more certainty there is that the location shown is accurate."
+      ],
+      "insert": "The confidence circles are around 95% accurate. This means that the true location of each ping will fall within the confidence circle around 95% of the time.",
+      "last-pagaraphs": [
+        "To view the exact size of a confidence circle, select the point at its centre to open the ping card (pop-up box).",
+        "Under ‘Accuracy’, you can view the distance from the centre to the edge of the circle, measured in metres.",
+        "You can add or remove confidence circles from the map using the ‘View location accuracy’ checkbox in the map controls."
+      ]
+    },
+    "directionOfTravel": {
+      "title": "Direction of travel",
+      "image": {
+        "src": "/assets/images/one_direction.png",
+        "alt": "Map with a blue line with black arrows and 2 blue dots on it that runs alongside a street"
+      },
+      "first-pagaraphs": [
+        "Each point is joined to the next point in the sequence by a straight line to form a ‘trail’."
+      ],
+      "insert": "The trail is formed by joining the points with a straight line. It's aimed at making the points easier to view and is not intended to show the actual route taken.",
+      "last-pagaraphs": [
+        "Arrows along the trail show the estimated direction of travel, based on the order of the location points.",
+        "You can view the order of the points by selecting ‘Point numbers’ in the map controls.",
+        "To add or remove the arrows, use the 'Direction of travel' checkbox in the map controls."
+      ]
+    },
+    "dateAndTime": {
+      "title": "Date and time of activity",
+      "image": {
+        "src": "/assets/images/multi.png",
+        "alt": "Box containing a number and values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', 'Signal type'"
+      },
+      "first-pagaraphs": [
+        "Each point has a timestamp that shows when the tag pinged in that location.",
+        "To view the timestamp, select the point and open its ping card."
+      ]
+    },
+    "speedTravel": {
+      "title": "Speed of travel",
+      "image": {
+        "src": "/assets/images/multi.png",
+        "alt": "Box containing a number and values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', 'Signal type'"
+      },
+      "first-pagaraphs": [
+        "To view the estimated speed of travel, select a point to open its ping card.",
+        "The value shown reflects the estimated speed of travel at the moment the tag pinged. It does not indicate the speed of travel between points."
+      ]
+    },
+    "signalType": {
+      "title": "Signal type (GPS or LBS)",
+      "image": {
+        "src": "/assets/images/multi.png",
+        "alt": "Box containing a number and values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', 'Signal type'"
+      },
+      "first-pagaraphs": [
+        "When the tag is unable to connect to GPS satellite signals, it uses local cellular network towers to estimate its location instead.",
+        "This is known as LBS (location-based services) tracking.",
+        "Because cellular towers are spaced further apart than GPS satellites, LBS is less accurate than GPS tracking.",
+        "With LBS tracking, the tag will usually ping around once every 3 minutes.",
+        "To check which signal type was used to detect a location, select the point to open its ping card."
+      ]
+    },
+    "missingTrailData": {
+      "title": "Missing trail data",
+      "image": {
+        "src": "/assets/images/missing_data.png",
+        "alt": "Map with a blue dotted line with arrows, which starts on a grey line then runs across a green area"
+      },
+      "first-pagaraphs": [
+        "Missing trail data usually means that either the tag is not working or that it cannot get a signal.",
+        "Missing data is shown on the map by a dotted line.",
+        "A gap of more than 5 minutes between two points in a sequence also indicates that data is missing."
+      ]
+    }
+  }
+}

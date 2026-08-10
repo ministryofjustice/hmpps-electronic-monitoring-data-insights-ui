@@ -9,6 +9,7 @@ export enum Page {
   PEOPLE_LOCATION_PAGE = 'PEOPLE_LOCATION_PAGE',
   SEARCH_PAGE = 'SEARCH_PAGE',
   MAP_HELP_PAGE = 'MAP_HELP_PAGE',
+  WHATS_NEW_PAGE = 'WHATS_NEW_PAGE',
 }
 
 export interface PageViewEventDetails {
