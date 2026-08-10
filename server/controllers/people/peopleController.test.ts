@@ -240,6 +240,7 @@ describe('PeopleController', () => {
           tracks: true,
           confidence: true,
           numbers: true,
+          heatmap: false,
         },
         currentUrl: encodeURIComponent('/people/X31092/locations'),
       }),

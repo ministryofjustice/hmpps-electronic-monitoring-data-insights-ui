@@ -15,10 +15,8 @@ const flag = (key: string, enabled: boolean) => ({
 
 export default {
   stubFeatureFlags: ({
-    enableHeatmap = true,
     enablePingCardNavigation = true,
   }: {
-    enableHeatmap?: boolean
     enablePingCardNavigation?: boolean
   } = {}): SuperAgentRequest =>
     stubFor({
@@ -32,7 +30,7 @@ export default {
           namespace: {
             key: 'hmpps-electronic-monitoring-data-insights',
           },
-          flags: [flag('enable-heatmap', enableHeatmap), flag('enable-ping-card-navigation', enablePingCardNavigation)],
+          flags: [flag('enable-ping-card-navigation', enablePingCardNavigation)],
         },
       },
     }),
