@@ -11,6 +11,8 @@ const renderMapSearchForm = async (showCrn?: boolean): Promise<string> => {
       'partials/mapSearchForm',
       {
         locale: casesLocationLocale,
+        enableHeatmap: true,
+        enableExclusionZones: true,
         mapControls: {
           baseLayer: 'street',
           tracks: true,
@@ -47,6 +49,13 @@ describe('mapSearchForm template', () => {
     const html = await renderMapSearchForm()
 
     expect(html).toContain('name="mapControls[heatmap]"')
+    expect(html).toContain('value="false"')
+  })
+
+  it('renders the exclusion zones map control hidden input so search requests preserve state', async () => {
+    const html = await renderMapSearchForm()
+
+    expect(html).toContain('name="mapControls[exclusion]"')
     expect(html).toContain('value="false"')
   })
 

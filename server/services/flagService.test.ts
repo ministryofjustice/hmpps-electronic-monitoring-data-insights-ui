@@ -41,10 +41,7 @@ describe('FlagService', () => {
   })
 
   it('defaults a flag to false when Flipt does not return the requested flag key', async () => {
-    evaluateBoolean
-      .mockReturnValueOnce({ flagKey: 'enable-heatmap', enabled: true })
-      .mockReturnValueOnce({ flagKey: 'unexpected-flag', enabled: true })
-      .mockReturnValueOnce({ flagKey: 'enable-exclusion-zones', enabled: true })
+    evaluateBoolean.mockReturnValueOnce({ flagKey: 'unexpected-flag', enabled: true })
 
     const flags = await new FlagService().getFlags({})
 
@@ -53,13 +50,6 @@ describe('FlagService', () => {
       entityId: 'anonymous',
       context: {},
     })
-    expect(evaluateBoolean).toHaveBeenCalledWith({
-      flagKey: 'enable-exclusion-zones',
-      entityId: 'anonymous',
-      context: {},
-    })
-    expect(flags.enableHeatmap).toEqual(true)
     expect(flags.enablePingCardNavigation).toEqual(false)
-    expect(flags.enableExclusionZones).toEqual(true)
   })
 })

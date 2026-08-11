@@ -22,6 +22,7 @@ interface MapLayersControlOptions {
   numbersLayer?: ComposableLayer
   heatmapLayer?: ComposableLayer
   exclusionLayer?: BaseLayer
+  enableHeatmap?: boolean
   enableExclusionZones?: boolean
   mapContainer: HTMLElement
   map: EmMap
@@ -115,10 +116,15 @@ export default class MapLayersControl extends Control {
               <input class="govuk-checkboxes__input" id="mlc-numbers" type="checkbox" ${state.numbers ? 'checked' : ''}>
               <label class="govuk-label govuk-checkboxes__label" for="mlc-numbers">Point numbers</label>
             </div>
+            ${
+              opts.enableHeatmap
+                ? ` 
              <div class="govuk-checkboxes__item">
               <input class="govuk-checkboxes__input" id="mlc-heatmap" type="checkbox" ${state.heatmap ? 'checked' : ''}>
               <label class="govuk-label govuk-checkboxes__label" for="mlc-heatmap">Heatmap</label>
-            </div>
+            </div>`
+                : ``
+            }
           </div>
         </fieldset>
       </div>

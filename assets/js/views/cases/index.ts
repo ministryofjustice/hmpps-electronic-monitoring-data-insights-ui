@@ -5,6 +5,7 @@ import {
   TracksLayer,
   CirclesLayer,
   TextLayer,
+  type ComposableLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 
 import { isEmpty } from 'ol/extent'
@@ -323,6 +324,7 @@ const initialiseLocationDataView = () => {
       confidenceLayer,
       numbersLayer,
       heatmapLayer,
+      enableHeatmap: mapContainer.dataset.enableHeatmap === 'true',
       exclusionLayer,
       enableExclusionZones: mapContainer.dataset.enableExclusionZones === 'true',
       initialState: mapControlState,

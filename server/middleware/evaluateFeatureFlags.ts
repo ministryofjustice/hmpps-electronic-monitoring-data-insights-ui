@@ -10,6 +10,7 @@ export default function evaluateFeatureFlags(flagService: FlagService): RequestH
       res.locals.flags = flags
       res.locals.enablePingCardNavigation = flags.enablePingCardNavigation
       res.locals.enableExclusionZones = flags.enableExclusionZones
+      res.locals.enableHeatmap = flags.enableHeatmap
       next()
     } catch (error) {
       logger.error(error, 'Failed to retrieve flipt feature flags')
@@ -17,6 +18,7 @@ export default function evaluateFeatureFlags(flagService: FlagService): RequestH
       res.locals.flags = flags
       res.locals.enablePingCardNavigation = flags.enablePingCardNavigation
       res.locals.enableExclusionZones = flags.enableExclusionZones
+      res.locals.enableHeatmap = flags.enableHeatmap
       next()
     }
   }
