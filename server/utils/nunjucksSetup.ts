@@ -3,6 +3,7 @@ import path from 'path'
 import nunjucks from 'nunjucks'
 import express from 'express'
 import fs from 'fs'
+import mojFilters from '@ministryofjustice/frontend/moj/filters/all'
 import { initialiseName } from './utils'
 import config from '../config'
 import logger from '../../logger'
@@ -60,4 +61,8 @@ export default function nunjucksSetup(app: express.Express): void {
   njkEnv.addFilter('throw', (message: string) => {
     throw new Error(message)
   })
+
+  for (const [name, filter] of Object.entries(mojFilters())) {
+    njkEnv.addFilter(name, filter)
+  }
 }

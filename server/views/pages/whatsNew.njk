@@ -1,24 +1,19 @@
 {% extends "../partials/layout.njk" %}
+{%- from "moj/components/timeline/macro.njk" import mojTimeline -%}
 
-{% set pageTitle = applicationName + " - Help with the map" %}
+{% set pageTitle = applicationName + " - What's new" %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}
 
   <a href="{{ returnUrl or '/' }}" class="govuk-back-link">Back</a>
 
-  <h2 class="govuk-heading-l">{{locale.title}}</h2>
+  <h2 class="govuk-heading-l">{{ locale.title }}</h2>
   <div class="govuk-width-container map-help-section-container">
   {% if locale and locale.content %}
     {% for _, section in locale.content %}
       {% if section %}
-        {% set firstParagraphs = section['first-pagaraphs'] or [] %}
-        {% set lastParagraphs = section['last-pagaraphs'] or [] %}
-        {% set bulletPoints = section.bulletPoints or [] %}
-        {% set firstBulletPoints = section.firstBulletPoints or [] %}
-        {% set lastBulletPoints = section.lastBulletPoints or [] %}
-        {% set insert = section.insert %}
-        {% set image = section.image %}
+        {% set firstParagraphs = section['first-paragraphs'] or [] %}
 
         <div class="govuk-grid-row">
           <div class="govuk-!-margin-bottom-6 {{ "govuk-grid-column-three-quarters" if (image and image.src) else "govuk-grid-column-full" }}">
@@ -28,7 +23,7 @@
 
             {% for paragraph in firstParagraphs %}
               {% if paragraph %}
-                 <p>
+                <p>
                   {% if loop.first %}
                     <strong>{{ paragraph }}</strong>
                   {% else %}
@@ -37,60 +32,16 @@
                 </p>
               {% endif %}
             {% endfor %}
-
-            {% if insert %}
-              <p class="govuk-inset-text">{{ insert }}</p>
-            {% endif %}
-
-            {% if bulletPoints.length %}
-              <ul class="govuk-list govuk-list--bullet">
-                {% for bulletPoint in bulletPoints %}
-                  {% if bulletPoint %}
-                    <li>{{ bulletPoint }}</li>
-                  {% endif %}
-                {% endfor %}
-              </ul>
-            {% endif %}
-
-            {% if firstBulletPoints.length %}
-              <ul class="govuk-list govuk-list--bullet">
-                {% for bulletPoint in firstBulletPoints %}
-                  {% if bulletPoint %}
-                    <li>{{ bulletPoint }}</li>
-                  {% endif %}
-                {% endfor %}
-              </ul>
-            {% endif %}
-
-            {% for paragraph in lastParagraphs %}
-              {% if paragraph %}
-                <p class="govuk-body">{{ paragraph }}</p>
-              {% endif %}
-            {% endfor %}
-
-            {% if lastBulletPoints.length %}
-              <ul class="govuk-list govuk-list--bullet">
-                {% for bulletPoint in lastBulletPoints %}
-                  {% if bulletPoint %}
-                    <li>{{ bulletPoint }}</li>
-                  {% endif %}
-                {% endfor %}
-              </ul>
-            {% endif %}
           </div>
-          {% if image and image.src %}
-            <div class="govuk-grid-column-one-quarter">
-              <img
-                src="{{ image.src }}"
-                alt="{{ image.alt or '' }}"
-                class="govuk-!-margin-top-8"
-              >
-            </div>
-          {% endif %}
         </div>
-        
       {% endif %}
     {% endfor %}
   {% endif %}
   </div>
+
+{{ mojTimeline({
+  items: locale.timelineItems,
+  classes: "govuk-!-margin-top-6"
+}) }} 
+
 {% endblock %}
