@@ -9,6 +9,7 @@ import DateSearchValidationService from '../../services/dateSearchValidationServ
 import PeopleExclusionService from '../../services/peopleExclusionService'
 import casesLocationLocale from '../cases/cases-location.locale.json'
 import PeopleController from './peopleController'
+import { Geometry } from '../../data/peopleExclusionApiClient'
 
 jest.mock('../../services/auditService')
 
@@ -438,5 +439,68 @@ describe('PeopleController', () => {
 
     expect(res.redirect).toHaveBeenCalledWith('/people/X31092?redirectTo=%2Fpeople%2FX31092%2Flocations')
     expect(res.render).not.toHaveBeenCalled()
+  })
+
+  describe('exclusion zones feature', () => {
+    beforeEach(() => {
+      setPersonContext()
+      req.query = {
+        start: { date: '12/01/2026', hour: '10', minute: '00' },
+        end: { date: '14/01/2026', hour: '11', minute: '00' },
+      }
+      caseLocationActivityService.getPositions.mockResolvedValue([])
+    })
+
+    it('fetches and passes exclusion zones when enableExclusionZones feature flag is true', async () => {
+      res.locals.enableExclusionZones = true
+      const mockExclusionZones = [{ name: 'Zone A', address: '1 Test St', geometry: {} as Geometry }]
+      peopleExclusionService.getExclusionZone.mockResolvedValue({
+        exclusionZones: mockExclusionZones,
+        nextToken: '',
+      })
+
+      await controller.location(req as Request, res as Response)
+
+      expect(peopleExclusionService.getExclusionZone).toHaveBeenCalledWith(user.username, '41591')
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/personLocation',
+        expect.objectContaining({
+          exclusionZones: mockExclusionZones,
+        }),
+      )
+    })
+
+    it('handles service errors gracefully when fetching exclusion zones fails', async () => {
+      res.locals.enableExclusionZones = true
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+      peopleExclusionService.getExclusionZone.mockRejectedValue(new Error('Exclusion service down'))
+
+      await controller.location(req as Request, res as Response)
+
+      expect(peopleExclusionService.getExclusionZone).toHaveBeenCalledWith(user.username, '41591')
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching exclusion zones:', expect.any(Error))
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/personLocation',
+        expect.objectContaining({
+          exclusionZones: null,
+        }),
+      )
+
+      consoleErrorSpy.mockRestore()
+    })
+
+    it('does not attempt to fetch exclusion zones when enableExclusionZones is false or undefined', async () => {
+      res.locals.enableExclusionZones = false
+
+      await controller.location(req as Request, res as Response)
+
+      expect(peopleExclusionService.getExclusionZone).not.toHaveBeenCalled()
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/personLocation',
+        expect.objectContaining({
+          exclusionZones: null,
+        }),
+      )
+    })
   })
 })

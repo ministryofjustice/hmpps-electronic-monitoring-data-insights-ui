@@ -295,14 +295,21 @@ export default class PeopleController {
                 { crn },
               )
               positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
-              exclusionResult = await this.peopleExclusionService.getExclusionZone(
-                res.locals.user.username,
-                personContext.personId,
-              )
             } catch (error) {
               /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
               console.error('Error fetching locations:', error)
               locationAlert = { text: casesLocationLocale.alerts.fetchError }
+            }
+
+            if (res.locals.enableExclusionZones) {
+              try {
+                exclusionResult = await this.peopleExclusionService.getExclusionZone(
+                  res.locals.user.username,
+                  personContext.personId,
+                )
+              } catch (error) {
+                console.error('Error fetching exclusion zones:', error)
+              }
             }
           } else {
             locationAlert = { text: casesLocationLocale.alerts.fetchError }

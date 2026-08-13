@@ -177,7 +177,17 @@ const initialiseLocationDataView = () => {
 
     injectShadowFocusStyles(emMap as EmMap)
     const { positions } = emMap
+    const enableHeatmap = mapContainer.dataset.enableHeatmap === 'true'
+    const enableExclusionZones = mapContainer.dataset.enableExclusionZones === 'true'
+
     const mapControlState = getInitialMapControlState(mapContainer)
+
+    if (!enableHeatmap) {
+      mapControlState.heatmap = false
+    }
+    if (!enableExclusionZones) {
+      mapControlState.exclusion = false
+    }
     syncMapControlInputs(mapControlState)
 
     const locationsLayer = emMap.addLayer(
