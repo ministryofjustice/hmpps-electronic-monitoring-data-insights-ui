@@ -181,6 +181,7 @@ describe('initialiseLocationDataView', () => {
           confidence: true,
           numbers: false,
           heatmap: false,
+          exclusion: false,
         },
         onChange: expect.any(Function),
       }),
@@ -290,6 +291,48 @@ describe('initialiseLocationDataView', () => {
       loadendHandler()
 
       expect(mockUpdateButton.disabled).toBe(false)
+    })
+  })
+
+  describe('Exclusion Zones and heatmap feature Flags', () => {
+    it('should override heatmap and exclusion states to false when feature flags are disabled', () => {
+      mockMapContainer.dataset.mapControlHeatmap = 'true'
+      mockMapContainer.dataset.mapControlExclusion = 'true'
+      mockMapContainer.dataset.enableHeatmap = 'false'
+      mockMapContainer.dataset.enableExclusionZones = 'false'
+
+      initialiseLocationDataView()
+
+      expect(MapLayersControl).toHaveBeenCalledWith(
+        expect.objectContaining({
+          initialState: expect.objectContaining({
+            heatmap: false,
+            exclusion: false,
+          }),
+          enableHeatmap: false,
+          enableExclusionZones: false,
+        }),
+      )
+    })
+
+    it('should allow heatmap and exclusion states to be true when feature flags are enabled', () => {
+      mockMapContainer.dataset.mapControlHeatmap = 'true'
+      mockMapContainer.dataset.mapControlExclusion = 'true'
+      mockMapContainer.dataset.enableHeatmap = 'true'
+      mockMapContainer.dataset.enableExclusionZones = 'true'
+
+      initialiseLocationDataView()
+
+      expect(MapLayersControl).toHaveBeenCalledWith(
+        expect.objectContaining({
+          initialState: expect.objectContaining({
+            heatmap: true,
+            exclusion: true,
+          }),
+          enableHeatmap: true,
+          enableExclusionZones: true,
+        }),
+      )
     })
   })
 })
