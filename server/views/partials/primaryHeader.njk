@@ -12,17 +12,24 @@
       "data-qa": "service-phase-banner"
     }
   }) }}
-  {{
-  templateUpdateBanner({
-      version: "1.0.0",
-      heading: "New features",
-      message: "We’re updating the service all the time,",
-      linkHref: "/whats-new?returnUrl=" + currentUrl,
-      linkText: "find out more on the What’s new page.",
-      hideText: "Hide message"
-    })  
-  }}
+
+{% if showTechnicalUpdatesBanner %}
+    {{
+    templateUpdateBanner({
+        version: {{ whatsNewVersion }}
+        heading: "New features",
+        message: "We’re updating the service all the time,",
+        linkHref: "/whats-new?returnUrl=" + currentUrl,
+        linkText: "find out more on the What’s new page.",
+        hideText: "Hide message"
+      })  
+    }}
+{% endif %}
 </div>
+
+
+
+
 
 {% set items = [
   {

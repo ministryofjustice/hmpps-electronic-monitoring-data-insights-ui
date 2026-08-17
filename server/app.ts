@@ -17,6 +17,7 @@ import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 import evaluateFeatureFlags from './middleware/evaluateFeatureFlags'
+import setTechnicalUpdatesBannerVisibility from './middleware/setTechnicalUpdatesBannerVisibility'
 
 import routes from './routes'
 import type { Services } from './services'
@@ -52,6 +53,7 @@ export default function createApp(services: Services): express.Application {
   app.use(authorisationMiddleware())
   app.use(setUpCsrf())
   app.use(setUpCurrentUser())
+  app.use(setTechnicalUpdatesBannerVisibility())
   app.use(evaluateFeatureFlags(services.flagService))
 
   app.use(

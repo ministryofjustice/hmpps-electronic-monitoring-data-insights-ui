@@ -8,6 +8,7 @@ import { initialiseName } from './utils'
 import config from '../config'
 import logger from '../../logger'
 import formatDate from './helpers'
+import whatsNewLocale from '../controllers/static/whats-new.locale.json'
 
 const commonLocale = {
   en: {
@@ -26,6 +27,7 @@ export default function nunjucksSetup(app: express.Express): void {
   app.locals.environmentName = config.environmentName
   app.locals.environmentNameColour = config.environmentName === 'PRE-PRODUCTION' ? 'govuk-tag--green' : ''
   app.locals.common = commonLocale.en
+  app.locals.whatsNew = whatsNewLocale.version
   app.locals.mpopUrl = config.mpopUrl
   app.locals.enableHeatmap = false
   app.locals.enablePingCardNavigation = false
