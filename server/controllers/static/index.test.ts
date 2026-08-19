@@ -55,4 +55,19 @@ describe('StaticController', () => {
       })
     })
   })
+
+  describe('whatsNew', () => {
+    it('logs page view and renders the whats new page with locale content', async () => {
+      req = { id: 'test-correlation-id' }
+      await controller.whatsNew(req as Request, res as Response)
+
+      expect(auditService.logPageView).toHaveBeenCalledWith(Page.WHATS_NEW_PAGE, {
+        who: 'user1',
+        correlationId: 'test-correlation-id',
+      })
+      expect(res.render).toHaveBeenCalledWith('pages/whatsNew', {
+        locale: { version: '1.0.0', title: 'What’s new', content: { intro: {} } },
+      })
+    })
+  })
 })

@@ -25,33 +25,10 @@
 {% block bodyEnd %}
   <script type="module" src="{{ '/assets/js/index.js' | assetMap }}"></script>
   <script nonce="{{ cspNonce }}">
-    console.log('xxx here xxx ')
     document.addEventListener('DOMContentLoaded', function () {
       if (typeof document.initialiseTelemetry === 'function') {
         document.initialiseTelemetry('{{ applicationInsightsConnectionString }}', '{{ applicationInsightsRoleName }}', '{{ user.username }}')
       }
-
-      console.log('xxx DOM fully loaded and parsed');
-      const banner = document.getElementById('technical-updates-banner')
-      if (!banner) return
-
-      const currentVersion = banner.getAttribute('data-banner-version');
-      const STORAGE_KEY = 'technicalUpdatesBannerDismissedVersion';
-      const savedVersion = localStorage.getItem(STORAGE_KEY);
-      console.log('xxx currentVersion', currentVersion);
-      console.log('xxx savedVersion', savedVersion);
-      if (savedVersion === currentVersion) {
-        banner.style.display = 'none';
-      } else {
-          localStorage.setItem(STORAGE_KEY, currentVersion)
-      }
-
-      const hideLink = document.getElementById('hide-message')
-      hideLink?.addEventListener('click', event => {
-        event.preventDefault()
-        localStorage.setItem(STORAGE_KEY, currentVersion)
-        banner.style.display = 'none'
-      })
     })
   </script>
 {% endblock %}

@@ -16,7 +16,7 @@
         {% set firstParagraphs = section['first-paragraphs'] or [] %}
 
         <div class="govuk-grid-row">
-          <div class="govuk-!-margin-bottom-6 {{ "govuk-grid-column-three-quarters" if (image and image.src) else "govuk-grid-column-full" }}">
+          <div class="govuk-!-margin-bottom-2 {{ "govuk-grid-column-three-quarters" if (image and image.src) else "govuk-grid-column-full" }}">
             {% if section.title %}
               <h2 class="govuk-heading-m">{{ section.title }}</h2>
             {% endif %}

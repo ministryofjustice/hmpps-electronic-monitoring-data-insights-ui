@@ -16,7 +16,7 @@
 {% if showTechnicalUpdatesBanner %}
     {{
     templateUpdateBanner({
-        version: {{ whatsNewVersion }}
+        version: whatsNewVersion,
         heading: "New features",
         message: "We’re updating the service all the time,",
         linkHref: "/whats-new?returnUrl=" + currentUrl,
@@ -26,9 +26,6 @@
     }}
 {% endif %}
 </div>
-
-
-
 
 
 {% set items = [
