@@ -29,9 +29,9 @@ export default function nunjucksSetup(app: express.Express): void {
   app.locals.common = commonLocale.en
   app.locals.whatsNew = whatsNewLocale.version
   app.locals.mpopUrl = config.mpopUrl
-  app.locals.enableHeatmap = false
   app.locals.enablePingCardNavigation = false
-  app.locals.whatsNewVersion = whatsNewLocale.version
+  app.locals.enableExclusionZones = false
+
   let assetManifest: Record<string, string> = {}
 
   try {

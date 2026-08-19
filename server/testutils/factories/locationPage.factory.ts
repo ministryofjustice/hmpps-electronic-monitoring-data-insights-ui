@@ -87,6 +87,8 @@ export interface LocationMapControls {
   tracks: boolean
   confidence: boolean
   numbers: boolean
+  heatmap: boolean
+  exclusion: boolean
 }
 
 // ============================================================================
@@ -109,6 +111,8 @@ const defaultMapControls = (): LocationMapControls => ({
   tracks: true,
   confidence: true,
   numbers: true,
+  heatmap: false,
+  exclusion: false,
 })
 
 const defaultDateFilterForm = (): DateFilterForm => ({

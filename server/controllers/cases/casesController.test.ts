@@ -147,6 +147,8 @@ describe('CasesController', () => {
             tracks: true,
             confidence: true,
             numbers: true,
+            heatmap: false,
+            exclusion: false,
           },
         }),
       )
@@ -160,6 +162,7 @@ describe('CasesController', () => {
           tracks: false,
           confidence: true,
           numbers: false,
+          heatmap: true,
         },
       } as Request['session']
 
@@ -173,6 +176,8 @@ describe('CasesController', () => {
             tracks: false,
             confidence: true,
             numbers: false,
+            heatmap: true,
+            exclusion: false,
           },
         }),
       )
@@ -186,6 +191,8 @@ describe('CasesController', () => {
           tracks: 'false',
           confidence: 'true',
           numbers: 'false',
+          heatmap: 'true',
+          exclusion: 'true',
         },
       }
       req.session = {} as Request['session']
@@ -197,6 +204,8 @@ describe('CasesController', () => {
         tracks: false,
         confidence: true,
         numbers: false,
+        heatmap: true,
+        exclusion: true,
       })
       expect(res.render).toHaveBeenCalledWith(
         'pages/casesLocation',
@@ -214,6 +223,7 @@ describe('CasesController', () => {
           tracks: 'yes',
           confidence: 'no',
           numbers: 'invalid',
+          exclusion: 'false',
         },
       }
       req.session = {
@@ -222,6 +232,7 @@ describe('CasesController', () => {
           tracks: false,
           confidence: false,
           numbers: true,
+          exclusion: false,
         },
       } as Request['session']
 
@@ -232,6 +243,8 @@ describe('CasesController', () => {
         tracks: false,
         confidence: false,
         numbers: true,
+        heatmap: false,
+        exclusion: false,
       })
     })
 

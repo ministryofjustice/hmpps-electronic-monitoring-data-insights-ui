@@ -25,14 +25,13 @@ export default class FlagService {
         context: evaluationContext,
       })
 
-      if (result.flagKey === flagKey) {
+      if (result?.flagKey === flagKey) {
         featureFlags[featureFlagName] = result.enabled === true
       } else {
-        logger.warn(`Expected response for flag ${flagKey}, got ${result.flagKey} - defaulting to false`)
+        logger.warn(`Expected response for flag ${flagKey}, got ${result?.flagKey} - defaulting to false`)
         featureFlags[featureFlagName] = false
       }
     }
-
     return featureFlags
   }
 }

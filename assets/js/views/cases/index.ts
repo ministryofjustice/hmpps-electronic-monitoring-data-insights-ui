@@ -1,10 +1,13 @@
 import { EmMap, Position } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
+
 import {
   LocationsLayer,
   TracksLayer,
   CirclesLayer,
   TextLayer,
+  type ComposableLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
+
 import { isEmpty } from 'ol/extent'
 import VectorLayer from 'ol/layer/Vector'
 import { Interaction } from 'ol/interaction'
@@ -14,11 +17,47 @@ import { Feature } from 'ol'
 import { Point } from 'ol/geom'
 import { fromLonLat } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
+import GeoJSON from 'ol/format/GeoJSON'
+import { Fill, Stroke, Style } from 'ol/style'
 import { queryElement } from '../../utils/utils'
 import getRotatedDirection from './controls/getRotatedDirection'
 import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
 import { getNavVisibilityState, resolveNavTargetIndex } from '../../utils/pingCard'
 
+type MapAdapter = Parameters<ComposableLayer<HeatmapLayer>['attach']>[0]
+type AttachOptions = Parameters<ComposableLayer<HeatmapLayer>['attach']>[1]
+
+class ComposableHeatmapLayer implements ComposableLayer<HeatmapLayer> {
+  id = 'heatmapLayer'
+
+  private layer: HeatmapLayer
+
+  constructor(layer: HeatmapLayer) {
+    this.layer = layer
+  }
+
+  attach(adapter: MapAdapter, _options?: AttachOptions) {
+    if (!adapter.openlayers) {
+      throw new Error('ComposableHeatmapLayer only supports the OpenLayers adapter')
+    }
+    adapter.openlayers.map.addLayer(this.layer)
+  }
+
+  detach(adapter: MapAdapter) {
+    if (!adapter.openlayers) {
+      throw new Error('ComposableHeatmapLayer only supports the OpenLayers adapter')
+    }
+    adapter.openlayers.map.removeLayer(this.layer)
+  }
+
+  getNativeLayer() {
+    return this.layer
+  }
+
+  getPrimaryLayer() {
+    return this.layer
+  }
+}
 interface ShadowRootHost extends HTMLElement {
   shadowRoot: ShadowRoot | null
 }
@@ -42,6 +81,8 @@ const defaultMapControlState: MapControlState = {
   tracks: true,
   confidence: true,
   numbers: true,
+  heatmap: false,
+  exclusion: false,
 }
 
 const parseBooleanDataValue = (value: string | undefined): boolean | undefined => {
@@ -55,6 +96,8 @@ const getInitialMapControlState = (mapContainer: HTMLElement): MapControlState =
   tracks: parseBooleanDataValue(mapContainer.dataset.mapControlTracks) ?? defaultMapControlState.tracks,
   confidence: parseBooleanDataValue(mapContainer.dataset.mapControlConfidence) ?? defaultMapControlState.confidence,
   numbers: parseBooleanDataValue(mapContainer.dataset.mapControlNumbers) ?? defaultMapControlState.numbers,
+  heatmap: parseBooleanDataValue(mapContainer.dataset.mapControlHeatmap) ?? defaultMapControlState.heatmap,
+  exclusion: parseBooleanDataValue(mapContainer.dataset.mapControlExclusion) ?? defaultMapControlState.exclusion,
 })
 
 const syncMapControlInputs = (state: MapControlState) => {
@@ -134,7 +177,17 @@ const initialiseLocationDataView = () => {
 
     injectShadowFocusStyles(emMap as EmMap)
     const { positions } = emMap
+    const enableHeatmap = mapContainer.dataset.enableHeatmap === 'true'
+    const enableExclusionZones = mapContainer.dataset.enableExclusionZones === 'true'
+
     const mapControlState = getInitialMapControlState(mapContainer)
+
+    if (!enableHeatmap) {
+      mapControlState.heatmap = false
+    }
+    if (!enableExclusionZones) {
+      mapControlState.exclusion = false
+    }
     syncMapControlInputs(mapControlState)
 
     const locationsLayer = emMap.addLayer(
@@ -205,25 +258,66 @@ const initialiseLocationDataView = () => {
       },
     })
 
-    if (mapContainer.dataset.enableHeatmap === 'true') {
-      const heatmapSource = new VectorSource({
-        features: positions.map(
-          position =>
-            new Feature({
-              geometry: new Point(
-                fromLonLat([(position as TrackPosition).longitude, (position as TrackPosition).latitude]),
-              ),
-            }),
-        ),
-      })
+    const heatmapSource = new VectorSource({
+      features: positions.map(
+        position =>
+          new Feature({
+            geometry: new Point(
+              fromLonLat([(position as TrackPosition).longitude, (position as TrackPosition).latitude]),
+            ),
+          }),
+      ),
+    })
 
-      const heatmapLayer = new HeatmapLayer({
+    const heatmapLayer = new ComposableHeatmapLayer(
+      new HeatmapLayer({
         source: heatmapSource,
         blur: 15,
         radius: 10,
+        visible: mapControlState.heatmap,
         zIndex: 2,
-      })
-      emMap.addLayer(heatmapLayer)
+      }),
+    )
+
+    emMap.addLayer(heatmapLayer)
+    let exclusionLayer: VectorLayer | undefined
+    const exclusionZonesData = mapContainer.dataset.exclusionZones
+    if (exclusionZonesData && mapContainer.dataset.enableExclusionZones === 'true') {
+      try {
+        const exclusionZones = JSON.parse(exclusionZonesData)
+        const polygonZones = (Array.isArray(exclusionZones) ? exclusionZones : []).filter(
+          zone => zone?.geometry?.type === 'Polygon',
+        )
+
+        if (polygonZones.length > 0) {
+          const features = new GeoJSON().readFeatures(
+            {
+              type: 'FeatureCollection',
+              features: polygonZones.map(zone => ({
+                type: 'Feature',
+                properties: { name: zone.name, address: zone.address },
+                geometry: zone.geometry,
+              })),
+            },
+            { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' },
+          )
+
+          exclusionLayer = new VectorLayer({
+            source: new VectorSource({ features }),
+            style: new Style({
+              fill: new Fill({ color: 'rgba(255, 0, 0, 0.3)' }),
+              stroke: new Stroke({ color: 'rgba(255, 0, 0, 1)', width: 2 }),
+            }),
+            zIndex: 5,
+            visible: mapControlState.exclusion,
+          })
+
+          map.addLayer(exclusionLayer) // native ol.Map, not emMap.addLayer
+        }
+      } catch (error) {
+        /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+        console.error('Error parsing exclusion zone data:', error)
+      }
     }
 
     emMap.addLayer(locationsLayer)
@@ -239,6 +333,10 @@ const initialiseLocationDataView = () => {
       tracksLayer,
       confidenceLayer,
       numbersLayer,
+      heatmapLayer,
+      enableHeatmap: mapContainer.dataset.enableHeatmap === 'true',
+      exclusionLayer,
+      enableExclusionZones: mapContainer.dataset.enableExclusionZones === 'true',
       initialState: mapControlState,
       onChange: syncMapControlInputs,
     })

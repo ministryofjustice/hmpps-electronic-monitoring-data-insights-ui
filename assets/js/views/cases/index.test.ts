@@ -8,6 +8,7 @@ import {
   CirclesLayer,
   TextLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
+import HeatmapLayer from 'ol/layer/Heatmap'
 import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
 import { Interaction } from 'ol/interaction'
 import initialiseLocationDataView from './index'
@@ -164,12 +165,14 @@ describe('initialiseLocationDataView', () => {
     mockMapContainer.dataset.mapControlTracks = 'false'
     mockMapContainer.dataset.mapControlConfidence = 'true'
     mockMapContainer.dataset.mapControlNumbers = 'false'
+    mockMapContainer.dataset.mapControlHeatmap = 'false'
 
     initialiseLocationDataView()
 
     expect(TracksLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: false }))
     expect(CirclesLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: true }))
     expect(TextLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: false }))
+    expect(HeatmapLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: false }))
     expect(MapLayersControl).toHaveBeenCalledWith(
       expect.objectContaining({
         initialState: {
@@ -177,6 +180,8 @@ describe('initialiseLocationDataView', () => {
           tracks: false,
           confidence: true,
           numbers: false,
+          heatmap: false,
+          exclusion: false,
         },
         onChange: expect.any(Function),
       }),
@@ -189,6 +194,7 @@ describe('initialiseLocationDataView', () => {
       <input data-map-control-input="tracks" value="true">
       <input data-map-control-input="confidence" value="true">
       <input data-map-control-input="numbers" value="true">
+      <input data-map-control-input="heatmap" value="false">
     `
 
     initialiseLocationDataView()
@@ -199,12 +205,14 @@ describe('initialiseLocationDataView', () => {
       tracks: false,
       confidence: true,
       numbers: false,
+      heatmap: false,
     })
 
     expect(document.querySelector<HTMLInputElement>('[data-map-control-input="baseLayer"]')?.value).toBe('satellite')
     expect(document.querySelector<HTMLInputElement>('[data-map-control-input="tracks"]')?.value).toBe('false')
     expect(document.querySelector<HTMLInputElement>('[data-map-control-input="confidence"]')?.value).toBe('true')
     expect(document.querySelector<HTMLInputElement>('[data-map-control-input="numbers"]')?.value).toBe('false')
+    expect(document.querySelector<HTMLInputElement>('[data-map-control-input="heatmap"]')?.value).toBe('false')
   })
 
   it('should add a CirclesLayer to the map', () => {
@@ -283,6 +291,48 @@ describe('initialiseLocationDataView', () => {
       loadendHandler()
 
       expect(mockUpdateButton.disabled).toBe(false)
+    })
+  })
+
+  describe('Exclusion Zones and heatmap feature Flags', () => {
+    it('should override heatmap and exclusion states to false when feature flags are disabled', () => {
+      mockMapContainer.dataset.mapControlHeatmap = 'true'
+      mockMapContainer.dataset.mapControlExclusion = 'true'
+      mockMapContainer.dataset.enableHeatmap = 'false'
+      mockMapContainer.dataset.enableExclusionZones = 'false'
+
+      initialiseLocationDataView()
+
+      expect(MapLayersControl).toHaveBeenCalledWith(
+        expect.objectContaining({
+          initialState: expect.objectContaining({
+            heatmap: false,
+            exclusion: false,
+          }),
+          enableHeatmap: false,
+          enableExclusionZones: false,
+        }),
+      )
+    })
+
+    it('should allow heatmap and exclusion states to be true when feature flags are enabled', () => {
+      mockMapContainer.dataset.mapControlHeatmap = 'true'
+      mockMapContainer.dataset.mapControlExclusion = 'true'
+      mockMapContainer.dataset.enableHeatmap = 'true'
+      mockMapContainer.dataset.enableExclusionZones = 'true'
+
+      initialiseLocationDataView()
+
+      expect(MapLayersControl).toHaveBeenCalledWith(
+        expect.objectContaining({
+          initialState: expect.objectContaining({
+            heatmap: true,
+            exclusion: true,
+          }),
+          enableHeatmap: true,
+          enableExclusionZones: true,
+        }),
+      )
     })
   })
 })

@@ -10,6 +10,8 @@ export interface MapControlState {
   tracks: boolean
   confidence: boolean
   numbers: boolean
+  heatmap: boolean
+  exclusion: boolean
 }
 
 interface MapLayersControlOptions {
@@ -18,6 +20,10 @@ interface MapLayersControlOptions {
   tracksLayer: ComposableLayer
   confidenceLayer?: ComposableLayer
   numbersLayer?: ComposableLayer
+  heatmapLayer?: ComposableLayer
+  exclusionLayer?: BaseLayer
+  enableHeatmap?: boolean
+  enableExclusionZones?: boolean
   mapContainer: HTMLElement
   map: EmMap
   initialState?: MapControlState
@@ -29,6 +35,8 @@ const defaultMapControlState: MapControlState = {
   tracks: true,
   confidence: true,
   numbers: true,
+  heatmap: true,
+  exclusion: false,
 }
 
 export default class MapLayersControl extends Control {
@@ -53,7 +61,6 @@ export default class MapLayersControl extends Control {
 
   private static createPanel(opts: MapLayersControlOptions): { panel: HTMLElement; openBtn: HTMLElement } {
     const state: MapControlState = { ...defaultMapControlState, ...opts.initialState }
-
     const openBtn = document.createElement('button')
     openBtn.setAttribute('aria-label', 'Open layers panel')
     openBtn.className = 'govuk-button mlc-open-btn govuk-button--inverse'
@@ -80,8 +87,9 @@ export default class MapLayersControl extends Control {
             <span aria-hidden="true">&#9662;</span>
           </button>
         </div>
-
+        
         <fieldset class="govuk-fieldset">
+            <span class="govuk-fieldset__heading govuk-!-font-weight-bold">Map View</span>
             <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
                 <div class="govuk-radios__item">
                   <input class="govuk-radios__input" id="mlc-base-street" name="mlc-base" type="radio" value="street" ${state.baseLayer === 'street' ? 'checked' : ''}>
@@ -92,9 +100,9 @@ export default class MapLayersControl extends Control {
      </div>
 
       <hr class="govuk-section-break govuk-section-break--visible mlc-panel__divider">
-
       <div class="govuk-form-group govuk-!-margin-bottom-0">
         <fieldset class="govuk-fieldset">
+            <span class="govuk-fieldset__heading govuk-!-font-weight-bold">Map Controls</span>
           <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
               <input class="govuk-checkboxes__input" id="mlc-tracks" type="checkbox" ${state.tracks ? 'checked' : ''}>
@@ -108,10 +116,35 @@ export default class MapLayersControl extends Control {
               <input class="govuk-checkboxes__input" id="mlc-numbers" type="checkbox" ${state.numbers ? 'checked' : ''}>
               <label class="govuk-label govuk-checkboxes__label" for="mlc-numbers">Point numbers</label>
             </div>
+            ${
+              opts.enableHeatmap
+                ? ` 
+             <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" id="mlc-heatmap" type="checkbox" ${state.heatmap ? 'checked' : ''}>
+              <label class="govuk-label govuk-checkboxes__label" for="mlc-heatmap">Heatmap</label>
+            </div>`
+                : ``
+            }
+          </div>
+        </fieldset>
+      </div>
+      ${
+        opts.enableExclusionZones
+          ? `  
+      <hr class="govuk-section-break govuk-section-break--visible mlc-panel__divider">
+      <div class="govuk-form-group govuk-!-margin-bottom-0">
+        <fieldset class="govuk-fieldset">
+            <span class="govuk-fieldset__heading govuk-!-font-weight-bold">Zones</span>
+          <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+            <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" id="mlc-exclusion" type="checkbox" ${state.exclusion ? 'checked' : ''}>
+              <label class="govuk-label govuk-checkboxes__label" for="mlc-exclusion">Exclusion</label>
+            </div>
           </div>
         </fieldset>
       </div>`
-
+          : ``
+      }`
     const notifyChange = () => opts.onChange?.({ ...state })
 
     opts.streetLayer?.setVisible(state.baseLayer === 'street')
@@ -127,14 +160,39 @@ export default class MapLayersControl extends Control {
       }),
     )
 
-    const bindCheckbox = (id: string, stateKey: 'tracks' | 'confidence' | 'numbers', layer?: ComposableLayer) => {
+    const bindCheckbox = (
+      id: string,
+      stateKey: 'tracks' | 'confidence' | 'numbers' | 'heatmap' | 'exclusion',
+      layer?: ComposableLayer,
+    ) => {
       const input = panel.querySelector(id) as HTMLInputElement | null
       if (!input || !layer) return
-      const nativeLayer = opts.map.getNativeLayer(layer.id)
-      ;(nativeLayer as BaseLayer | undefined)?.setVisible(state[stateKey])
+
+      const raw = layer.getNativeLayer()
+      const nativeLayers: BaseLayer[] = (() => {
+        if (Array.isArray(raw)) return raw
+        if (raw) return [raw]
+        return []
+      })()
+
+      nativeLayers.forEach(l => l.setVisible(state[stateKey]))
       input.addEventListener('change', () => {
         state[stateKey] = input.checked
-        ;(nativeLayer as BaseLayer | undefined)?.setVisible(input.checked)
+        nativeLayers.forEach(l => l.setVisible(input.checked))
+        notifyChange()
+      })
+    }
+
+    const bindNativeLayerCheckbox = (id: string, stateKey: 'exclusion', layer?: BaseLayer) => {
+      const input = panel.querySelector(id) as HTMLInputElement | null
+      if (!input) return
+      if (!layer) {
+        return
+      }
+      layer.setVisible(state[stateKey])
+      input.addEventListener('change', () => {
+        state[stateKey] = input.checked
+        layer.setVisible(input.checked)
         notifyChange()
       })
     }
@@ -142,6 +200,8 @@ export default class MapLayersControl extends Control {
     bindCheckbox('#mlc-tracks', 'tracks', opts.tracksLayer)
     bindCheckbox('#mlc-confidence', 'confidence', opts.confidenceLayer)
     bindCheckbox('#mlc-numbers', 'numbers', opts.numbersLayer)
+    bindCheckbox('#mlc-heatmap', 'heatmap', opts.heatmapLayer)
+    bindNativeLayerCheckbox('#mlc-exclusion', 'exclusion', opts.exclusionLayer)
 
     panel.querySelector('.mlc-panel__close')?.addEventListener('click', () => {
       toggle(panel, openBtn)
