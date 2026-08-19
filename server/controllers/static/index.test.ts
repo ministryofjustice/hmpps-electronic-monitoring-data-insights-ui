@@ -3,6 +3,7 @@ import StaticController from './index'
 import AuditService, { Page } from '../../services/auditService'
 import { user } from '../../routes/testutils/appSetup'
 import mapHelpLocale from './map-help.locale.json'
+import whatsNewLocale from './whats-new.locale.json'
 
 jest.mock('../../services/auditService')
 
@@ -58,7 +59,10 @@ describe('StaticController', () => {
 
   describe('whatsNew', () => {
     it('logs page view and renders the whats new page with locale content', async () => {
-      req = { id: 'test-correlation-id' }
+      req = {
+        id: 'test-correlation-id',
+        query: { returnUrl: '/cases/123?tab=something' },
+      }
       await controller.whatsNew(req as Request, res as Response)
 
       expect(auditService.logPageView).toHaveBeenCalledWith(Page.WHATS_NEW_PAGE, {
@@ -66,7 +70,19 @@ describe('StaticController', () => {
         correlationId: 'test-correlation-id',
       })
       expect(res.render).toHaveBeenCalledWith('pages/whatsNew', {
-        locale: { version: '1.0.0', title: 'What’s new', content: { intro: {} } },
+        locale: whatsNewLocale,
+        returnUrl: '/cases/123?tab=something',
+      })
+    })
+
+    it('defaults returnUrl to "/" if no query param is provided', async () => {
+      req = { id: 'test-id', query: {} }
+
+      await controller.whatsNew(req as Request, res as Response)
+
+      expect(res.render).toHaveBeenCalledWith('pages/whatsNew', {
+        locale: whatsNewLocale,
+        returnUrl: '/',
       })
     })
   })
