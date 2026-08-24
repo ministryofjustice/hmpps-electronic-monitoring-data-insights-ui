@@ -7,6 +7,7 @@ import AuditService, { Page } from '../../services/auditService'
 import CaseLocationActivityService, { type CaseLocationBasePosition } from '../../services/caseLocationActivityService'
 import DateSearchValidationService from '../../services/dateSearchValidationService'
 import PeopleExclusionService from '../../services/peopleExclusionService'
+import DataFreshnessService from '../../services/dataFreshnessService'
 import casesLocationLocale from '../cases/cases-location.locale.json'
 import PeopleController from './peopleController'
 import { Geometry } from '../../data/peopleExclusionApiClient'
@@ -19,6 +20,7 @@ describe('PeopleController', () => {
   let caseLocationActivityService: { getPositions: jest.Mock; annotatePositionsWithDisplayProperties: jest.Mock }
   let dateSearchValidationService: jest.Mocked<DateSearchValidationService>
   let peopleExclusionService: jest.Mocked<PeopleExclusionService>
+  let dataFreshnessService: jest.Mocked<DataFreshnessService>
   let controller: PeopleController
   let req: Partial<Request>
   let res: Partial<Response>
@@ -58,6 +60,7 @@ describe('PeopleController', () => {
     } as unknown as jest.Mocked<PeopleService>
 
     peopleExclusionService = { getExclusionZone: jest.fn() } as unknown as jest.Mocked<PeopleExclusionService>
+    dataFreshnessService = { getDataFreshness: jest.fn() } as unknown as jest.Mocked<DataFreshnessService>
 
     req = {
       id: 'test-correlation-id',
@@ -79,6 +82,7 @@ describe('PeopleController', () => {
       caseLocationActivityService as unknown as CaseLocationActivityService,
       dateSearchValidationService,
       peopleExclusionService,
+      dataFreshnessService,
     )
   })
 

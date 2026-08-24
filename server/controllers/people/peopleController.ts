@@ -14,6 +14,8 @@ import casesLocationLocale from '../cases/cases-location.locale.json'
 import { defaultLocationMapControls, LocationMapControls } from '../../types/locationMapControls'
 import PeopleExclusionService from '../../services/peopleExclusionService'
 import { ApiExclusionZoneResponse } from '../../data/peopleExclusionApiClient'
+import DataFreshnessService from '../../services/dataFreshnessService'
+import { ApiDataFreshnessResponse } from '../../data/dataFreshnessApiClient'
 
 type SelectedPersonContext = session.SessionData['peopleSelection'][string]
 
@@ -63,6 +65,7 @@ export default class PeopleController {
     private readonly caseLocationActivityService: CaseLocationActivityService,
     private readonly dateSearchValidationService: DateSearchValidationService,
     private readonly peopleExclusionService: PeopleExclusionService,
+    private readonly dataFreshnessService: DataFreshnessService,
   ) {}
 
   private conssumeDateFilterState(req: Request): FilterStateProps {
@@ -245,8 +248,21 @@ export default class PeopleController {
     let locationAlert: { text: string } | null = null
     let queryRange = { fromDate: '', toDate: '' }
     let formValues: LocationBuildProps
+    let dataFreshnessResponse: ApiDataFreshnessResponse | null = null
+    let isDataFreshnessError = false
     const mapControls = this.buildLocationMapControls(req)
     const hasQueryParams = req.query.start !== undefined || req.query.end !== undefined
+
+    try {
+      dataFreshnessResponse = await this.dataFreshnessService.getDataFreshness(
+        res.locals.user.username,
+        personContext.personId,
+      )
+    } catch (error) {
+      /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+      console.error('Error fetching data freshness:', error)
+      isDataFreshnessError = true
+    }
 
     if (hasQueryParams) {
       hasSearched = true
@@ -296,7 +312,6 @@ export default class PeopleController {
               )
               positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
             } catch (error) {
-              /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
               console.error('Error fetching locations:', error)
               locationAlert = { text: casesLocationLocale.alerts.fetchError }
             }
@@ -362,6 +377,8 @@ export default class PeopleController {
       mapControls,
       currentUrl: encodeURIComponent(String(req.originalUrl)),
       exclusionZones: exclusionResult?.exclusionZones ?? null,
+      dataFreshness: dataFreshnessResponse,
+      isDataFreshnessError,
     })
   }
 

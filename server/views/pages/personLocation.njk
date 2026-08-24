@@ -43,7 +43,20 @@
     </h1>
     <h2 class="govuk-heading-m">{{ locale.title }} </h2>
 
-    {% include "partials/dataRecency.njk" %}
+    {% if dataFreshnessError %}  
+       {{ dataFreshnessErrorBanner({
+          heading: "Data delay",
+          message: "There is currently a problem connecting to the trail data..."
+        }) 
+      }}
+    {% elif dataFreshness.statuses.length > 0 %}
+        {% include "partials/dataRecency.njk" %}
+
+    {% else %}  
+      <p class="govuk-body-m">
+        {{ locale.dataFreshness.noData }}
+      </p>
+    {% endif %}
 
     <div class="date-time-picker">
       <div class="govuk-grid-row">

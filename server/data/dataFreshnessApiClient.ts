@@ -9,7 +9,7 @@ export type ApiFreshnessStatus = {
   latestPosition?: string
 }
 
-export type ApiFreshnessStatusesponse = {
+export type ApiDataFreshnessResponse = {
   statuses: ApiFreshnessStatus[]
   nextToken: string | null
 }
@@ -19,8 +19,8 @@ export default class DataFreshnessApiClient extends RestClient {
     super('DataFreshness API', config.apis.emdiApi, logger, authenticationClient)
   }
 
-  async getDataFreshness(username: string, personId: string): Promise<ApiFreshnessStatusesponse> {
-    return this.get<ApiFreshnessStatusesponse>(
+  async getDataFreshness(username: string): Promise<ApiDataFreshnessResponse> {
+    return this.get<ApiDataFreshnessResponse>(
       {
         path: `/status`,
       },
