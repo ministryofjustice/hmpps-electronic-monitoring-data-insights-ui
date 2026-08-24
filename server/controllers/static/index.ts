@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import AuditService, { Page } from '../../services/auditService'
 import mapHelplocale from './map-help.locale.json'
+import whatsNewLocale from './whats-new.locale.json'
 
 export default class StaticController {
   constructor(private readonly auditService: AuditService) {}
@@ -12,6 +13,17 @@ export default class StaticController {
     })
     res.render('pages/mapHelp', {
       locale: mapHelplocale,
+      returnUrl: req.query?.returnUrl ? decodeURIComponent(req.query.returnUrl as string) : '/',
+    })
+  }
+
+  async whatsNew(req: Request, res: Response): Promise<void> {
+    await this.auditService.logPageView(Page.WHATS_NEW_PAGE, {
+      who: res.locals.user.username,
+      correlationId: req.id,
+    })
+    res.render('pages/whatsNew', {
+      locale: whatsNewLocale,
       returnUrl: req.query?.returnUrl ? decodeURIComponent(req.query.returnUrl as string) : '/',
     })
   }

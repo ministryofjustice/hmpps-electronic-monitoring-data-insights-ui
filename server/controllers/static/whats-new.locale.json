@@ -1,0 +1,40 @@
+{
+  "version": "1.0.0",
+  "title": "What’s new",
+  "content": {
+    "intro": {
+      "first-paragraphs": [
+        "Welcome to our service updates",
+        "View highlights of what's new and what's improved for Electronic monitoring.",
+        "If you have any feedback or questions on the service or any of these updates, email <a href='mailto:emdisupport@justice.gov.uk'>emdisupport@justice.gov.uk</a>."
+      ]
+    },
+    "changes": [
+      {
+        "title": "Change five",
+        "dateText": "14 June 2026 at 2:01pm",
+        "description": "The probation practitioner's application for life skills training needs confirming by 28 June 2026.<a href='/'> View application</a>"
+      },
+      {
+        "title": "Change four",
+        "dateText": "7 June 2026 at 12:32pm",
+        "description": "The application is being reviewed by a case worker"
+      },
+      {
+        "title": "Change three",
+        "dateText": "16 June 2026 at 9:12am",
+        "description": "Your application has been received – reference MOJ-1234-5678"
+      },
+      {
+        "title": "Change two",
+        "dateText": "28 May 2026 at 10:45am",
+        "description": ""
+      },
+      {
+        "title": "Change one",
+        "dateText": "21 May 2026 at 1:15pm",
+        "description": ""
+      }
+    ]
+  }
+}

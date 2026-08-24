@@ -3,10 +3,12 @@ import path from 'path'
 import nunjucks from 'nunjucks'
 import express from 'express'
 import fs from 'fs'
+import mojFilters from '@ministryofjustice/frontend/moj/filters/all'
 import { initialiseName } from './utils'
 import config from '../config'
 import logger from '../../logger'
 import formatDate from './helpers'
+import whatsNewLocale from '../controllers/static/whats-new.locale.json'
 
 const commonLocale = {
   en: {
@@ -25,6 +27,7 @@ export default function nunjucksSetup(app: express.Express): void {
   app.locals.environmentName = config.environmentName
   app.locals.environmentNameColour = config.environmentName === 'PRE-PRODUCTION' ? 'govuk-tag--green' : ''
   app.locals.common = commonLocale.en
+  app.locals.whatsNewVersion = whatsNewLocale.version
   app.locals.mpopUrl = config.mpopUrl
   app.locals.enablePingCardNavigation = false
   app.locals.enableExclusionZones = false
@@ -57,4 +60,11 @@ export default function nunjucksSetup(app: express.Express): void {
   njkEnv.addFilter('formatSimpleDate', date => formatDate(date, 'simple'))
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
+  njkEnv.addFilter('throw', (message: string) => {
+    throw new Error(message)
+  })
+
+  for (const [name, filter] of Object.entries(mojFilters())) {
+    njkEnv.addFilter(name, filter)
+  }
 }

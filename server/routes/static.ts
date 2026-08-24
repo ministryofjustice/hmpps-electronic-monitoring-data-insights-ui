@@ -10,4 +10,7 @@ export default function staticRoutes(
   get('/map-help', async (req, res, next) => {
     await staticController.mapHelp(req, res)
   })
+  get('/whats-new', async (req, res, next) => {
+    await staticController.whatsNew(req, res)
+  })
 }

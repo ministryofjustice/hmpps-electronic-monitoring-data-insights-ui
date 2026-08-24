@@ -1,0 +1,34 @@
+.technical-updates-banner {
+    background-color: #44247b;
+    padding: 10px 0 10px 0;
+
+    & .technical-updates-column {
+        padding-top: 0px;
+        min-height: 25px;
+    }
+
+    & .technical-updates-whats-new {
+        padding-right: 20px;
+    }
+
+    & .technical-updates-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 32px;
+        color: #fff;
+    }
+
+    & .technical-updates-content {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    & .technical-updates-hide-message {
+        white-space: nowrap;
+        flex: 0 0 auto;
+    }
+}

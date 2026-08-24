@@ -1,0 +1,54 @@
+{% extends "../partials/layout.njk" %}
+{%- from "moj/components/timeline/macro.njk" import mojTimeline -%}
+
+{% set pageTitle = applicationName + " - What's new" %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+
+  <a href="{{ returnUrl or '/' }}" class="govuk-back-link">Back</a>
+
+  <h2 class="govuk-heading-l">{{ locale.title }}</h2>
+  <div class="govuk-width-container">
+  {% if locale and locale.content %}
+    {% for _, section in locale.content %}
+      {% if section %}
+        {% set firstParagraphs = section['first-paragraphs'] or [] %}
+
+        <div class="govuk-grid-row">
+          <div class="govuk-!-margin-bottom-2 {{ "govuk-grid-column-three-quarters" if (image and image.src) else "govuk-grid-column-full" }}">
+            {% if section.title %}
+              <h2 class="govuk-heading-m">{{ section.title }}</h2>
+            {% endif %}
+
+            {% for paragraph in firstParagraphs %}
+              {% if paragraph %}
+                <p>
+                  {% if loop.first %}
+                    <strong>{{ paragraph }}</strong>
+                  {% else %}
+                    {{ paragraph | safe }}
+                  {% endif %}
+                </p>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  </div>
+
+{% set timelineItems = [] %}
+{% for change in locale.content.changes %}
+  {% set descriptionHtml = ('<p>' + (change.description | safe) + '</p>') if change.description else undefined %}
+  {% set item = {
+    label: { text: change.title },
+    datetime: { timestamp: change.dateText, type: "text" },
+    html: descriptionHtml
+  } %}
+  {% set timelineItems = (timelineItems.push(item), timelineItems) %}
+{% endfor %}
+{{ mojTimeline({ items: timelineItems }) }}
+
+{% endblock %}
