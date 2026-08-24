@@ -54,6 +54,7 @@ context('Cases', () => {
     it('should not display any error messages on initial load', () => {
       cy.get('.govuk-error-summary').should('not.exist')
       cy.get('.govuk-error-message').should('not.exist')
+      cy.title().should('not.match', /^Error: /)
     })
   })
 
@@ -64,6 +65,7 @@ context('Cases', () => {
       locationPage.submitButton().click()
 
       cy.get('.govuk-error-summary').should('exist')
+      cy.title().should('match', /^Error: /)
       cy.get('.govuk-error-summary__title').should('contain', 'There is a problem')
       cy.get('.govuk-error-summary__list').within(() => {
         cy.contains('From date must be DD/MM/YYYY').should('exist')

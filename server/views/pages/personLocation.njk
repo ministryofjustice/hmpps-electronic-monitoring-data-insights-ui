@@ -3,6 +3,9 @@
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 
 {% set pageTitle = applicationName + " - Person Location" %}
+{% if dateFilterForm.errorSummary and dateFilterForm.errorSummary | length %}
+  {% set pageTitle = "Error: " + pageTitle %}
+{% endif %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}

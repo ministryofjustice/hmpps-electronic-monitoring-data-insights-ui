@@ -93,6 +93,34 @@ describe('searchLocationsQuerySchema', () => {
 
     expect(result.success).toBe(true)
   })
+  it.each([
+    ['out-of-range hour', '25'],
+    ['fractional hour', '1.5'],
+  ])('should only reject the time field for an %s', (_description, hour) => {
+    const result = searchLocationsQuerySchema.safeParse({
+      start: {
+        date: '01/01/2025',
+        hour,
+        minute: '1',
+      },
+      end: {
+        date: '02/01/2025',
+        hour: '1',
+        minute: '1',
+      },
+    })
+
+    expect(result.success).toBe(false)
+
+    if (!result.success) {
+      expect(result.error.issues).toHaveLength(1)
+      expect(result.error.issues[0]).toMatchObject({
+        message: 'From hour must be between 00 and 23',
+        path: ['start', 'hour'],
+      })
+      expect(result.error.issues).not.toContainEqual(expect.objectContaining({ path: ['start', 'date'] }))
+    }
+  })
   it('should fail when all date and time values are the same', () => {
     const result = searchLocationsQuerySchema.safeParse({
       start: {
