@@ -41,7 +41,10 @@
     <h1 class="govuk-heading-l govuk-!-margin-bottom-4">
       {{ fullName }}
     </h1>
-    <h2 class="govuk-heading-m">{{ locale.title }}</h2>
+    <h2 class="govuk-heading-m">{{ locale.title }} </h2>
+
+    {% include "partials/dataRecency.njk" %}
+
     <div class="date-time-picker">
       <div class="govuk-grid-row">
         {% include "partials/mapSearchForm.njk" %}
