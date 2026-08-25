@@ -11,7 +11,7 @@ import {
 import HeatmapLayer from 'ol/layer/Heatmap'
 import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
 import { Interaction } from 'ol/interaction'
-import initialiseLocationDataView from './index'
+import initialiseLocationDataView, { bindPointKeyboardNavigation } from './index'
 import * as utils from '../../utils/utils'
 import MapLayersControl from './controls/mapLayersControls'
 
@@ -271,6 +271,67 @@ describe('initialiseLocationDataView', () => {
       const { adoptedStyleSheets } = mockEmMap.shadowRoot as MockShadowRoot
       expect(adoptedStyleSheets).toHaveLength(2)
       expect(adoptedStyleSheets[0]).toBe(existingSheet)
+    })
+
+    it('should give the zoom controls explicit accessible names', () => {
+      const zoomIn = document.createElement('button')
+      const zoomOut = document.createElement('button')
+      ;(mockEmMap.shadowRoot as MockShadowRoot).querySelector.mockImplementation((selector: string) => {
+        if (selector === '.ol-zoom-in') return zoomIn
+        if (selector === '.ol-zoom-out') return zoomOut
+        return null
+      })
+
+      initialiseLocationDataView()
+
+      expect(zoomIn).toHaveAttribute('aria-label', 'Zoom in')
+      expect(zoomOut).toHaveAttribute('aria-label', 'Zoom out')
+    })
+  })
+
+  describe('point keyboard access', () => {
+    it('should listen for keyboard activation on the map region', () => {
+      const addEventListenerSpy = jest.spyOn(mockMapContainer, 'addEventListener')
+
+      initialiseLocationDataView()
+
+      expect(addEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function))
+    })
+
+    it.each(['Enter', ' '])('should open the first point when the map region receives %p', key => {
+      const mapRegion = document.createElement('div')
+      const openPoint = jest.fn()
+      bindPointKeyboardNavigation(mapRegion, 2, openPoint)
+      const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true })
+
+      mapRegion.dispatchEvent(event)
+
+      expect(event.defaultPrevented).toBe(true)
+      expect(openPoint).toHaveBeenCalledWith(0, true)
+    })
+
+    it('should ignore activation keys when there are no location points', () => {
+      const mapRegion = document.createElement('div')
+      const openPoint = jest.fn()
+      bindPointKeyboardNavigation(mapRegion, 0, openPoint)
+      const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
+
+      mapRegion.dispatchEvent(event)
+
+      expect(event.defaultPrevented).toBe(false)
+      expect(openPoint).not.toHaveBeenCalled()
+    })
+
+    it('should not override keyboard interaction with controls inside the map region', () => {
+      const mapRegion = document.createElement('div')
+      const childButton = document.createElement('button')
+      const openPoint = jest.fn()
+      mapRegion.appendChild(childButton)
+      bindPointKeyboardNavigation(mapRegion, 2, openPoint)
+
+      childButton.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }))
+
+      expect(openPoint).not.toHaveBeenCalled()
     })
   })
 

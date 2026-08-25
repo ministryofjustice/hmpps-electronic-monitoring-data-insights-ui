@@ -62,18 +62,18 @@ export default class MapLayersControl extends Control {
   private static createPanel(opts: MapLayersControlOptions): { panel: HTMLElement; openBtn: HTMLElement } {
     const state: MapControlState = { ...defaultMapControlState, ...opts.initialState }
     const openBtn = document.createElement('button')
-    openBtn.setAttribute('aria-label', 'Open layers panel')
+    openBtn.setAttribute('aria-label', 'Open map controls')
+    openBtn.setAttribute('aria-controls', 'map-controls-panel')
+    openBtn.setAttribute('aria-expanded', 'true')
     openBtn.className = 'govuk-button mlc-open-btn govuk-button--inverse'
     openBtn.innerHTML = 'Open map controls &#9656;'
     openBtn.setAttribute('data-hidden', 'true')
 
     const panel = document.createElement('div')
+    panel.id = 'map-controls-panel'
     panel.className = 'mlc-panel'
-
-    const toggle = (hide: HTMLElement, show: HTMLElement) => {
-      hide.setAttribute('data-hidden', 'true')
-      show.removeAttribute('data-hidden')
-    }
+    panel.setAttribute('role', 'region')
+    panel.setAttribute('aria-label', 'Map controls')
 
     panel.innerHTML = `
       <div class="govuk-form-group govuk-!-margin-bottom-0">
@@ -82,6 +82,8 @@ export default class MapLayersControl extends Control {
             type="button" 
             class="mlc-panel__close govuk-button govuk-button--secondary" 
             aria-label="Close map controls"
+            aria-controls="map-controls-panel"
+            aria-expanded="true"
           >
             Close map controls
             <span aria-hidden="true">&#9662;</span>
@@ -99,7 +101,7 @@ export default class MapLayersControl extends Control {
         </fieldset>
      </div>
 
-      <hr class="govuk-section-break govuk-section-break--visible mlc-panel__divider">
+      <hr class="govuk-section-break govuk-section-break--visible mlc-panel__divider" aria-hidden="true">
       <div class="govuk-form-group govuk-!-margin-bottom-0">
         <fieldset class="govuk-fieldset">
             <span class="govuk-fieldset__heading govuk-!-font-weight-bold">Map Controls</span>
@@ -131,7 +133,7 @@ export default class MapLayersControl extends Control {
       ${
         opts.enableExclusionZones
           ? `  
-      <hr class="govuk-section-break govuk-section-break--visible mlc-panel__divider">
+      <hr class="govuk-section-break govuk-section-break--visible mlc-panel__divider" aria-hidden="true">
       <div class="govuk-form-group govuk-!-margin-bottom-0">
         <fieldset class="govuk-fieldset">
             <span class="govuk-fieldset__heading govuk-!-font-weight-bold">Zones</span>
@@ -145,6 +147,14 @@ export default class MapLayersControl extends Control {
       </div>`
           : ``
       }`
+    const closeBtn = panel.querySelector('.mlc-panel__close') as HTMLButtonElement
+    const setExpanded = (expanded: boolean) => {
+      panel.toggleAttribute('data-hidden', !expanded)
+      openBtn.toggleAttribute('data-hidden', expanded)
+      openBtn.setAttribute('aria-expanded', String(expanded))
+      closeBtn.setAttribute('aria-expanded', String(expanded))
+    }
+
     const notifyChange = () => opts.onChange?.({ ...state })
 
     opts.streetLayer?.setVisible(state.baseLayer === 'street')
@@ -203,13 +213,13 @@ export default class MapLayersControl extends Control {
     bindCheckbox('#mlc-heatmap', 'heatmap', opts.heatmapLayer)
     bindNativeLayerCheckbox('#mlc-exclusion', 'exclusion', opts.exclusionLayer)
 
-    panel.querySelector('.mlc-panel__close')?.addEventListener('click', () => {
-      toggle(panel, openBtn)
+    closeBtn.addEventListener('click', () => {
+      setExpanded(false)
       openBtn.focus()
     })
 
     openBtn.addEventListener('click', () => {
-      toggle(openBtn, panel)
+      setExpanded(true)
       const firstFocusable = panel.querySelector<HTMLElement>(
         'input, button, [href], select, textarea, [tabindex]:not([tabindex="-1"])',
       )
