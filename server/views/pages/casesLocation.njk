@@ -2,6 +2,9 @@
 {% from "components/moj-api-error/macro.njk" import mojApiError %}
 
 {% set pageTitle = applicationName + " - Cases" %}
+{% if dateFilterForm.errorSummary and dateFilterForm.errorSummary | length %}
+  {% set pageTitle = "Error: " + pageTitle %}
+{% endif %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}

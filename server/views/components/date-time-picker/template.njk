@@ -28,21 +28,19 @@
 
 <div class="date-time-picker" id="{{ params.id }}-component">
     <div class="{% if dateErrorMessage %}govuk-form-group--error{% endif %}">
-        <fieldset class="govuk-fieldset">
-            {{ mojDatePicker({
-                id: params.id + "-date",
-                name: params.name + "[date]",
-                label: {
-                    text: params.labelText,
-                    classes: "govuk-label--s govuk-margin-bottom-2"
-                },
-                errorMessage: { text: dateErrorMessage } if dateErrorMessage,
-                value: params.value,
-                hint: {
-                    text: "For example, 17/5/2024."
-                }
-            }) }}
-        </fieldset>
+        {{ mojDatePicker({
+            id: params.id + "-date",
+            name: params.name + "[date]",
+            label: {
+                text: params.labelText,
+                classes: "govuk-label--s govuk-margin-bottom-2"
+            },
+            errorMessage: { text: dateErrorMessage } if dateErrorMessage,
+            value: params.value,
+            hint: {
+                text: "For example, 17/5/2024."
+            }
+        }) }}
     </div>
 
     {% if params.timeLabel %}
@@ -62,7 +60,10 @@
                     name: params.name + "[hour]",
                     classes: "govuk-input--width-2" + (" govuk-input--error" if hourErrorMessage else ""),
                     value: params.hour,
-                    attributes: { "data-qa": params.id + "-hour" }
+                    attributes: {
+                        "data-qa": params.id + "-hour",
+                        "aria-label": params.timeLabel + " hour"
+                    }
                 },
                 {
                     label: "Minute",
@@ -70,7 +71,10 @@
                     name: params.name + "[minute]",
                     classes: "govuk-input--width-2" + (" govuk-input--error" if minuteErrorMessage else ""),
                     value: params.minute,
-                    attributes: { "data-qa": params.id + "-minute" }
+                    attributes: {
+                        "data-qa": params.id + "-minute",
+                        "aria-label": params.timeLabel + " minute"
+                    }
                 }
             ],
             hint: {
