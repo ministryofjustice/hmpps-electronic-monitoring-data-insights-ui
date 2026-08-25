@@ -83,6 +83,24 @@ describe('MapLayersControl', () => {
       expect(openBtn.hasAttribute('data-hidden')).toBe(true)
     })
 
+    it('exposes the map controls as an expanded labelled region', () => {
+      const panel = mapContainer.querySelector('.mlc-panel') as HTMLElement
+      const closeBtn = mapContainer.querySelector('.mlc-panel__close') as HTMLElement
+
+      expect(panel).toHaveAttribute('id', 'map-controls-panel')
+      expect(panel).toHaveAttribute('role', 'region')
+      expect(panel).toHaveAttribute('aria-label', 'Map controls')
+      expect(closeBtn).toHaveAttribute('aria-controls', 'map-controls-panel')
+      expect(closeBtn).toHaveAttribute('aria-expanded', 'true')
+    })
+
+    it('hides decorative dividers from assistive technology', () => {
+      const dividers = mapContainer.querySelectorAll('.mlc-panel__divider')
+
+      expect(dividers).toHaveLength(1)
+      dividers.forEach(divider => expect(divider).toHaveAttribute('aria-hidden', 'true'))
+    })
+
     it('renders controls from the provided initial state', () => {
       const opts = makeOpts(makeMockMap())
       mapContainer = opts.mapContainer
@@ -198,12 +216,19 @@ describe('MapLayersControl', () => {
 
     it('hides the panel', () => {
       const panel = mapContainer.querySelector('.mlc-panel') as HTMLElement
-      expect(panel.getAttribute('data-hidden')).toBeTruthy()
+      expect(panel.hasAttribute('data-hidden')).toBe(true)
     })
 
     it('shows the open button', () => {
       const openBtn = mapContainer.querySelector('.mlc-open-btn') as HTMLElement
       expect(openBtn.hasAttribute('data-hidden')).toBe(false)
+    })
+
+    it('exposes the collapsed state on the open button', () => {
+      const openBtn = mapContainer.querySelector('.mlc-open-btn') as HTMLElement
+
+      expect(openBtn).toHaveAttribute('aria-controls', 'map-controls-panel')
+      expect(openBtn).toHaveAttribute('aria-expanded', 'false')
     })
   })
 
@@ -223,6 +248,12 @@ describe('MapLayersControl', () => {
     it('hides the open button again', () => {
       const openBtn = mapContainer.querySelector('.mlc-open-btn') as HTMLElement
       expect(openBtn.hasAttribute('data-hidden')).toBe(true)
+    })
+
+    it('exposes the expanded state on the close button', () => {
+      const closeBtn = mapContainer.querySelector('.mlc-panel__close') as HTMLElement
+
+      expect(closeBtn).toHaveAttribute('aria-expanded', 'true')
     })
   })
 

@@ -56,5 +56,25 @@ test.describe('Accessibility', () => {
     await expect(page.locator('#map-pan-announce')).toHaveAttribute('aria-atomic', 'true')
     await expect(page.locator('#lock-rotation-btn')).toHaveCount(0)
     await expect(page.locator('#map-rotation-status')).toHaveCount(0)
+
+    await expect(page.locator('em-map').locator('.ol-zoom-in')).toHaveAttribute('aria-label', 'Zoom in')
+    await expect(page.locator('em-map').locator('.ol-zoom-out')).toHaveAttribute('aria-label', 'Zoom out')
+
+    const dividers = page.locator('.mlc-panel__divider')
+    await expect(dividers).toHaveCount(1)
+    await expect(dividers.first()).toHaveAttribute('aria-hidden', 'true')
+
+    const closeMapControls = page.getByRole('button', { name: 'Close map controls' })
+    await expect(closeMapControls).toHaveAttribute('aria-expanded', 'true')
+    await closeMapControls.click()
+
+    const openMapControls = page.getByRole('button', { name: 'Open map controls' })
+    await expect(openMapControls).toHaveAttribute('aria-expanded', 'false')
+    await openMapControls.click()
+    await expect(closeMapControls).toHaveAttribute('aria-expanded', 'true')
+
+    await map.focus()
+    await page.keyboard.press('Enter')
+    await expect(page.locator('em-map').locator('.app-map__overlay')).toBeVisible()
   })
 })

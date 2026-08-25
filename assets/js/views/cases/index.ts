@@ -91,6 +91,20 @@ const parseBooleanDataValue = (value: string | undefined): boolean | undefined =
   return undefined
 }
 
+export const bindPointKeyboardNavigation = (
+  mapContainer: HTMLElement,
+  pointCount: number,
+  openPoint: (index: number, moveFocusToOverlay: boolean) => void,
+) => {
+  mapContainer.addEventListener('keydown', (event: KeyboardEvent) => {
+    if (event.target !== mapContainer || (event.key !== 'Enter' && event.key !== ' ')) return
+    if (pointCount === 0) return
+
+    event.preventDefault()
+    openPoint(0, true)
+  })
+}
+
 const getInitialMapControlState = (mapContainer: HTMLElement): MapControlState => ({
   baseLayer: mapContainer.dataset.mapControlBaseLayer === 'satellite' ? 'satellite' : 'street',
   tracks: parseBooleanDataValue(mapContainer.dataset.mapControlTracks) ?? defaultMapControlState.tracks,
@@ -135,6 +149,11 @@ const initialiseDirectionScreenReader = () => {
 const injectShadowFocusStyles = (emMap: EmMap) => {
   const shadowRoot = getShadowRoot(emMap)
   if (!shadowRoot) return
+
+  const zoomInButton = shadowRoot.querySelector<HTMLButtonElement>('.ol-zoom-in')
+  const zoomOutButton = shadowRoot.querySelector<HTMLButtonElement>('.ol-zoom-out')
+  zoomInButton?.setAttribute('aria-label', 'Zoom in')
+  zoomOutButton?.setAttribute('aria-label', 'Zoom out')
 
   const sheet = new CSSStyleSheet()
   sheet.replaceSync(`
@@ -368,7 +387,7 @@ const initialiseLocationDataView = () => {
       view.animate({ center: offsetCenter, duration: 300 })
     }
 
-    const openOverlayForIndex = (index: number) => {
+    const openOverlayForIndex = (index: number, moveFocusToOverlay = false) => {
       const position = positions[index] as TrackPosition
       currentPointIndex = index
 
@@ -392,8 +411,16 @@ const initialiseLocationDataView = () => {
       const clickInteraction = interactions.find((i: OverlayInteraction) => i.overlay?.showAtCoordinate)
       if (clickInteraction) {
         ;(clickInteraction as OverlayInteraction).overlay.showAtCoordinate(coords, feature.getProperties())
+        if (moveFocusToOverlay) {
+          const overlayControl = getShadowRoot(emMap as EmMap)?.querySelector<HTMLElement>(
+            '.app-map__overlay-close, [data-nav="next"], [data-nav="last"]',
+          )
+          overlayControl?.focus()
+        }
       }
     }
+
+    bindPointKeyboardNavigation(mapContainer, positions.length, openOverlayForIndex)
 
     const shadowRootMap = getShadowRoot(emMap as EmMap)
 
