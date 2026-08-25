@@ -254,10 +254,7 @@ export default class PeopleController {
     const hasQueryParams = req.query.start !== undefined || req.query.end !== undefined
 
     try {
-      dataFreshnessResponse = await this.dataFreshnessService.getDataFreshness(
-        res.locals.user.username,
-        personContext.personId,
-      )
+      dataFreshnessResponse = await this.dataFreshnessService.getDataFreshness(res.locals.user.username)
     } catch (error) {
       /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
       console.error('Error fetching data freshness:', error)

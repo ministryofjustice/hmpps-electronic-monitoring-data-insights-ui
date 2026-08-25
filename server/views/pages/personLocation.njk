@@ -44,17 +44,16 @@
     <h2 class="govuk-heading-m">{{ locale.title }} </h2>
 
     {% if dataFreshnessError %}  
-       {{ dataFreshnessErrorBanner({
-          heading: "Data delay",
-          message: "There is currently a problem connecting to the trail data..."
-        }) 
-      }}
+    <h1>Hii 1</h1>
+       {% include "partials/dataFreshnessError.njk" %}
     {% elif dataFreshness.statuses.length > 0 %}
+    <h1>Hii 2</h1>
         {% include "partials/dataRecency.njk" %}
 
     {% else %}  
+    <h1>Hii 3</h1>
       <p class="govuk-body-m">
-        {{ locale.dataFreshness.noData }}
+        {% include "partials/dataFreshnessError.njk" %}
       </p>
     {% endif %}
 
