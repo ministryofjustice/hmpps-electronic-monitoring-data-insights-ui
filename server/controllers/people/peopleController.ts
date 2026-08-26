@@ -16,6 +16,7 @@ import PeopleExclusionService from '../../services/peopleExclusionService'
 import { ApiExclusionZoneResponse } from '../../data/peopleExclusionApiClient'
 import DataFreshnessService from '../../services/dataFreshnessService'
 import { ApiDataFreshnessResponse } from '../../data/dataFreshnessApiClient'
+import { getMockDataOutOfSync } from '../cases/mocks/mockDataOutOfSync'
 
 type SelectedPersonContext = session.SessionData['peopleSelection'][string]
 
@@ -252,9 +253,11 @@ export default class PeopleController {
     let isDataFreshnessError = false
     const mapControls = this.buildLocationMapControls(req)
     const hasQueryParams = req.query.start !== undefined || req.query.end !== undefined
+    const hasDataOutOfSync = req.query.dataOutOfSync === 'true' && process.env.ENVIRONMENT_NAME === 'dev'
 
     try {
-      dataFreshnessResponse = await this.dataFreshnessService.getDataFreshness(res.locals.user.username)
+      console.log('>>> xxx Fetching data freshness for deliusId:', deliusId, 'hasDataOutOfSync:', hasDataOutOfSync, 'ENVIRONMENT_NAME:', process.env.ENVIRONMENT_NAME)
+      dataFreshnessResponse = await (hasDataOutOfSync ? getMockDataOutOfSync() : this.dataFreshnessService.getDataFreshness(res.locals.user.username))
     } catch (error) {
       /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
       console.error('Error fetching data freshness:', error)
@@ -345,6 +348,8 @@ export default class PeopleController {
     }
 
     const isMapLoading = hasSearched && positions.length > 0 && !(locationAlert && locationAlert.text)
+
+    console.log("dataFreshnessResponse", dataFreshnessResponse  )
 
     res.render('pages/personLocation', {
       activeNav: 'cases',

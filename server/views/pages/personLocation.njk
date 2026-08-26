@@ -1,6 +1,7 @@
 {% extends "../partials/layout.njk" %}
 {% from "components/moj-api-error/macro.njk" import mojApiError %}
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
+{% import "components/data-freshness-error-banner/macro.njk" import dataFreshnessErrorBanner %}
 
 {% set pageTitle = applicationName + " - Person Location" %}
 {% if dateFilterForm.errorSummary and dateFilterForm.errorSummary | length %}
@@ -44,17 +45,23 @@
     <h2 class="govuk-heading-m">{{ locale.title }} </h2>
 
     {% if dataFreshnessError %}  
-    <h1>Hii 1</h1>
-       {% include "partials/dataFreshnessError.njk" %}
+       {{ dataFreshnessErrorBanner({
+            text: "There is a delay in the data being displayed. The data may not be up to date."
+          })  
+        }}
     {% elif dataFreshness.statuses.length > 0 %}
-    <h1>Hii 2</h1>
-        {% include "partials/dataRecency.njk" %}
-
-    {% else %}  
-    <h1>Hii 3</h1>
-      <p class="govuk-body-m">
-        {% include "partials/dataFreshnessError.njk" %}
+      <p class="govuk-body-m"> 
+        {% set date = dataFreshness.statuses[0].latestPositionDateTime | date("d F Y") %}
+        {% set time = dataFreshness.statuses[0].latestPositionDateTime | date("H:i") %}
+        {{ dataFreshnessErrorBanner({
+            text: "There is currently a problem connecting to the trail data. The data was last updated on " + date + " at " + time + ". After this time, location data will be missing from the map.
+            <br><br>
+            The tag is still recording. When the delay is resolved, all trail data will be available to search."
+          })  
+        }}
       </p>
+    {% else %}  
+       {% include "partials/dataRecency.njk" %}
     {% endif %}
 
     <div class="date-time-picker">
