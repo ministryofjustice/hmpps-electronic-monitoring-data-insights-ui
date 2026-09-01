@@ -9,18 +9,18 @@ export type ApiFreshnessStatus = {
   latestPosition?: string
 }
 
-export type ApiDataFreshnessResponse = {
+export type ApiLocationDataSyncResponse = {
   statuses: ApiFreshnessStatus[]
   nextToken: string | null
 }
 
-export default class DataFreshnessApiClient extends RestClient {
+export default class LocationDataSyncApiclient extends RestClient {
   constructor(authenticationClient: AuthenticationClient) {
     super('DataFreshness API', config.apis.emdiApi, logger, authenticationClient)
   }
 
-  async getDataFreshness(username: string): Promise<ApiDataFreshnessResponse> {
-    return this.get<ApiDataFreshnessResponse>(
+  async getLocationDataSyncStatus(username: string): Promise<ApiLocationDataSyncResponse> {
+    return this.get<ApiLocationDataSyncResponse>(
       {
         path: `/status`,
       },

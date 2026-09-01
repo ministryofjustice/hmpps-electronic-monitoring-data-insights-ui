@@ -14,9 +14,8 @@ import casesLocationLocale from '../cases/cases-location.locale.json'
 import { defaultLocationMapControls, LocationMapControls } from '../../types/locationMapControls'
 import PeopleExclusionService from '../../services/peopleExclusionService'
 import { ApiExclusionZoneResponse } from '../../data/peopleExclusionApiClient'
-import DataFreshnessService from '../../services/dataFreshnessService'
-import { ApiDataFreshnessResponse } from '../../data/dataFreshnessApiClient'
-import { getMockDataOutOfSync } from '../cases/mocks/mockDataOutOfSync'
+import LocationDataSyncService from '../../services/locationDataSyncService'
+import { ApiLocationDataSyncResponse } from '../../data/locationDataSyncApiClient'
 
 type SelectedPersonContext = session.SessionData['peopleSelection'][string]
 
@@ -66,7 +65,7 @@ export default class PeopleController {
     private readonly caseLocationActivityService: CaseLocationActivityService,
     private readonly dateSearchValidationService: DateSearchValidationService,
     private readonly peopleExclusionService: PeopleExclusionService,
-    private readonly dataFreshnessService: DataFreshnessService,
+    private readonly locationDataSyncService: LocationDataSyncService,
   ) {}
 
   private conssumeDateFilterState(req: Request): FilterStateProps {
@@ -249,19 +248,17 @@ export default class PeopleController {
     let locationAlert: { text: string } | null = null
     let queryRange = { fromDate: '', toDate: '' }
     let formValues: LocationBuildProps
-    let dataFreshnessResponse: ApiDataFreshnessResponse | null = null
-    let isDataFreshnessError = false
+    let locationDataSyncResponse: ApiLocationDataSyncResponse | null = null
+    let isDataSyncError = false
     const mapControls = this.buildLocationMapControls(req)
     const hasQueryParams = req.query.start !== undefined || req.query.end !== undefined
-    const hasDataOutOfSync = req.query.dataOutOfSync === 'true' && process.env.ENVIRONMENT_NAME === 'dev'
 
     try {
-      console.log('>>> xxx Fetching data freshness for deliusId:', deliusId, 'hasDataOutOfSync:', hasDataOutOfSync, 'ENVIRONMENT_NAME:', process.env.ENVIRONMENT_NAME)
-      dataFreshnessResponse = await (hasDataOutOfSync ? getMockDataOutOfSync() : this.dataFreshnessService.getDataFreshness(res.locals.user.username))
+      locationDataSyncResponse = await this.locationDataSyncService.getLocationDataSyncStatus(res.locals.user.username)
     } catch (error) {
       /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
       console.error('Error fetching data freshness:', error)
-      isDataFreshnessError = true
+      isDataSyncError = true
     }
 
     if (hasQueryParams) {
@@ -349,8 +346,6 @@ export default class PeopleController {
 
     const isMapLoading = hasSearched && positions.length > 0 && !(locationAlert && locationAlert.text)
 
-    console.log("dataFreshnessResponse", dataFreshnessResponse  )
-
     res.render('pages/personLocation', {
       activeNav: 'cases',
       activeTab: 'locations',
@@ -379,8 +374,8 @@ export default class PeopleController {
       mapControls,
       currentUrl: encodeURIComponent(String(req.originalUrl)),
       exclusionZones: exclusionResult?.exclusionZones ?? null,
-      dataFreshness: dataFreshnessResponse,
-      isDataFreshnessError,
+      dataFreshness: locationDataSyncResponse,
+      isDataFreshnessError: isDataSyncError,
     })
   }
 

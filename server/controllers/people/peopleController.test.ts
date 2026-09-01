@@ -7,10 +7,11 @@ import AuditService, { Page } from '../../services/auditService'
 import CaseLocationActivityService, { type CaseLocationBasePosition } from '../../services/caseLocationActivityService'
 import DateSearchValidationService from '../../services/dateSearchValidationService'
 import PeopleExclusionService from '../../services/peopleExclusionService'
-import DataFreshnessService from '../../services/dataFreshnessService'
+import LocationDataSyncService from '../../services/locationDataSyncService'
 import casesLocationLocale from '../cases/cases-location.locale.json'
 import PeopleController from './peopleController'
 import { Geometry } from '../../data/peopleExclusionApiClient'
+import { ApiLocationDataSyncResponse } from '../../data/locationDataSyncApiClient'
 
 jest.mock('../../services/auditService')
 
@@ -20,7 +21,7 @@ describe('PeopleController', () => {
   let caseLocationActivityService: { getPositions: jest.Mock; annotatePositionsWithDisplayProperties: jest.Mock }
   let dateSearchValidationService: jest.Mocked<DateSearchValidationService>
   let peopleExclusionService: jest.Mocked<PeopleExclusionService>
-  let dataFreshnessService: jest.Mocked<DataFreshnessService>
+  let locationDataSyncService: jest.Mocked<LocationDataSyncService>
   let controller: PeopleController
   let req: Partial<Request>
   let res: Partial<Response>
@@ -60,7 +61,9 @@ describe('PeopleController', () => {
     } as unknown as jest.Mocked<PeopleService>
 
     peopleExclusionService = { getExclusionZone: jest.fn() } as unknown as jest.Mocked<PeopleExclusionService>
-    dataFreshnessService = { getDataFreshness: jest.fn() } as unknown as jest.Mocked<DataFreshnessService>
+    locationDataSyncService = {
+      getLocationDataSyncStatus: jest.fn(),
+    } as unknown as jest.Mocked<LocationDataSyncService>
 
     req = {
       id: 'test-correlation-id',
@@ -82,7 +85,7 @@ describe('PeopleController', () => {
       caseLocationActivityService as unknown as CaseLocationActivityService,
       dateSearchValidationService,
       peopleExclusionService,
-      dataFreshnessService,
+      locationDataSyncService,
     )
   })
 
@@ -503,6 +506,100 @@ describe('PeopleController', () => {
         'pages/personLocation',
         expect.objectContaining({
           exclusionZones: null,
+        }),
+      )
+    })
+  })
+
+  describe('data freshness', () => {
+    beforeEach(() => {
+      setPersonContext()
+      req.query = {
+        start: { date: '12/01/2026', hour: '10', minute: '00' },
+        end: { date: '14/01/2026', hour: '11', minute: '00' },
+      }
+      caseLocationActivityService.getPositions.mockResolvedValue([])
+    })
+
+    it('fetches data freshness status and passes it to the view', async () => {
+      const mockResponse: ApiLocationDataSyncResponse = {
+        statuses: [
+          {
+            code: 'DATA_OUT_OF_SYNC',
+            description: 'Data out of sync',
+            latestPosition: '2026-08-28T14:54:25Z',
+          },
+        ],
+        nextToken: null,
+      }
+      locationDataSyncService.getLocationDataSyncStatus.mockResolvedValue(mockResponse)
+
+      await controller.location(req as Request, res as Response)
+
+      expect(locationDataSyncService.getLocationDataSyncStatus).toHaveBeenCalledWith(user.username)
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/personLocation',
+        expect.objectContaining({
+          dataFreshness: mockResponse,
+          isDataFreshnessError: false,
+        }),
+      )
+    })
+
+    it('handles service errors gracefully when fetching data freshness fails', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+      locationDataSyncService.getLocationDataSyncStatus.mockRejectedValue(new Error('Data sync service down'))
+
+      await controller.location(req as Request, res as Response)
+
+      expect(locationDataSyncService.getLocationDataSyncStatus).toHaveBeenCalledWith(user.username)
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching data freshness:', expect.any(Error))
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/personLocation',
+        expect.objectContaining({
+          dataFreshness: null,
+          isDataFreshnessError: true,
+        }),
+      )
+
+      consoleErrorSpy.mockRestore()
+    })
+
+    it('still renders locations and search results when data freshness fetch fails', async () => {
+      const positions: CaseLocationBasePosition[] = [
+        {
+          positionId: 1,
+          latitude: 51.5,
+          longitude: -0.1,
+          precision: 10,
+          speed: 0,
+          direction: 0,
+          timestamp: '2026-01-12T10:00:00.000Z',
+          geolocationMechanism: 'GPS',
+          sequenceNumber: 1,
+          deviceId: null,
+          hdop: null,
+          geometry: null,
+          satellite: null,
+          lbs: null,
+          gpsDate: '2026-01-12T10:00:00.000Z',
+        },
+      ]
+      caseLocationActivityService.getPositions.mockResolvedValue(positions)
+      caseLocationActivityService.annotatePositionsWithDisplayProperties.mockReturnValue([
+        { ...positions[0], displayPointNumber: 1 },
+      ])
+      locationDataSyncService.getLocationDataSyncStatus.mockRejectedValue(new Error('Data sync service down'))
+      jest.spyOn(console, 'error').mockImplementation()
+
+      await controller.location(req as Request, res as Response)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/personLocation',
+        expect.objectContaining({
+          isDataFreshnessError: true,
+          hasSearched: true,
+          positions: [{ ...positions[0], displayPointNumber: 1 }],
         }),
       )
     })

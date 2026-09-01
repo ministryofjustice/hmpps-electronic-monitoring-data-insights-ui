@@ -8,7 +8,7 @@ import LocationsService from './locationsService'
 import PeopleExclusionService from './peopleExclusionService'
 import PeopleService from './peopleService'
 import TrailService from './trailService'
-import DataFreshnessService from './dataFreshnessService'
+import LocationDataSyncService from './locationDataSyncService'
 
 export const services = () => {
   const {
@@ -18,7 +18,7 @@ export const services = () => {
     locationsApiClient,
     peopleApiClient,
     peopleExclusionApiClient,
-    dataFreshnessApiClient,
+    locationDataSyncApiclient,
   } = dataAccess()
 
   const auditService = new AuditService(hmppsAuditClient)
@@ -30,7 +30,7 @@ export const services = () => {
   const dateSearchValidationService = new DateSearchValidationService()
   const flagService = new FlagService()
   const peopleExclusionService = new PeopleExclusionService(peopleExclusionApiClient)
-  const dataFreshnessService = new DataFreshnessService(dataFreshnessApiClient)
+  const locationDataSyncService = new LocationDataSyncService(locationDataSyncApiclient)
   return {
     applicationInfo,
     auditService,
@@ -42,7 +42,7 @@ export const services = () => {
     dateSearchValidationService,
     flagService,
     peopleExclusionService,
-    dataFreshnessService,
+    locationDataSyncService,
   }
 }
 
