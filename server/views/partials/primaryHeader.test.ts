@@ -31,7 +31,7 @@ describe('primaryHeader template', () => {
     expect(html).toContain('data-qa="service-phase-banner"')
     expect(html).toMatch(/<strong class="govuk-tag govuk-phase-banner__content__tag">\s*Beta\s*<\/strong>/)
     expect(html).toContain('This is a new service.')
-    expect(html).toContain('href="https://www.smartsurvey.co.uk/t/CF3MFT/"')
+    expect(html).toContain('href="https://www.smartsurvey.co.uk/t/AAGPPN?service=EM%20Data%20Insights"')
     expect(html).toContain('target="_blank"')
     expect(html).toContain('Give feedback (opens in a new tab)')
     expect(html).toContain('href="mailto:emdisupport@justice.gov.uk?subject=EMDI problem"')

@@ -29,7 +29,7 @@ context('Layout', () => {
     indexPage
       .servicePhaseBanner()
       .contains('a', 'Give feedback (opens in a new tab)')
-      .should('have.attr', 'href', 'https://www.smartsurvey.co.uk/t/CF3MFT/')
+      .should('have.attr', 'href', 'https://www.smartsurvey.co.uk/t/AAGPPN?service=EM%20Data%20Insights')
       .and('have.attr', 'target', '_blank')
     indexPage
       .servicePhaseBanner()

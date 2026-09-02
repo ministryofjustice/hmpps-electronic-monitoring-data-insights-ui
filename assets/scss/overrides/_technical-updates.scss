@@ -1,0 +1,20 @@
+.govuk-grid-row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.technical-updates-banner {
+    background-color: #44247b;
+
+    & .technical-updates-container {
+        color: #fff;
+        min-height: 25px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 0;
+    }
+}
+
+.technical-banner-dismissed .technical-updates-banner {
+    display: none !important;
+}

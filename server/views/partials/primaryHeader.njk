@@ -1,5 +1,5 @@
 {%- from "moj/components/primary-navigation/macro.njk" import mojPrimaryNavigation -%}
-{% from "../components/technical-updates-banner/macro.njk" import templateUpdateBanner %}
+{% from "../components/technical-updates-banner/macro.njk" import technicalUpdatesBanner %}
 {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
 
 <div role="region" aria-label="Service information">
@@ -7,7 +7,7 @@
     tag: {
       text: "Beta"
     },
-    html: 'This is a new service. <a href="https://www.smartsurvey.co.uk/t/CF3MFT/" target="_blank">Give feedback (opens in a new tab)</a> to help us improve it, <a class="govuk-link" href="mailto:emdisupport@justice.gov.uk?subject=EMDI problem">report a problem</a>.',
+    html: 'This is a new service. <a href="https://www.smartsurvey.co.uk/t/AAGPPN?service=EM%20Data%20Insights" target="_blank">Give feedback (opens in a new tab)</a> to help us improve it, <a class="govuk-link" href="mailto:emdisupport@justice.gov.uk?subject=EMDI problem">report a problem</a>.',
     attributes: {
       "data-qa": "service-phase-banner"
     }
@@ -15,13 +15,14 @@
 
 {% if showTechnicalUpdatesBanner %}
     {{
-    templateUpdateBanner({
+    technicalUpdatesBanner({
         version: whatsNewVersion,
         heading: "New features",
         message: "We’re updating the service all the time,",
         linkHref: "/whats-new?returnUrl=" + currentUrl,
         linkText: "find out more on the What’s new page.",
-        hideText: "Hide message"
+        hideText: "Hide message",
+        cspNonce: cspNonce
       })  
     }}
 {% endif %}
