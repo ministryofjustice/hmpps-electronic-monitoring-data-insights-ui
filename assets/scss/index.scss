@@ -24,6 +24,8 @@ $govuk-suppressed-warnings: (
 @import './overrides/local';
 @import './overrides/overview';
 @import './overrides/map-help';
+@import './overrides/technical-updates';
+@import './overrides/whats-new';
 
 @import 'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/footer';
 @import 'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/header';

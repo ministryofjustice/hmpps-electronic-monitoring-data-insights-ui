@@ -1,5 +1,5 @@
 {%- from "moj/components/primary-navigation/macro.njk" import mojPrimaryNavigation -%}
-{% from "../components/technical-updates-banner/macro.njk" import templateUpdateBanner %}
+{% from "../components/technical-updates-banner/macro.njk" import technicalUpdatesBanner %}
 {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
 
 <div role="region" aria-label="Service information">
@@ -15,13 +15,14 @@
 
 {% if showTechnicalUpdatesBanner %}
     {{
-    templateUpdateBanner({
+    technicalUpdatesBanner({
         version: whatsNewVersion,
         heading: "New features",
         message: "We’re updating the service all the time,",
         linkHref: "/whats-new?returnUrl=" + currentUrl,
         linkText: "find out more on the What’s new page.",
-        hideText: "Hide message"
+        hideText: "Hide message",
+        cspNonce: cspNonce
       })  
     }}
 {% endif %}

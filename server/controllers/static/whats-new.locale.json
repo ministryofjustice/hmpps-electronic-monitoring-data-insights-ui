@@ -6,34 +6,14 @@
       "first-paragraphs": [
         "Welcome to our service updates",
         "View highlights of what's new and what's improved for Electronic monitoring.",
-        "If you have any feedback or questions on the service or any of these updates, email <a href='mailto:emdisupport@justice.gov.uk'>emdisupport@justice.gov.uk</a>."
+        "If you have any feedback or questions on the service or any of these updates, <br>email <a href='mailto:emdisupport@justice.gov.uk'>emdisupport@justice.gov.uk</a>."
       ]
     },
     "changes": [
       {
-        "title": "Change five",
-        "dateText": "14 June 2026 at 2:01pm",
-        "description": "The probation practitioner's application for life skills training needs confirming by 28 June 2026.<a href='/'> View application</a>"
-      },
-      {
-        "title": "Change four",
-        "dateText": "7 June 2026 at 12:32pm",
-        "description": "The application is being reviewed by a case worker"
-      },
-      {
-        "title": "Change three",
-        "dateText": "16 June 2026 at 9:12am",
-        "description": "Your application has been received – reference MOJ-1234-5678"
-      },
-      {
-        "title": "Change two",
-        "dateText": "28 May 2026 at 10:45am",
-        "description": ""
-      },
-      {
-        "title": "Change one",
-        "dateText": "21 May 2026 at 1:15pm",
-        "description": ""
+        "title": "Navigating trail map points",
+        "dateText": "6 August 2026 at 2:01pm",
+        "description": "It is now easier to move through the points of a trail map. When any point is clicked, this will bring up a<br> 'ping card' of information. On this card you can now reach the start and end points of the trail data (using<br>the double arrows << >>) and all points in between (using the single arrows < >)."
       }
     ]
   }
