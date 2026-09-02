@@ -9,7 +9,13 @@ import CaseLocationActivityService, {
 import DateSearchValidationService from '../../services/dateSearchValidationService'
 import { ValidationResult } from '../../models/ValidationResult'
 import { searchLocationsQuerySchema } from '../../schemas/locationActivity/searchDateFormSchema'
-import { calculateAge, getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
+import {
+  calculateAge,
+  formatSyncDate,
+  formatSyncTime,
+  getDateComponents,
+  parseDateTimeFromISOString,
+} from '../../utils/date'
 import casesLocationLocale from '../cases/cases-location.locale.json'
 import { defaultLocationMapControls, LocationMapControls } from '../../types/locationMapControls'
 import PeopleExclusionService from '../../services/peopleExclusionService'
@@ -256,9 +262,9 @@ export default class PeopleController {
     try {
       locationDataSyncResponse = await this.locationDataSyncService.getLocationDataSyncStatus(res.locals.user.username)
     } catch (error) {
+      isDataSyncError = true
       /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
       console.error('Error fetching data freshness:', error)
-      isDataSyncError = true
     }
 
     if (hasQueryParams) {
@@ -345,6 +351,7 @@ export default class PeopleController {
     }
 
     const isMapLoading = hasSearched && positions.length > 0 && !(locationAlert && locationAlert.text)
+    const latestPosition = locationDataSyncResponse?.statuses?.[0]?.latestPosition ?? null
 
     res.render('pages/personLocation', {
       activeNav: 'cases',
@@ -375,6 +382,8 @@ export default class PeopleController {
       currentUrl: encodeURIComponent(String(req.originalUrl)),
       exclusionZones: exclusionResult?.exclusionZones ?? null,
       dataFreshness: locationDataSyncResponse,
+      dataFreshnessLatestDate: latestPosition ? formatSyncDate(latestPosition) : null,
+      dataFreshnessLatestTime: latestPosition ? formatSyncTime(latestPosition) : null,
       isDataFreshnessError: isDataSyncError,
     })
   }

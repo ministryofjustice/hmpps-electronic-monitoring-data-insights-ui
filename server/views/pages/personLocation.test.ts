@@ -7,6 +7,8 @@ interface RenderOverrides {
   isDataFreshnessError?: boolean
   dataFreshness?: { statuses: Array<{ code: string; description: string; latestPosition: string }> }
   locationAlert?: { text: string } | null
+  dataFreshnessLatestDate?: string | null
+  dataFreshnessLatestTime?: string | null
 }
 
 const renderPersonLocation = async (overrides: RenderOverrides = {}): Promise<string> => {
@@ -15,6 +17,8 @@ const renderPersonLocation = async (overrides: RenderOverrides = {}): Promise<st
     isDataFreshnessError = false,
     dataFreshness = { statuses: [] },
     locationAlert = null,
+    dataFreshnessLatestDate = null,
+    dataFreshnessLatestTime = null,
   } = overrides
   const app = express()
   nunjucksSetup(app)
@@ -65,6 +69,8 @@ const renderPersonLocation = async (overrides: RenderOverrides = {}): Promise<st
         isDataFreshnessError,
         dataFreshness,
         locationAlert,
+        dataFreshnessLatestDate,
+        dataFreshnessLatestTime,
       },
       (error, html) => {
         if (error) {
@@ -117,9 +123,12 @@ describe('personLocation template', () => {
             { code: 'DATA_OUT_OF_SYNC', description: 'Data out of sync', latestPosition: '2026-08-28T14:54:25Z' },
           ],
         },
+        dataFreshnessLatestDate: '28 August 2026',
+        dataFreshnessLatestTime: '15:54',
       })
 
       expect(html).toContain('28 August 2026')
+      expect(html).toContain('15:54')
       expect(html).toContain('There is currently a problem connecting to the trail data')
       expect(html).toContain('The tag is still recording')
     })

@@ -542,6 +542,8 @@ describe('PeopleController', () => {
         expect.objectContaining({
           dataFreshness: mockResponse,
           isDataFreshnessError: false,
+          dataFreshnessLatestDate: '28 August 2026',
+          dataFreshnessLatestTime: '15:54',
         }),
       )
     })

@@ -50,10 +50,8 @@
         }}
     {% elif dataFreshness.statuses.length > 0 %}
       <p class="govuk-body-m"> 
-        {% set date = dataFreshness.statuses[0].latestPosition | date("D MMMM YYYY") %}
-        {% set time = dataFreshness.statuses[0].latestPosition | date("HH:mm") %}
         {{ dataFreshnessErrorBanner({
-            text: "There is currently a problem connecting to the trail data. The data was last updated on " + date + " at " + time + ". After this time, location data will be missing from the map.
+            text: "There is currently a problem connecting to the trail data. The data was last updated on " + dataFreshnessLatestDate + " at " + dataFreshnessLatestTime + ". After this time, location data will be missing from the map.
             <br><br>
             The tag is still recording. When the delay is resolved, all trail data will be available to search."
           })  
