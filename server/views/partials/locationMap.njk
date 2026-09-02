@@ -39,7 +39,7 @@
   <template id="overlay-title-mdss-location">
      <div class="app-map__overlay-header-nav">  
        
-          <button type="button" class="ping-card-navigation__button" aria-label="First point" rel="prev"  data-nav="first" aria-label="First point" data-test="first-pin-card">
+          <button type="button" class="ping-card-navigation__button" aria-label="First point" rel="prev"  data-nav="first" data-test="first-pin-card">
             <span class="govuk-visually-hidden">First point</span>
             <svg width="44" height="40" viewBox="0 0 44 40" fill="none" focusable="false" aria-hidden="true" role="img">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M23.1643 20L28.9572 14.2071L27.5429 12.7929L20.3358 20L27.5429 27.2071L28.9572 25.7929L23.1643 20Z" fill="currentColor"></path>
@@ -47,14 +47,14 @@
             </svg>
           </button>
       
-          <button type="button" class="ping-card-navigation__button" aria-label="Previous point" rel="prev" data-nav="prev" aria-label="Previous point" data-test="previous-pin-card"> 
+          <button type="button" class="ping-card-navigation__button" aria-label="Previous point" rel="prev" data-nav="prev" data-test="previous-pin-card"> 
             <span class="govuk-visually-hidden">Previous point</span>
             <svg width="44" height="40" viewBox="0 0 44 40" fill="none" focusable="false" aria-hidden="true" role="img">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M20.5729 20L25.7865 14.2071L24.5137 12.7929L18.0273 20L24.5137 27.2071L25.7865 25.7929L20.5729 20Z" fill="currentColor"></path>
             </svg>
           </button>
       
-      <strong>{{ positionCardHeader }} {{ displayPointNumber }} {{ positionCardHeaderConjuction }} {{ displayTotalPoints }}</strong>  
+      <strong aria-live="polite" aria-atomic="true">{{ positionCardHeader }} {{ displayPointNumber }} {{ positionCardHeaderConjuction }} {{ displayTotalPoints }}</strong>  
     
        <button type="button" class="ping-card-navigation__button" aria-label="Next point" data-nav="next" data-test="next-pin-card">
           <span class="govuk-visually-hidden">Next point</span>
@@ -340,6 +340,28 @@
       overflow: hidden !important;
       text-overflow: ellipsis !important;
       margin: 0 6px !important;
+    }
+
+    .ping-card-navigation__button:focus {
+      outline: 3px solid;
+      outline-color: var(--govuk-focus-colour, #ffdd00);
+      outline-color: var(--govuk-focus-colour, #ffdd00);
+      outline-offset: -3px;
+      box-shadow: inset 0 0 0 6px var(--govuk-input-border-colour, #0b0c0c);
+    }
+
+    .app-map__overlay-close:focus {
+      outline: 3px solid;
+      outline-color: var(--govuk-focus-colour, #ffdd00);
+      outline-offset: 0;
+      box-shadow: inset 0 0 0 2px var(--govuk-input-border-colour, #0b0c0c);
+    }
+
+    .app-map__overlay-nav .govuk-pagination__link:focus {
+      outline: 3px solid;
+      outline-color: var(--govuk-focus-colour, #ffdd00);
+      outline-offset: 0;
+      box-shadow: inset 0 0 0 2px var(--govuk-input-border-colour, #0b0c0c);
     }
 
   `)
