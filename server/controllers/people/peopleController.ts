@@ -9,11 +9,19 @@ import CaseLocationActivityService, {
 import DateSearchValidationService from '../../services/dateSearchValidationService'
 import { ValidationResult } from '../../models/ValidationResult'
 import { searchLocationsQuerySchema } from '../../schemas/locationActivity/searchDateFormSchema'
-import { calculateAge, getDateComponents, parseDateTimeFromISOString } from '../../utils/date'
+import {
+  calculateAge,
+  formatSyncDate,
+  formatSyncTime,
+  getDateComponents,
+  parseDateTimeFromISOString,
+} from '../../utils/date'
 import casesLocationLocale from '../cases/cases-location.locale.json'
 import { defaultLocationMapControls, LocationMapControls } from '../../types/locationMapControls'
 import PeopleExclusionService from '../../services/peopleExclusionService'
 import { ApiExclusionZoneResponse } from '../../data/peopleExclusionApiClient'
+import LocationDataSyncService from '../../services/locationDataSyncService'
+import { ApiLocationDataSyncResponse } from '../../data/locationDataSyncApiClient'
 
 type SelectedPersonContext = session.SessionData['peopleSelection'][string]
 
@@ -63,6 +71,7 @@ export default class PeopleController {
     private readonly caseLocationActivityService: CaseLocationActivityService,
     private readonly dateSearchValidationService: DateSearchValidationService,
     private readonly peopleExclusionService: PeopleExclusionService,
+    private readonly locationDataSyncService: LocationDataSyncService,
   ) {}
 
   private conssumeDateFilterState(req: Request): FilterStateProps {
@@ -245,8 +254,18 @@ export default class PeopleController {
     let locationAlert: { text: string } | null = null
     let queryRange = { fromDate: '', toDate: '' }
     let formValues: LocationBuildProps
+    let locationDataSyncResponse: ApiLocationDataSyncResponse | null = null
+    let isDataSyncError = false
     const mapControls = this.buildLocationMapControls(req)
     const hasQueryParams = req.query.start !== undefined || req.query.end !== undefined
+
+    try {
+      locationDataSyncResponse = await this.locationDataSyncService.getLocationDataSyncStatus(res.locals.user.username)
+    } catch (error) {
+      isDataSyncError = true
+      /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+      console.error('Error fetching data freshness:', error)
+    }
 
     if (hasQueryParams) {
       hasSearched = true
@@ -296,7 +315,6 @@ export default class PeopleController {
               )
               positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
             } catch (error) {
-              /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
               console.error('Error fetching locations:', error)
               locationAlert = { text: casesLocationLocale.alerts.fetchError }
             }
@@ -333,6 +351,7 @@ export default class PeopleController {
     }
 
     const isMapLoading = hasSearched && positions.length > 0 && !(locationAlert && locationAlert.text)
+    const latestPosition = locationDataSyncResponse?.statuses?.[0]?.latestPosition ?? null
 
     res.render('pages/personLocation', {
       activeNav: 'cases',
@@ -362,6 +381,10 @@ export default class PeopleController {
       mapControls,
       currentUrl: encodeURIComponent(String(req.originalUrl)),
       exclusionZones: exclusionResult?.exclusionZones ?? null,
+      dataFreshness: locationDataSyncResponse,
+      dataFreshnessLatestDate: latestPosition ? formatSyncDate(latestPosition) : null,
+      dataFreshnessLatestTime: latestPosition ? formatSyncTime(latestPosition) : null,
+      isDataFreshnessError: isDataSyncError,
     })
   }
 

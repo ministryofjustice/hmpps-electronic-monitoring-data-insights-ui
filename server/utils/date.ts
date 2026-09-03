@@ -120,6 +120,24 @@ const calculateAge = (dateString?: string | null): number | null => {
   return age
 }
 
+const formatSyncDate = (datetime?: string | null): string => {
+  if (!datetime) return ''
+
+  const date = dayjs(datetime)
+  if (!date?.isValid()) return ''
+
+  return date.tz('Europe/London').format('D MMMM YYYY')
+}
+
+const formatSyncTime = (datetime?: string | null): string => {
+  if (!datetime) return ''
+
+  const date = dayjs(datetime)
+  if (!date?.isValid()) return ''
+
+  return date.tz('Europe/London').format('HH:mm')
+}
+
 export {
   parseDateTimeFromComponents,
   parseDateTimeFromISOString,
@@ -128,4 +146,6 @@ export {
   formatDate,
   formatDob,
   formatGpsDate,
+  formatSyncDate,
+  formatSyncTime,
 }

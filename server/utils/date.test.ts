@@ -3,6 +3,8 @@ import {
   formatDate,
   formatDob,
   formatGpsDate,
+  formatSyncDate,
+  formatSyncTime,
   getDateComponents,
   parseDateTimeFromComponents,
   parseDateTimeFromISOString,
@@ -176,5 +178,15 @@ describe('formatGpsDate', () => {
 
   it('should format a mid-year date correctly', () => {
     expect(formatGpsDate('2023-06-15T14:30:00Z')).toBe('15 Jun 2023, 15:30')
+  })
+})
+
+describe('Sync utils', () => {
+  it('formatSyncDate should format date in the expected format', () => {
+    expect(formatSyncDate('2026-08-28T14:54:25Z')).toBe('28 August 2026')
+  })
+
+  it('formatSyncTime should format time in the expected format', () => {
+    expect(formatSyncTime('2026-08-28T14:54:25Z')).toBe('15:54')
   })
 })

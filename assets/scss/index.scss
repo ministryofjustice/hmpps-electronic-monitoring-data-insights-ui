@@ -24,6 +24,7 @@ $govuk-suppressed-warnings: (
 @import './overrides/local';
 @import './overrides/overview';
 @import './overrides/map-help';
+@import './overrides/data-freshness-error';
 @import './overrides/technical-updates';
 @import './overrides/whats-new';
 

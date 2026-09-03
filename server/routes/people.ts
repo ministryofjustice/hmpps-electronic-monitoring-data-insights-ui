@@ -9,6 +9,7 @@ export default function peopleRoutes(
     dateSearchValidationService,
     peopleService,
     peopleExclusionService,
+    locationDataSyncService,
   }: Services,
   get: (path: string, handler: RequestHandler) => Router,
 ): void {
@@ -18,6 +19,7 @@ export default function peopleRoutes(
     caseLocationActivityService,
     dateSearchValidationService,
     peopleExclusionService,
+    locationDataSyncService,
   )
 
   get('/people/:delius_id', async (req, res) => {

@@ -21,6 +21,7 @@ import EmdiApiClient from './emdiApiClient'
 import LocationsApiClient from './locationsApiClient'
 import PeopleApiClient from './peopleApiClient'
 import PeopleExclusionApiClient from './peopleExclusionApiClient'
+import LocationDataSyncApiclient from './locationDataSyncApiClient'
 
 export const dataAccess = () => {
   const hmppsAuthClient = new AuthenticationClient(
@@ -37,6 +38,7 @@ export const dataAccess = () => {
     locationsApiClient: new LocationsApiClient(hmppsAuthClient),
     peopleApiClient: new PeopleApiClient(hmppsAuthClient),
     peopleExclusionApiClient: new PeopleExclusionApiClient(hmppsAuthClient),
+    locationDataSyncApiclient: new LocationDataSyncApiclient(hmppsAuthClient),
   }
 }
 

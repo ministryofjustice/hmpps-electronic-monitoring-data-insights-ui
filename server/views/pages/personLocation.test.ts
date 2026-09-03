@@ -2,7 +2,24 @@ import express from 'express'
 import nunjucksSetup from '../../utils/nunjucksSetup'
 import casesLocationLocale from '../../controllers/cases/cases-location.locale.json'
 
-const renderPersonLocation = async (hasErrors: boolean = false): Promise<string> => {
+interface RenderOverrides {
+  hasErrors?: boolean
+  isDataFreshnessError?: boolean
+  dataFreshness?: { statuses: Array<{ code: string; description: string; latestPosition: string }> }
+  locationAlert?: { text: string } | null
+  dataFreshnessLatestDate?: string | null
+  dataFreshnessLatestTime?: string | null
+}
+
+const renderPersonLocation = async (overrides: RenderOverrides = {}): Promise<string> => {
+  const {
+    hasErrors = false,
+    isDataFreshnessError = false,
+    dataFreshness = { statuses: [] },
+    locationAlert = null,
+    dataFreshnessLatestDate = null,
+    dataFreshnessLatestTime = null,
+  } = overrides
   const app = express()
   nunjucksSetup(app)
   app.locals.feComponents = {
@@ -49,6 +66,11 @@ const renderPersonLocation = async (hasErrors: boolean = false): Promise<string>
             toDate: { date: '', hour: '', minute: '' },
           },
         },
+        isDataFreshnessError,
+        dataFreshness,
+        locationAlert,
+        dataFreshnessLatestDate,
+        dataFreshnessLatestTime,
       },
       (error, html) => {
         if (error) {
@@ -81,8 +103,73 @@ describe('personLocation template', () => {
   })
 
   it('front-loads the page title when the form has errors', async () => {
-    const html = await renderPersonLocation(true)
+    const html = await renderPersonLocation({ hasErrors: true })
 
     expect(html).toContain('<title>Error: HMPPS Electronic Monitoring Data Insights Ui - Person Location</title>')
+  })
+
+  describe('data freshness banner', () => {
+    it('shows the sync-service-down banner when isDataFreshnessError is true', async () => {
+      const html = await renderPersonLocation({ isDataFreshnessError: true })
+
+      expect(html).toContain('The data sync service is currently down')
+    })
+
+    it('shows the stale-data banner with formatted date and time when data is out of sync', async () => {
+      const html = await renderPersonLocation({
+        isDataFreshnessError: false,
+        dataFreshness: {
+          statuses: [
+            { code: 'DATA_OUT_OF_SYNC', description: 'Data out of sync', latestPosition: '2026-08-28T14:54:25Z' },
+          ],
+        },
+        dataFreshnessLatestDate: '28 August 2026',
+        dataFreshnessLatestTime: '15:54',
+      })
+
+      expect(html).toContain('28 August 2026')
+      expect(html).toContain('15:54')
+      expect(html).toContain('There is currently a problem connecting to the trail data')
+      expect(html).toContain('The tag is still recording')
+    })
+
+    it('prioritises the sync-service-down banner over the stale-data banner when both apply', async () => {
+      const html = await renderPersonLocation({
+        isDataFreshnessError: true,
+        dataFreshness: {
+          statuses: [
+            { code: 'DATA_OUT_OF_SYNC', description: 'Data out of sync', latestPosition: '2026-08-28T14:54:25Z' },
+          ],
+        },
+      })
+
+      expect(html).toContain('The data sync service is currently down')
+      expect(html).not.toContain('problem connecting to the trail data')
+    })
+
+    it('renders the dataRecency partial when there is no freshness error and no out-of-sync status', async () => {
+      const html = await renderPersonLocation({
+        isDataFreshnessError: false,
+        dataFreshness: { statuses: [] },
+      })
+      expect(html).toContain('Service data is updated every 15 minutes.')
+      expect(html).not.toContain('The data sync service is currently down')
+      expect(html).not.toContain('problem connecting to the trail data')
+    })
+  })
+
+  describe('location alert', () => {
+    it('does not render the alert when locationAlert is null', async () => {
+      const html = await renderPersonLocation({ locationAlert: null })
+
+      expect(html).not.toContain('data-qa="location-data-error"')
+    })
+
+    it('renders the alert text when locationAlert has text', async () => {
+      const html = await renderPersonLocation({ locationAlert: { text: 'No results found for this search' } })
+
+      expect(html).toContain('data-qa="location-data-error"')
+      expect(html).toContain('No results found for this search')
+    })
   })
 })
