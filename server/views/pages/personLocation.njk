@@ -51,7 +51,7 @@
     {% elif dataFreshness.statuses.length > 0 %}
       <p class="govuk-body-m"> 
         {{ dataFreshnessErrorBanner({
-            text: "There is currently a problem connecting to the trail data. The data was last updated on " + dataFreshnessLatestDate + " at " + dataFreshnessLatestTime + ". After this time, location data will be missing from the map.
+            text: "There is currently a problem connecting to the trail data. The data was last updated on " + dataFreshnessLatestDate + " at " + dataFreshnessLatestTime + ". <br>After this time, location data will be missing from the map.
             <br><br>
             The tag is still recording. When the delay is resolved, all trail data will be available to search."
           })  
