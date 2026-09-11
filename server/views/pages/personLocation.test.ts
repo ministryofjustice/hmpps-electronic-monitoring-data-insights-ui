@@ -59,8 +59,8 @@ const renderPersonLocation = async (overrides: RenderOverrides = {}): Promise<st
         dateFilterForm: {
           action: '/people/X31092/locations',
           showCrn: false,
-          errors: hasErrors ? [{ field: 'start.hour', message: 'From hour must be between 00 and 23' }] : [],
-          errorSummary: hasErrors ? [{ text: 'From hour must be between 00 and 23', href: '#start-hour' }] : [],
+          errors: hasErrors ? [{ field: 'start.hour', message: 'Enter a correct hour' }] : [],
+          errorSummary: hasErrors ? [{ text: 'Enter a correct hour', href: '#start-hour' }] : [],
           values: {
             fromDate: { date: '', hour: '', minute: '' },
             toDate: { date: '', hour: '', minute: '' },

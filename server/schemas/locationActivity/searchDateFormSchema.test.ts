@@ -23,25 +23,25 @@ describe('searchLocationsQuerySchema', () => {
 
       expect(issues[0]).toMatchObject({
         code: 'too_small',
-        message: 'You must enter a time from hour',
+        message: `Enter an hour for 'time from'`,
         path: ['start', 'hour'],
       })
 
       expect(issues[1]).toMatchObject({
         code: 'too_small',
-        message: 'You must enter a time from minute',
+        message: `Enter a 'time from'`,
         path: ['start', 'minute'],
       })
 
       expect(issues[2]).toMatchObject({
         code: 'too_small',
-        message: 'You must enter a time to hour',
+        message: `Enter an hour for 'time to'`,
         path: ['end', 'hour'],
       })
 
       expect(issues[3]).toMatchObject({
         code: 'too_small',
-        message: 'You must enter a time to minute',
+        message: `Enter a 'time to'`,
         path: ['end', 'minute'],
       })
     }
@@ -115,7 +115,7 @@ describe('searchLocationsQuerySchema', () => {
     if (!result.success) {
       expect(result.error.issues).toHaveLength(1)
       expect(result.error.issues[0]).toMatchObject({
-        message: 'From hour must be between 00 and 23',
+        message: 'Enter a correct hour',
         path: ['start', 'hour'],
       })
       expect(result.error.issues).not.toContainEqual(expect.objectContaining({ path: ['start', 'date'] }))
@@ -158,7 +158,7 @@ describe('searchLocationsQuerySchema', () => {
 
       expect(issues[0]).toMatchObject({
         code: 'custom',
-        message: 'To date and time must be after the from date and time',
+        message: `'Date to' must be after 'date from'`,
       })
     }
   })
@@ -177,5 +177,33 @@ describe('searchLocationsQuerySchema', () => {
     })
 
     expect(result.success).toBe(true)
+  })
+
+  it('should reject when start and end date and time are exactly the same', () => {
+    const result = searchLocationsQuerySchema.safeParse({
+      start: {
+        date: '01/01/2025',
+        hour: '1',
+        minute: '1',
+      },
+      end: {
+        date: '01/01/2025',
+        hour: '1',
+        minute: '1',
+      },
+    })
+
+    expect(result.success).toBe(false)
+
+    if (!result.success) {
+      const { issues } = result.error
+      expect(issues).toHaveLength(1)
+
+      expect(issues[0]).toMatchObject({
+        code: 'custom',
+        message: `'Date from' and 'time from' must be earlier than 'date to' and 'time to'`,
+        path: ['start', 'date'],
+      })
+    }
   })
 })
