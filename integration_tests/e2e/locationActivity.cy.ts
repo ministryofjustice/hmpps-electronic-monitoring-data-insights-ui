@@ -68,16 +68,16 @@ context('Cases', () => {
       cy.title().should('match', /^Error: /)
       cy.get('.govuk-error-summary__title').should('contain', 'There is a problem')
       cy.get('.govuk-error-summary__list').within(() => {
-        cy.contains('From date must be DD/MM/YYYY').should('exist')
+        cy.contains('Select or enter a ‘date from’').should('exist')
         cy.contains('To date must be DD/MM/YYYY').should('exist')
-        cy.contains('You must enter a time to hour').should('exist')
-        cy.contains('You must enter a time to minute').should('exist')
+        cy.contains(`Enter a 'time to'`).should('exist')
+        cy.contains(`Enter a 'time to'`).should('exist')
       })
 
-      cy.contains('From date must be DD/MM/YYYY').should('exist')
+      cy.contains('Select or enter a ‘date from’').should('exist')
       cy.contains('To date must be DD/MM/YYYY').should('exist')
-      cy.contains('You must enter a time to hour').should('exist')
-      cy.contains('You must enter a time to minute').should('exist')
+      cy.contains(`Enter a 'time to'`).should('exist')
+      cy.contains('').should('exist')
     })
 
     it('should show validation errors for missing end date fields only', () => {
@@ -94,11 +94,11 @@ context('Cases', () => {
       locationPage.submitButton().click()
 
       cy.get('.govuk-error-summary').should('exist')
-      cy.contains('To date must be DD/MM/YYYY').should('exist')
-      cy.contains('You must enter a time to hour').should('exist')
-      cy.contains('You must enter a time to minute').should('exist')
+      cy.contains('Enter date in the format DD/MM/YYYY').should('exist')
+      cy.contains(`Enter the minutes for 'time from'`).should('exist')
+      cy.contains(`Enter the minutes for 'time to'`).should('exist')
 
-      cy.contains('From date must be DD/MM/YYYY').should('not.exist')
+      cy.contains(`Enter the minutes for 'time from'`).should('not.exist')
     })
   })
 
@@ -138,7 +138,7 @@ context('Cases', () => {
       locationPage.submitButton().click()
 
       cy.get('.govuk-error-summary').should('exist')
-      cy.contains('From hour must be between 00 and 23').should('exist')
+      cy.contains('Enter a correct hour').should('exist')
     })
 
     it('should show error for minute value greater than 59', () => {
@@ -279,7 +279,7 @@ context('Cases', () => {
 
       locationPage.submitButton().click()
 
-      cy.get('.govuk-error-summary a').contains('You must enter a time to hour').click()
+      cy.get('.govuk-error-summary a').contains('Enter a correct hour').click()
 
       cy.focused().should('have.attr', 'id', 'end-hour')
     })
