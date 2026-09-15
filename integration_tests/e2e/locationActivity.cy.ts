@@ -119,6 +119,24 @@ context('Cases', () => {
       locationPage.submitButton().click()
 
       cy.get('.govuk-error-summary').should('exist')
+      cy.contains('Enter date in the format DD/MM/YYYY').should('exist')
+    })
+
+    it('should show error for a date that does not exist', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+
+      locationPage.fillSearchForm({
+        startDate: '31/02/2026',
+        startHour: '10',
+        startMinute: '00',
+        endDate: '02/01/2026',
+        endHour: '15',
+        endMinute: '30',
+      })
+
+      locationPage.submitButton().click()
+
+      cy.get('.govuk-error-summary').should('exist')
       cy.contains('You must enter a valid From date and time').should('exist')
     })
   })

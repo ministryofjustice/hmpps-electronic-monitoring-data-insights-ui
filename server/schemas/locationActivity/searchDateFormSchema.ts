@@ -8,7 +8,12 @@ const isIntegerInRange = (value: string, minimum: number, maximum: number): bool
 
 const createDateTimeSchema = (label: 'From' | 'To') =>
   z.object({
-    date: z.string().min(8, `Select or enter a 'date ${label.toLowerCase()}'`),
+    date: z
+      .string()
+      .min(1, `Select or enter a 'date ${label.toLowerCase()}'`)
+      .refine(val => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(val.trim()), {
+        message: 'Enter date in the format DD/MM/YYYY',
+      }),
     hour: z
       .string()
       .trim()
