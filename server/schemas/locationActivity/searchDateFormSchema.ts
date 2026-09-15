@@ -61,6 +61,16 @@ const searchLocationsQueryValidationSchema = z
       return
     }
 
+    const sameDate = data.start.date === data.end.date
+    if (sameDate && toParsed.valueOf() < fromParsed.valueOf()) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `'Time to' must be after 'time from'`,
+        path: ['end', 'hour'],
+      })
+      return
+    }
+
     if (toParsed.valueOf() < fromParsed.valueOf()) {
       ctx.addIssue({
         code: 'custom',
