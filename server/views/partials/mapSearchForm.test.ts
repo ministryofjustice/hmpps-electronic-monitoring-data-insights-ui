@@ -96,9 +96,7 @@ describe('mapSearchForm template', () => {
   })
 
   it('only highlights the time input when the hour has an error', async () => {
-    const html = await renderMapSearchForm(undefined, [
-      { field: 'start.hour', message: 'From hour must be between 00 and 23' },
-    ])
+    const html = await renderMapSearchForm(undefined, [{ field: 'start.hour', message: 'Enter a correct hour' }])
     const dateInput = html.match(/<input\b[^>]*id="start-date"[^>]*>/)?.[0]
     const hourInput = html.match(/<input\b[^>]*id="start-hour"[^>]*>/)?.[0]
 

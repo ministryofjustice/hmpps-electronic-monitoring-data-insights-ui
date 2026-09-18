@@ -8,18 +8,23 @@ const isIntegerInRange = (value: string, minimum: number, maximum: number): bool
 
 const createDateTimeSchema = (label: 'From' | 'To') =>
   z.object({
-    date: z.string().min(8, `${label} date must be DD/MM/YYYY`),
+    date: z
+      .string()
+      .min(1, `Select or enter a 'date ${label.toLowerCase()}'`)
+      .refine(val => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(val.trim()), {
+        message: 'Enter date in the format DD/MM/YYYY',
+      }),
     hour: z
       .string()
       .trim()
-      .min(1, `You must enter a time ${label.toLowerCase()} hour`)
+      .min(1, `Enter an hour for 'time ${label.toLowerCase()}'`)
       .refine(val => val === '' || isIntegerInRange(val, 0, 23), {
-        message: `${label} hour must be between 00 and 23`,
+        message: 'Enter a correct hour',
       }),
     minute: z
       .string()
       .trim()
-      .min(1, `You must enter a time ${label.toLowerCase()} minute`)
+      .min(1, `Enter a 'time ${label.toLowerCase()}'`)
       .refine(val => val === '' || isIntegerInRange(val, 0, 59), {
         message: `${label} minute must be between 00 and 59`,
       }),
@@ -44,31 +49,50 @@ const searchLocationsQueryValidationSchema = z
     message: 'You must enter a valid to date and time',
     path: ['end', 'date'],
   })
-  .refine(
-    data => {
-      const startHourEmpty = data.start.hour.trim() === ''
-      const startMinuteEmpty = data.start.minute.trim() === ''
-      const endHourEmpty = data.end.hour.trim() === ''
-      const endMinuteEmpty = data.end.minute.trim() === ''
+  .superRefine((data, ctx) => {
+    const startHourEmpty = data.start.hour.trim() === ''
+    const startMinuteEmpty = data.start.minute.trim() === ''
+    const endHourEmpty = data.end.hour.trim() === ''
+    const endMinuteEmpty = data.end.minute.trim() === ''
 
-      if (startHourEmpty || startMinuteEmpty || endHourEmpty || endMinuteEmpty) {
-        return true
-      }
+    if (startHourEmpty || startMinuteEmpty || endHourEmpty || endMinuteEmpty) {
+      return
+    }
 
-      const fromParsed = parseDateTimeFromComponents(data.start.date, data.start.hour, data.start.minute)
-      const toParsed = parseDateTimeFromComponents(data.end.date, data.end.hour, data.end.minute)
+    const fromParsed = parseDateTimeFromComponents(data.start.date, data.start.hour, data.start.minute)
+    const toParsed = parseDateTimeFromComponents(data.end.date, data.end.hour, data.end.minute)
 
-      if (!fromParsed.isValid() || !toParsed.isValid()) {
-        return true
-      }
+    if (!fromParsed.isValid() || !toParsed.isValid()) {
+      return
+    }
 
-      return toParsed.valueOf() > fromParsed.valueOf()
-    },
-    {
-      message: 'To date and time must be after the from date and time',
-      path: ['end', 'date'],
-    },
-  )
+    const sameDate = data.start.date === data.end.date
+    if (sameDate && toParsed.valueOf() < fromParsed.valueOf()) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `'Time to' must be after 'time from'`,
+        path: ['end', 'hour'],
+      })
+      return
+    }
+
+    if (toParsed.valueOf() < fromParsed.valueOf()) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `'Date to' must be after 'date from'`,
+        path: ['end', 'date'],
+      })
+      return
+    }
+
+    if (toParsed.valueOf() === fromParsed.valueOf()) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `'Date from' and 'time from' must be earlier than 'date to' and 'time to'`,
+        path: ['start', 'date'],
+      })
+    }
+  })
 
 const searchLocationsQuerySchema = searchLocationsQueryValidationSchema.pipe(
   z
