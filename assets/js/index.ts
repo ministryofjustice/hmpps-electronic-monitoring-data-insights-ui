@@ -6,7 +6,11 @@ import './utils/appInsights'
 import { initialiseTechnicalUpdatesBanner } from './utils/technicalUpdatesBanner'
 
 govukFrontend.initAll()
-mojFrontend.initAll()
+
+const main = document.querySelector('main')
+if (main) {
+  mojFrontend.initAll({ scope: main })
+}
 
 if (document.querySelector('.location-activity')) {
   initialiseLocationDataView()
