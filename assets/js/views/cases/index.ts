@@ -19,6 +19,7 @@ import { fromLonLat } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
 import GeoJSON from 'ol/format/GeoJSON'
 import { Fill, Stroke, Style } from 'ol/style'
+import Overlay from 'ol/Overlay'
 import { queryElement } from '../../utils/utils'
 import getRotatedDirection from './controls/getRotatedDirection'
 import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
@@ -422,6 +423,35 @@ const initialiseLocationDataView = () => {
 
     bindPointKeyboardNavigation(mapContainer, positions.length, openOverlayForIndex)
 
+    const pointOverlays: Overlay[] = []
+
+    const createPointMarkerOverlays = () => {
+      positions.forEach((position, index) => {
+        const trackPosition = position as TrackPosition
+        const button = document.createElement('button')
+        button.className = 'map-marker-interaction'
+        button.type = 'button'
+        button.setAttribute(
+          'aria-label',
+          `Location point ${trackPosition.displayPointNumber ?? index + 1} of ${positions.length}`,
+        )
+
+        const overlay = new Overlay({
+          element: button,
+          position: fromLonLat([trackPosition.longitude, trackPosition.latitude]),
+          positioning: 'center-center',
+          stopEvent: true,
+        })
+
+        button.addEventListener('click', () => {
+          openOverlayForIndex(index, true)
+        })
+
+        map.addOverlay(overlay)
+        pointOverlays.push(overlay)
+      })
+    }
+
     const shadowRootMap = getShadowRoot(emMap as EmMap)
 
     shadowRootMap?.addEventListener('click', (e: Event) => {
@@ -477,6 +507,7 @@ const initialiseLocationDataView = () => {
     if (document.querySelector('#map-pan-announce')) {
       initialiseDirectionScreenReader()
     }
+    createPointMarkerOverlays()
   }
 
   setupMap()
