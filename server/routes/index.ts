@@ -8,6 +8,7 @@ import casesRoutes from './cases'
 import homeRoutes from './home'
 import peopleRoutes from './people'
 import staticRoutes from './static'
+import satelliteMapRoutes from './satelliteMap'
 
 export default function routes(services: Services): Router {
   const router = Router()
@@ -19,6 +20,7 @@ export default function routes(services: Services): Router {
   staticRoutes(services, get)
   casesRoutes(services, get, post)
   peopleRoutes(services, get)
+  satelliteMapRoutes(services.satelliteMapService, get)
   const searchController = new SearchController(auditService)
   router.use(populateSessionData)
 
