@@ -113,6 +113,14 @@ const config = {
     url: get('FLIPT_URL', 'http://localhost:8100', requiredInProduction),
     namespace: get('FLIPT_NAMESPACE', 'hmpps-electronic-monitoring-data-insights', requiredInProduction),
   },
+  satelliteMap: {
+    capabilitiesUrl: get('GETMAPPING_WMTS_CAPABILITIES_URL', ''),
+    allowedHostname: get('GETMAPPING_WMTS_ALLOWED_HOSTNAME', 'www.getmapping.com'),
+    timeout: {
+      response: Number(get('GETMAPPING_WMTS_TIMEOUT_RESPONSE', 5000)),
+      deadline: Number(get('GETMAPPING_WMTS_TIMEOUT_DEADLINE', 15000)),
+    },
+  },
 }
 
 export interface ApiConfig {

@@ -135,11 +135,26 @@ These credentials are configured using the following env variables:
 
 OS Map credentials are configured using the following env variables:
 
-
 - OS_MAPS_API_KEY
 - OS_MAPS_API_SECRET
 
+### Satellite map WMTS proxy
 
+The Getmapping APGB WMTS connection is proxied through authenticated application routes under
+`/map/satellite/wmts/`. This prevents the provider's credential-bearing URL from being sent to the browser.
+
+Configure the proxy with:
+
+- `GETMAPPING_WMTS_CAPABILITIES_URL` — the complete secret URL issued by Getmapping, ending in
+  `/APGB/1.0.0/WMTSCapabilities.xml`. When omitted, the proxy returns `503` and the rest of the application continues
+  to run.
+- `GETMAPPING_WMTS_ALLOWED_HOSTNAME` — optional provider-host override; defaults to `www.getmapping.com`.
+- `GETMAPPING_WMTS_TIMEOUT_RESPONSE` — optional socket inactivity timeout in milliseconds; defaults to `5000`.
+- `GETMAPPING_WMTS_TIMEOUT_DEADLINE` — optional total request deadline in milliseconds; defaults to `15000`.
+
+`GETMAPPING_WMTS_CAPABILITIES_URL` must be supplied from a Kubernetes/AWS secret and must not be placed in Helm values,
+source control, frontend markup or logs. The Kubernetes secret reference should only be added after the corresponding
+secret key has been provisioned in every deployment environment.
 
 ### Dependencies
 
