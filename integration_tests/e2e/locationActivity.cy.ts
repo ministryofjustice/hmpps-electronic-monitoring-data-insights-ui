@@ -68,16 +68,17 @@ context('Cases', () => {
       cy.title().should('match', /^Error: /)
       cy.get('.govuk-error-summary__title').should('contain', 'There is a problem')
       cy.get('.govuk-error-summary__list').within(() => {
-        cy.contains('From date must be DD/MM/YYYY').should('exist')
-        cy.contains('To date must be DD/MM/YYYY').should('exist')
-        cy.contains('You must enter a time to hour').should('exist')
-        cy.contains('You must enter a time to minute').should('exist')
+        cy.contains(`Select or enter a 'date from'`).should('exist')
+        cy.contains(`Enter an hour for 'time from'`).should('exist')
+        cy.contains(`Enter a 'time from'`).should('exist')
+        cy.contains(`Select or enter a 'date to'`).should('exist')
+        cy.contains(`Enter an hour for 'time to'`).should('exist')
+        cy.contains(`Enter a 'time to'`).should('exist')
       })
 
-      cy.contains('From date must be DD/MM/YYYY').should('exist')
-      cy.contains('To date must be DD/MM/YYYY').should('exist')
-      cy.contains('You must enter a time to hour').should('exist')
-      cy.contains('You must enter a time to minute').should('exist')
+      cy.contains(`Select or enter a 'date from'`).should('exist')
+      cy.contains(`Select or enter a 'date to'`).should('exist')
+      cy.contains(`Enter a 'time to'`).should('exist')
     })
 
     it('should show validation errors for missing end date fields only', () => {
@@ -94,11 +95,11 @@ context('Cases', () => {
       locationPage.submitButton().click()
 
       cy.get('.govuk-error-summary').should('exist')
-      cy.contains('To date must be DD/MM/YYYY').should('exist')
-      cy.contains('You must enter a time to hour').should('exist')
-      cy.contains('You must enter a time to minute').should('exist')
+      cy.contains(`Select or enter a 'date to'`).should('exist')
+      cy.contains(`Enter an hour for 'time to'`).should('exist')
+      cy.contains(`Enter a 'time to'`).should('exist')
 
-      cy.contains('From date must be DD/MM/YYYY').should('not.exist')
+      cy.contains(`Enter a 'time from'`).should('not.exist')
     })
   })
 
@@ -111,6 +112,24 @@ context('Cases', () => {
         startHour: '10',
         startMinute: '00',
         endDate: '2026-01-02',
+        endHour: '15',
+        endMinute: '30',
+      })
+
+      locationPage.submitButton().click()
+
+      cy.get('.govuk-error-summary').should('exist')
+      cy.contains('Enter date in the format DD/MM/YYYY').should('exist')
+    })
+
+    it('should show error for a date that does not exist', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+
+      locationPage.fillSearchForm({
+        startDate: '31/02/2026',
+        startHour: '10',
+        startMinute: '00',
+        endDate: '02/01/2026',
         endHour: '15',
         endMinute: '30',
       })
@@ -138,7 +157,7 @@ context('Cases', () => {
       locationPage.submitButton().click()
 
       cy.get('.govuk-error-summary').should('exist')
-      cy.contains('From hour must be between 00 and 23').should('exist')
+      cy.contains('Enter a correct hour').should('exist')
     })
 
     it('should show error for minute value greater than 59', () => {
@@ -176,7 +195,7 @@ context('Cases', () => {
       locationPage.submitButton().click()
 
       cy.get('.govuk-error-summary').should('exist')
-      cy.contains('To date and time must be after the from date and time').should('exist')
+      cy.contains(`'Date to' must be after 'date from'`).should('exist')
     })
 
     it('should show error when end time is before start time on same date', () => {
@@ -195,7 +214,7 @@ context('Cases', () => {
       locationPage.submitButton().click()
 
       cy.get('.govuk-error-summary').should('exist')
-      cy.contains('To date and time must be after the from date and time').should('exist')
+      cy.contains(`'Time to' must be after 'time from'`).should('exist')
     })
   })
 
@@ -262,7 +281,7 @@ context('Cases', () => {
 
       locationPage.submitButton().click()
 
-      cy.get('.govuk-error-summary a').contains('To date must be DD/MM/YYYY').click()
+      cy.get('.govuk-error-summary a').contains(`Select or enter a 'date to'`).click()
 
       cy.focused().should('have.attr', 'id', 'end-date')
     })
@@ -275,11 +294,13 @@ context('Cases', () => {
         startHour: '10',
         startMinute: '00',
         endDate: '02/01/2026',
+        endHour: '25',
+        endMinute: '00',
       })
 
       locationPage.submitButton().click()
 
-      cy.get('.govuk-error-summary a').contains('You must enter a time to hour').click()
+      cy.get('.govuk-error-summary a').contains('Enter a correct hour').click()
 
       cy.focused().should('have.attr', 'id', 'end-hour')
     })
