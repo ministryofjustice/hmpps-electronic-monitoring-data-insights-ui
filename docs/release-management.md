@@ -40,7 +40,8 @@ Tags and released container versions are immutable. Do not delete, move or reuse
 
 Open **Actions**, select **Deploy to environment**, choose the environment and enter the released version without its
 leading `v`, for example `1.2.3`. The workflow rejects malformed versions, draft or missing GitHub releases, and
-missing container images before deployment. Environment approval rules continue to control promotion.
+missing container images before deployment. It also verifies that the image's embedded source revision matches the
+GitHub release tag. Environment approval rules continue to control promotion.
 
 Promote the same released container image through every environment; do not rebuild it between environments.
 
@@ -48,6 +49,7 @@ Promote the same released container image through every environment; do not rebu
 
 If release creation fails, rerun the same workflow run after correcting the operational problem. If its tag was already
 created, the workflow verifies that it still points to the expected commit and resumes without creating a second tag.
+If its versioned image already exists, the workflow verifies that it was built from that same commit before reusing it.
 A rerun of a completed release reports that it is already complete and does not recreate the tag, image or release.
 
 If code must change, merge the fix, test it in development and create a new release. Never move an existing tag.

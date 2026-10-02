@@ -48,8 +48,8 @@ jobs:
           persist-credentials: false
       - name: Fetch main and release tags
         run: git fetch origin main --tags --force
-      - name: Test release version calculation
-        run: node --test .github/scripts/calculate-release-version.test.mjs
+      - name: Test release scripts
+        run: node --test .github/scripts/*.test.mjs
       - id: version
         name: Calculate release version
         env:
@@ -81,8 +81,10 @@ jobs:
         name: Check for a release image
         env:
           IMAGE: ghcr.io/ministryofjustice/${{ github.event.repository.name }}:${{ steps.version.outputs.version }}
+          SOURCE_SHA: ${{ steps.version.outputs.source_sha }}
         run: |
           if docker buildx imagetools inspect "$IMAGE" >/dev/null 2>&1; then
+            node .github/scripts/verify-release-image.mjs "$IMAGE" "$SOURCE_SHA"
             echo "image_exists=true" >> "$GITHUB_OUTPUT"
           else
             echo "image_exists=false" >> "$GITHUB_OUTPUT"
@@ -227,6 +229,9 @@ jobs:
       - build_release_image
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
         with:
           registry: ghcr.io
@@ -235,7 +240,8 @@ jobs:
       - name: Verify release image
         env:
           IMAGE: ghcr.io/ministryofjustice/${{ github.event.repository.name }}:${{ needs.prepare.outputs.version }}
-        run: docker buildx imagetools inspect "$IMAGE"
+          SOURCE_SHA: ${{ needs.prepare.outputs.source_sha }}
+        run: node .github/scripts/verify-release-image.mjs "$IMAGE" "$SOURCE_SHA"
       - name: Create or publish release
         env:
           GH_TOKEN: ${{ github.token }}
