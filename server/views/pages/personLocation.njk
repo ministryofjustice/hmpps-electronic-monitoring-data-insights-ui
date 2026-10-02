@@ -43,11 +43,12 @@
     </h1>
     <h2 class="govuk-heading-m">{{ locale.title }} </h2>
 
-    {% if isDataFreshnessError %}  
-       {{ dataFreshnessErrorBanner({
-            text: "The data sync service is currently down"
-          })  
-        }}
+    {% if isDataFreshnessError %}
+      {{ mojApiError({
+        attributes: {
+          "data-qa": "data-freshness-error"
+        }
+      }) }}
     {% elif dataFreshness.statuses.length > 0 %}
       <p class="govuk-body-m"> 
         {{ dataFreshnessErrorBanner({
