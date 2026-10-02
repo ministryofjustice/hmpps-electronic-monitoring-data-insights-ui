@@ -1,9 +1,8 @@
 import { Readable } from 'stream'
 
-import express, { type RequestHandler } from 'express'
+import express from 'express'
 import request from 'supertest'
 
-import asyncMiddleware from '../middleware/asyncMiddleware'
 import SatelliteMapError from '../services/satelliteMapError'
 import SatelliteMapService from '../services/satelliteMapService'
 import satelliteMapRoutes from './satelliteMap'
@@ -13,10 +12,7 @@ const satelliteMapService = {
 } as unknown as jest.Mocked<SatelliteMapService>
 
 const app = express()
-const router = express.Router()
-const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
-satelliteMapRoutes(satelliteMapService, get)
-app.use(router)
+app.use(satelliteMapRoutes(satelliteMapService))
 
 beforeEach(() => jest.resetAllMocks())
 
