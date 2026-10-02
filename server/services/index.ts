@@ -9,6 +9,8 @@ import PeopleExclusionService from './peopleExclusionService'
 import PeopleService from './peopleService'
 import TrailService from './trailService'
 import LocationDataSyncService from './locationDataSyncService'
+import SatelliteMapService from './satelliteMapService'
+import config from '../config'
 
 export const services = () => {
   const {
@@ -31,6 +33,10 @@ export const services = () => {
   const flagService = new FlagService()
   const peopleExclusionService = new PeopleExclusionService(peopleExclusionApiClient)
   const locationDataSyncService = new LocationDataSyncService(locationDataSyncApiclient)
+  const satelliteMapService = new SatelliteMapService(
+    config.satelliteMap,
+    new URL('/map/satellite/wmts/', config.ingressUrl).href,
+  )
   return {
     applicationInfo,
     auditService,
@@ -43,6 +49,7 @@ export const services = () => {
     flagService,
     peopleExclusionService,
     locationDataSyncService,
+    satelliteMapService,
   }
 }
 
