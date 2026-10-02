@@ -109,10 +109,13 @@ describe('personLocation template', () => {
   })
 
   describe('data freshness banner', () => {
-    it('shows the sync-service-down banner when isDataFreshnessError is true', async () => {
+    it('shows the standard service error banner when the data freshness service is unavailable', async () => {
       const html = await renderPersonLocation({ isDataFreshnessError: true })
 
-      expect(html).toContain('The data sync service is currently down')
+      expect(html).toContain('data-qa="data-freshness-error"')
+      expect(html).toContain('Sorry, there is a problem with the service')
+      expect(html).toContain('Some information on this page may be unavailable. Try again later.')
+      expect(html).not.toContain('The data sync service is currently down')
     })
 
     it('shows the stale-data banner with formatted date and time when data is out of sync', async () => {
@@ -133,7 +136,7 @@ describe('personLocation template', () => {
       expect(html).toContain('The tag is still recording')
     })
 
-    it('prioritises the sync-service-down banner over the stale-data banner when both apply', async () => {
+    it('prioritises the service error banner over the stale-data banner when both apply', async () => {
       const html = await renderPersonLocation({
         isDataFreshnessError: true,
         dataFreshness: {
@@ -143,7 +146,7 @@ describe('personLocation template', () => {
         },
       })
 
-      expect(html).toContain('The data sync service is currently down')
+      expect(html).toContain('Sorry, there is a problem with the service')
       expect(html).not.toContain('problem connecting to the trail data')
     })
 
@@ -153,7 +156,7 @@ describe('personLocation template', () => {
         dataFreshness: { statuses: [] },
       })
       expect(html).toContain('Service data is updated every 15 minutes.')
-      expect(html).not.toContain('The data sync service is currently down')
+      expect(html).not.toContain('Sorry, there is a problem with the service')
       expect(html).not.toContain('problem connecting to the trail data')
     })
   })
