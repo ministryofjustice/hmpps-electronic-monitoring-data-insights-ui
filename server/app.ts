@@ -20,6 +20,7 @@ import evaluateFeatureFlags from './middleware/evaluateFeatureFlags'
 import setTechnicalUpdatesBannerVisibility from './middleware/setTechnicalUpdatesBannerVisibility'
 
 import routes from './routes'
+import satelliteMapRoutes from './routes/satelliteMap'
 import type { Services } from './services'
 import logger from '../logger'
 import config from './config'
@@ -53,6 +54,11 @@ export default function createApp(services: Services): express.Application {
   app.use(authorisationMiddleware())
   app.use(setUpCsrf())
   app.use(setUpCurrentUser())
+
+  // Map clients request many tiles for a single page view. Keep these authenticated
+  // requests ahead of page-only middleware that calls Flipt and the component API.
+  app.use(satelliteMapRoutes(services.satelliteMapService))
+
   app.use(setTechnicalUpdatesBannerVisibility())
   app.use(evaluateFeatureFlags(services.flagService))
 
