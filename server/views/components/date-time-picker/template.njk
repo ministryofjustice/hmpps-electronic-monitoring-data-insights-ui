@@ -5,15 +5,23 @@
 {% set hourErrorMessage = null %}
 {% set minuteErrorMessage = null %}
 {% set timeErrorMessage = null %}
+{% set hourHasError = false %}
+{% set minuteHasError = false %}
 
 {% if params.errors %}
     {% for error in params.errors %}
         {% if error.field == params.id + '.date' %}
             {% set dateErrorMessage = error.message %}
         {% elif error.field == params.id + '.hour' %}
-            {% set hourErrorMessage = error.message %}
+            {% set hourHasError = true %}
+            {% if not error.highlightOnly %}
+                {% set hourErrorMessage = error.message %}
+            {% endif %} 
         {% elif error.field == params.id + '.minute' %}
-            {% set minuteErrorMessage = error.message %}
+            {% set minuteHasError = true %}
+            {% if not error.highlightOnly %}
+                {% set minuteErrorMessage = error.message %}
+            {% endif %}
         {% endif %}
     {% endfor %}
 {% endif %}
@@ -58,7 +66,7 @@
                     label: "Hour",
                     id: params.id + "-hour",
                     name: params.name + "[hour]",
-                    classes: "govuk-input--width-2" + (" govuk-input--error" if hourErrorMessage else ""),
+                    classes: "govuk-input--width-2" + (" govuk-input--error" if hourHasError else ""),
                     value: params.hour,
                     attributes: {
                         "data-qa": params.id + "-hour",
@@ -69,7 +77,7 @@
                     label: "Minute",
                     id: params.id + "-minute",
                     name: params.name + "[minute]",
-                    classes: "govuk-input--width-2" + (" govuk-input--error" if minuteErrorMessage else ""),
+                    classes: "govuk-input--width-2" + (" govuk-input--error" if minuteHasError else ""),
                     value: params.minute,
                     attributes: {
                         "data-qa": params.id + "-minute",

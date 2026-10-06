@@ -9,26 +9,27 @@ dayjs.extend(timezone)
 dayjs.extend(customParseFormat)
 dayjs.extend(isSameOrBefore)
 
+const pad2 = (v: string) => v.trim().padStart(2, '0')
+
 const parseDateTimeFromComponents = (date: string, hour: string, minute: string, second?: string) => {
-  const dateTimeString = second ? `${date} ${hour}:${minute}:${second}` : `${date} ${hour}:${minute}`
+  const dateTrim = date?.trim() ?? ''
+  const hourTrim = hour?.trim() ?? ''
+  const minuteTrim = minute?.trim() ?? ''
+  const secondTrim = second?.trim() ?? ''
 
-  const formats = [
-    'D/M/YYYY H:m',
-    'DD/MM/YYYY H:m',
-    'D/M/YYYY HH:mm',
-    'DD/MM/YYYY HH:mm',
-    'D/M/YYYY H:m:s',
-    'DD/MM/YYYY H:m:s',
-    'D/M/YYYY HH:mm:ss',
-    'DD/MM/YYYY HH:mm:ss',
-  ]
-  const validationDate = dayjs(dateTimeString, formats, true)
+  if (!dateTrim || !hourTrim || !minuteTrim) return dayjs(null)
 
-  if (!validationDate?.isValid()) {
-    return dayjs(null)
-  }
+  const [d = '', m = '', y = ''] = dateTrim.split('/')
+  const normalisedDate = `${pad2(d)}/${pad2(m)}/${y}`
+  const time = secondTrim
+    ? `${pad2(hourTrim)}:${pad2(minuteTrim)}:${pad2(secondTrim)}`
+    : `${pad2(hourTrim)}:${pad2(minuteTrim)}`
+  const format = secondTrim ? 'DD/MM/YYYY HH:mm:ss' : 'DD/MM/YYYY HH:mm'
+  const input = `${normalisedDate} ${time}`
 
-  return dayjs.tz(dateTimeString, second ? 'D/M/YYYY H:m:s' : 'D/M/YYYY H:m', 'Europe/London')
+  if (!dayjs(input, format, true).isValid()) return dayjs(null)
+
+  return dayjs.tz(input, format, 'Europe/London')
 }
 
 const parseDateTimeFromISOString = (dateString: string) => {

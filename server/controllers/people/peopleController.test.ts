@@ -326,8 +326,8 @@ describe('PeopleController', () => {
   it('preserves submitted date formatting in the location search form', async () => {
     setPersonContext()
     req.query = {
-      start: { date: '2/6/2026', hour: '01', minute: '05' },
-      end: { date: '3/6/2026', hour: '02', minute: '06' },
+      start: { date: '02/06/2026', hour: '01', minute: '05' },
+      end: { date: '03/06/2026', hour: '02', minute: '06' },
     }
     caseLocationActivityService.getPositions.mockResolvedValue([])
 
@@ -345,8 +345,8 @@ describe('PeopleController', () => {
       expect.objectContaining({
         dateFilterForm: expect.objectContaining({
           values: {
-            fromDate: { date: '2/6/2026', hour: '01', minute: '05', second: '00' },
-            toDate: { date: '3/6/2026', hour: '02', minute: '06', second: '00' },
+            fromDate: { date: '02/06/2026', hour: '01', minute: '05', second: '00' },
+            toDate: { date: '03/06/2026', hour: '02', minute: '06', second: '00' },
           },
         }),
       }),
