@@ -32,6 +32,16 @@ export default class LocationActivityPage extends Page {
 
   emMap = (): PageElement => cy.get('[data-qa=em-map]')
 
+  errorSummaryLinks = (): PageElement => cy.get('.govuk-error-summary__list a')
+
+  expectHighlighted = (...ids: string[]): void => {
+    ids.forEach(id => cy.get(`#${id}`).should('have.class', 'govuk-input--error'))
+  }
+
+  expectNotHighlighted = (...ids: string[]): void => {
+    ids.forEach(id => cy.get(`#${id}`).should('not.have.class', 'govuk-input--error'))
+  }
+
   fillSearchForm = ({
     crn = '',
     startDate = '',

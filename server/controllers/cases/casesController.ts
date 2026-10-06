@@ -54,6 +54,7 @@ interface ValidationError {
   field: string
   message: string
   href?: string
+  highlightOnly?: boolean
 }
 
 export default class CasesController {
@@ -291,12 +292,14 @@ export default class CasesController {
         }
         validationErrors = queryResult.error.issues.map(issue => {
           const field = issue.path.join('.')
-
           const href = `#${issue.path.join('-')}`
+          const { params } = issue as { params?: { highlightOnly?: boolean } }
+
           return {
             field,
             message: issue.message,
             href,
+            highlightOnly: params?.highlightOnly === true,
           }
         })
       } else {
@@ -351,7 +354,9 @@ export default class CasesController {
         values: formValues,
         crn,
         errors: validationErrors,
-        errorSummary: validationErrors.map(err => ({ text: err.message, href: err?.href })),
+        errorSummary: validationErrors
+          .filter(err => !err.highlightOnly)
+          .map(err => ({ text: err.message, href: err?.href })),
       },
       hasSearched,
       fromDate: queryRange.fromDate,

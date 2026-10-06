@@ -2,6 +2,23 @@ import CasesPage from '../pages/cases'
 import LocationActivityPage from '../pages/locationActivity'
 import Page from '../pages/page'
 
+const londonToday = (): string =>
+  new Date().toLocaleDateString('en-GB', {
+    timeZone: 'Europe/London',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+
+const countOccurrences = (text: string, needle: string): number => text.split(needle).length - 1
+
+const expectSingleInlineTimeMessage = (side: 'start' | 'end', message: string) => {
+  cy.get(`#${side}-time-error`)
+    .should('have.length', 1)
+    .invoke('text')
+    .then(text => expect(countOccurrences(text, message), `"${message}" shown once inline`).to.eq(1))
+}
+
 context('Cases', () => {
   const locatioActivitySessionid = 'location-activity-session-id'
 
@@ -69,15 +86,16 @@ context('Cases', () => {
       cy.get('.govuk-error-summary__title').should('contain', 'There is a problem')
       cy.get('.govuk-error-summary__list').within(() => {
         cy.contains(`Select or enter a 'date from'`).should('exist')
-        cy.contains(`Enter an hour for 'time from'`).should('exist')
         cy.contains(`Enter a 'time from'`).should('exist')
         cy.contains(`Select or enter a 'date to'`).should('exist')
-        cy.contains(`Enter an hour for 'time to'`).should('exist')
         cy.contains(`Enter a 'time to'`).should('exist')
+        cy.contains(`Enter an hour for`).should('not.exist')
       })
+      locationPage.errorSummaryLinks().should('have.length', 4)
 
       cy.contains(`Select or enter a 'date from'`).should('exist')
       cy.contains(`Select or enter a 'date to'`).should('exist')
+      cy.contains(`Enter a 'time from'`).should('exist')
       cy.contains(`Enter a 'time to'`).should('exist')
     })
 
@@ -96,8 +114,8 @@ context('Cases', () => {
 
       cy.get('.govuk-error-summary').should('exist')
       cy.contains(`Select or enter a 'date to'`).should('exist')
-      cy.contains(`Enter an hour for 'time to'`).should('exist')
       cy.contains(`Enter a 'time to'`).should('exist')
+      locationPage.errorSummaryLinks().should('have.length', 2)
 
       cy.contains(`Enter a 'time from'`).should('not.exist')
     })
@@ -137,12 +155,13 @@ context('Cases', () => {
       locationPage.submitButton().click()
 
       cy.get('.govuk-error-summary').should('exist')
-      cy.contains('You must enter a valid From date and time').should('exist')
+      cy.contains('Enter a correct date').should('exist')
+      locationPage.errorSummaryLinks().should('have.length', 1)
     })
   })
 
   describe('Form validation - invalid time values', () => {
-    it('should show error for hour value greater than 23', () => {
+    it('should show error for hour value greater than 23 and highlight only the hour', () => {
       const locationPage = Page.verifyOnPage(LocationActivityPage)
 
       locationPage.fillSearchForm({
@@ -158,9 +177,13 @@ context('Cases', () => {
 
       cy.get('.govuk-error-summary').should('exist')
       cy.contains('Enter a correct hour').should('exist')
+      locationPage.errorSummaryLinks().should('have.length', 1)
+      locationPage.expectHighlighted('start-hour')
+      locationPage.submitButton().click()
+      locationPage.expectNotHighlighted('start-minute', 'end-hour', 'end-minute')
     })
 
-    it('should show error for minute value greater than 59', () => {
+    it('should show error for minute value greater than 59 and highlight only the minute', () => {
       const locationPage = Page.verifyOnPage(LocationActivityPage)
 
       locationPage.fillSearchForm({
@@ -175,7 +198,249 @@ context('Cases', () => {
       locationPage.submitButton().click()
 
       cy.get('.govuk-error-summary').should('exist')
-      cy.contains('From minute must be between 00 and 59').should('exist')
+      cy.contains('Enter the correct minutes').should('exist')
+      locationPage.errorSummaryLinks().should('have.length', 1)
+      locationPage.expectHighlighted('start-minute')
+      locationPage.expectNotHighlighted('start-hour', 'end-hour', 'end-minute')
+    })
+  })
+
+  describe('Form validation - hour and minute highlighting', () => {
+    it('should highlight both inputs with one summary link and one inline message when the whole time is empty', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+
+      locationPage.fillSearchForm({
+        startDate: '01/01/2026',
+        startHour: '10',
+        startMinute: '00',
+        endDate: '02/01/2026',
+      })
+
+      locationPage.submitButton().click()
+
+      locationPage.errorSummaryLinks().should('have.length', 1)
+      locationPage.errorSummaryLinks().should('contain', `Enter a 'time to'`)
+      locationPage.errorSummaryLinks().should('have.attr', 'href', '#end-hour')
+
+      expectSingleInlineTimeMessage('end', `Enter a 'time to'`)
+      locationPage.expectHighlighted('end-hour', 'end-minute')
+      locationPage.expectNotHighlighted('start-hour', 'start-minute')
+    })
+
+    it('should highlight only the hour when only the hour is empty', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+
+      locationPage.fillSearchForm({
+        startDate: '01/01/2026',
+        startHour: '10',
+        startMinute: '00',
+        endDate: '02/01/2026',
+        endMinute: '30',
+      })
+
+      locationPage.submitButton().click()
+
+      locationPage.errorSummaryLinks().should('have.length', 1)
+      locationPage.errorSummaryLinks().should('contain', `Enter an hour for 'time to'`)
+      locationPage.expectHighlighted('end-hour')
+      locationPage.expectNotHighlighted('end-minute')
+    })
+
+    it('should highlight only the minute when only the minute is empty', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+
+      locationPage.fillSearchForm({
+        startDate: '01/01/2026',
+        startHour: '10',
+        startMinute: '00',
+        endDate: '02/01/2026',
+        endHour: '15',
+      })
+
+      locationPage.submitButton().click()
+
+      locationPage.errorSummaryLinks().should('have.length', 1)
+      locationPage.errorSummaryLinks().should('contain', `Enter the minutes for 'time to'`)
+      locationPage.errorSummaryLinks().should('have.attr', 'href', '#end-minute')
+      locationPage.expectHighlighted('end-minute')
+      locationPage.expectNotHighlighted('end-hour')
+    })
+
+    it('should show both messages and highlight both inputs when the hour is empty and the minute is invalid', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+
+      locationPage.fillSearchForm({
+        startDate: '01/01/2026',
+        startHour: '10',
+        startMinute: '00',
+        endDate: '02/01/2026',
+        endMinute: '60',
+      })
+
+      locationPage.submitButton().click()
+
+      locationPage.errorSummaryLinks().should('have.length', 2)
+      locationPage.errorSummaryLinks().should('contain', `Enter an hour for 'time to'`)
+      locationPage.errorSummaryLinks().should('contain', 'Enter the correct minutes')
+      cy.get('#end-time-error')
+        .should('contain', `Enter an hour for 'time to'`)
+        .and('contain', 'Enter the correct minutes')
+      locationPage.expectHighlighted('end-hour', 'end-minute')
+    })
+
+    it('should highlight both inputs with a single message when time to is later today', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+      const today = londonToday()
+
+      locationPage.fillSearchForm({
+        startDate: today,
+        startHour: '00',
+        startMinute: '00',
+        endDate: today,
+        endHour: '23',
+        endMinute: '59',
+      })
+
+      locationPage.submitButton().click()
+
+      cy.title().should('match', /^Error: /)
+      locationPage.errorSummaryLinks().should('have.length', 1)
+      locationPage.errorSummaryLinks().should('contain', `Enter a 'time to' that is in the past`)
+      expectSingleInlineTimeMessage('end', `Enter a 'time to' that is in the past`)
+      locationPage.expectHighlighted('end-hour', 'end-minute')
+      locationPage.expectNotHighlighted('start-hour', 'start-minute')
+
+      cy.get('#end-hour').should('have.value', '23')
+      cy.get('#end-minute').should('have.value', '59')
+    })
+
+    it('should show an error for each side when both times are later today', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+      const today = londonToday()
+
+      locationPage.fillSearchForm({
+        startDate: today,
+        startHour: '23',
+        startMinute: '58',
+        endDate: today,
+        endHour: '23',
+        endMinute: '59',
+      })
+
+      locationPage.submitButton().click()
+
+      locationPage.errorSummaryLinks().should('have.length', 2)
+      locationPage.errorSummaryLinks().should('contain', `Enter a 'time from' that is in the past`)
+      locationPage.errorSummaryLinks().should('contain', `Enter a 'time to' that is in the past`)
+      expectSingleInlineTimeMessage('start', `Enter a 'time from' that is in the past`)
+      expectSingleInlineTimeMessage('end', `Enter a 'time to' that is in the past`)
+      locationPage.expectHighlighted('start-hour', 'start-minute', 'end-hour', 'end-minute')
+    })
+
+    it('should highlight both end inputs with a single message when time to is before time from on the same date', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+
+      locationPage.fillSearchForm({
+        startDate: '01/01/2026',
+        startHour: '15',
+        startMinute: '30',
+        endDate: '01/01/2026',
+        endHour: '10',
+        endMinute: '00',
+      })
+
+      locationPage.submitButton().click()
+
+      locationPage.errorSummaryLinks().should('have.length', 1)
+      locationPage.errorSummaryLinks().should('contain', `'Time to' must be after 'time from'`)
+      locationPage.errorSummaryLinks().should('have.attr', 'href', '#end-hour')
+      expectSingleInlineTimeMessage('end', `'Time to' must be after 'time from'`)
+      locationPage.expectHighlighted('end-hour', 'end-minute')
+      locationPage.expectNotHighlighted('start-hour', 'start-minute')
+    })
+
+    it('should show a date error and a time error together on the same side', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+
+      locationPage.fillSearchForm({
+        startDate: '2026-01-01', // Wrong format
+        startHour: '10',
+        startMinute: '00',
+        endDate: '02/01/2026',
+      })
+
+      locationPage.submitButton().click()
+
+      locationPage.errorSummaryLinks().should('have.length', 2)
+      locationPage.errorSummaryLinks().should('contain', 'Enter date in the format DD/MM/YYYY')
+      locationPage.errorSummaryLinks().should('contain', `Enter a 'time to'`)
+      locationPage.expectHighlighted('end-hour', 'end-minute')
+      locationPage.expectNotHighlighted('start-hour', 'start-minute')
+    })
+
+    it('should give every summary link a target when several inputs are invalid', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+
+      locationPage.fillSearchForm({
+        startDate: '2026-01-01', // Wrong format
+        startHour: '10',
+        startMinute: '00',
+        endDate: '02/01/2026',
+        endHour: '25',
+        endMinute: '60',
+      })
+
+      locationPage.submitButton().click()
+
+      locationPage.errorSummaryLinks().should('have.length', 3)
+      locationPage.errorSummaryLinks().then($links => {
+        const hrefs = $links.toArray().map(link => link.getAttribute('href'))
+        expect(hrefs).to.have.members(['#start-date', '#end-hour', '#end-minute'])
+        hrefs.forEach(href => cy.get(href as string).should('exist'))
+      })
+    })
+
+    it('should focus the hour input when clicking a link for an error that highlights both inputs', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+
+      locationPage.fillSearchForm({
+        startDate: '01/01/2026',
+        startHour: '15',
+        startMinute: '30',
+        endDate: '01/01/2026',
+        endHour: '10',
+        endMinute: '00',
+      })
+
+      locationPage.submitButton().click()
+
+      locationPage.errorSummaryLinks().contains(`'Time to' must be after 'time from'`).click()
+
+      cy.focused().should('have.attr', 'id', 'end-hour')
+    })
+
+    it('should clear the errors and highlighting when clearing the filters', () => {
+      const locationPage = Page.verifyOnPage(LocationActivityPage)
+
+      locationPage.fillSearchForm({
+        startDate: '01/01/2026',
+        startHour: '15',
+        startMinute: '30',
+        endDate: '01/01/2026',
+        endHour: '10',
+        endMinute: '00',
+      })
+
+      locationPage.submitButton().click()
+      locationPage.expectHighlighted('end-hour', 'end-minute')
+
+      locationPage.dateSearchForm().within(() => {
+        locationPage.clearFiltersLink().click()
+      })
+
+      cy.get('.govuk-error-summary').should('not.exist')
+      cy.get('.govuk-error-message').should('not.exist')
+      locationPage.expectNotHighlighted('end-hour', 'end-minute')
     })
   })
 

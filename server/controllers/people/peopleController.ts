@@ -62,6 +62,7 @@ interface ValidationError {
   field: string
   message: string
   href?: string
+  highlightOnly?: boolean
 }
 
 export default class PeopleController {
@@ -289,10 +290,12 @@ export default class PeopleController {
         validationErrors = queryResult.error.issues.map(issue => {
           const field = issue.path.join('.')
           const href = `#${issue.path.join('-')}`
+          const { params } = issue as { params?: { highlightOnly?: boolean } }
           return {
             field,
             message: issue.message,
             href,
+            highlightOnly: params?.highlightOnly === true,
           }
         })
       } else {
@@ -370,7 +373,9 @@ export default class PeopleController {
         action: `/people/${deliusId}/locations`,
         values: formValues,
         errors: validationErrors,
-        errorSummary: validationErrors.map(err => ({ text: err.message, href: err?.href })),
+        errorSummary: validationErrors
+          .filter(err => !err.highlightOnly)
+          .map(err => ({ text: err.message, href: err?.href })),
         showCrn: false,
       },
       hasSearched,
