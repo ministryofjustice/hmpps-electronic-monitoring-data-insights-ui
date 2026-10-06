@@ -4,8 +4,9 @@ The UI is versioned and released independently from the API. A release is an imm
 has been tested in development and has received the required human sign-off. Creating a release does not deploy it to
 pre-production or production.
 
-Every push to `main` is built with a development snapshot version and deployed only to the development environment.
-One or more tickets can therefore be tested and signed off together before a UI release is created.
+Every push to `main` is built with a development snapshot version and deployed to the development environment. The
+same pipeline then waits for the configured environment approvals before promoting that snapshot to pre-production
+and production. One or more tickets can therefore be tested and signed off before each promotion.
 
 ## Create a release
 
