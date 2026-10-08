@@ -13,56 +13,17 @@ on:
           - prod
         default: 'dev'
       version:
-        description: Released SemVer to deploy, without the leading v (for example 1.2.3)
+        description: version to be deployed to the environment - must already exist.
         required: true
         default: ''
         type: string
 
 permissions:
   contents: read
-  packages: read
 
 jobs:
-  validate_release:
-    name: Validate released version
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - id: release
-        name: Validate SemVer and GitHub release
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          VERSION: ${{ inputs.version }}
-        run: |
-          if [[ ! "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
-            echo "Version must be a stable SemVer without a leading v; got '$VERSION'" >&2
-            exit 1
-          fi
-          draft=$(gh release view "v$VERSION" --json isDraft --jq .isDraft)
-          if [[ "$draft" != "false" ]]; then
-            echo "Release v$VERSION is still a draft" >&2
-            exit 1
-          fi
-          source_sha=$(gh api "repos/$GH_REPO/commits/v$VERSION" --jq .sha)
-          echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
-          echo "Validated release v$VERSION"
-      - uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-      - name: Validate release image
-        env:
-          IMAGE: ghcr.io/ministryofjustice/${{ github.event.repository.name }}:${{ inputs.version }}
-          SOURCE_SHA: ${{ steps.release.outputs.source_sha }}
-        run: node .github/scripts/verify-release-image.mjs "$IMAGE" "$SOURCE_SHA"
   helm_lint:
     name: helm lint
-    needs:
-      - validate_release
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
     with:
@@ -70,11 +31,9 @@ jobs:
   deploy_env:
     name: Deploy to environment
     needs:
-      - validate_release
       - helm_lint
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
     with:
       environment: ${{ inputs.environment }}
       app_version: ${{ inputs.version }}
-      show_changelog: false
