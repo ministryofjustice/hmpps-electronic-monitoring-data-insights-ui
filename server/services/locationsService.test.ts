@@ -26,6 +26,7 @@ describe('LocationsService', () => {
     geometry: 'POINT(-2.429 53.578)',
     latitude: 53.578,
     longitude: -2.429,
+    tagStatus: 'Exclusion breach',
   }
 
   const mappedLocation: Location = {
@@ -41,6 +42,7 @@ describe('LocationsService', () => {
     geometry: 'POINT(-2.429 53.578)',
     latitude: 53.578,
     longitude: -2.429,
+    tagStatus: 'Exclusion breach',
   }
 
   beforeEach(() => {

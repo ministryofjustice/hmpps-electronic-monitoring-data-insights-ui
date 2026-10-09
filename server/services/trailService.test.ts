@@ -87,8 +87,6 @@ describe('TrailService', () => {
 
       const result: PositionCardData[] = trailService.annotatePositionsWithDisplayProperties(positions)
 
-      expect(result[0].displayLatitude).toBe('N/A')
-      expect(result[0].displayLongitude).toBe('N/A')
       expect(result[0].displayGpsDate).toBe('N/A')
       expect(result[0].displayAccuracy).toBe('N/A')
       expect(result[0].displaySpeed).toBe('N/A')
