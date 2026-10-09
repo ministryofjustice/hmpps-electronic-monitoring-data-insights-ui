@@ -16,6 +16,7 @@ export type ApiLocation = {
   geometry: string | null
   latitude: number | null
   longitude: number | null
+  tagStatus: string | null
 }
 
 export type ApiLocationsResponse = {

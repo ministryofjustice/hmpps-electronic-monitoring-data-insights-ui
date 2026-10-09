@@ -14,6 +14,7 @@ export type Location = {
   geometry: string | null
   latitude: number | null
   longitude: number | null
+  tagStatus: string | null
 }
 
 export type LocationsResult = {
@@ -59,6 +60,7 @@ export default class LocationsService {
       geometry: location.geometry,
       latitude: location.latitude,
       longitude: location.longitude,
+      tagStatus: location.tagStatus ?? null,
     }
   }
 }

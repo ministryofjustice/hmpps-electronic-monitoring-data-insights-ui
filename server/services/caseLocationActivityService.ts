@@ -18,6 +18,7 @@ export interface CaseLocationBasePosition {
   speed: number | null
   direction: number | null
   timestamp: string
+  tagStatus: string | null
   geolocationMechanism: string
   sequenceNumber: number
   deviceId: number | null
@@ -39,6 +40,7 @@ export interface CaseLocationPosition extends CaseLocationBasePosition {
   displayLongitude: string
   displaySpeed: string
   displayGeolocationMechanism: string
+  displayTagStatus?: string
   positionCardHeader: string
   positionCardHeaderConjuction: string
   positionCardAccuracyLabel: string
@@ -46,6 +48,7 @@ export interface CaseLocationPosition extends CaseLocationBasePosition {
   positionCardLatLngLabel: string
   positionCardSpeedLabel: string
   positionCardGeolocationMechanismLabel: string
+  positionCardTagStatusLabel?: string
 }
 
 export const getGeolocationMechanism = (value: number | null): GeolocationMechanism | 'Unknown' => {
@@ -83,6 +86,7 @@ export default class CaseLocationActivityService {
   }
 
   annotatePositionsWithDisplayProperties(positions: Array<CaseLocationBasePosition>): Array<CaseLocationPosition> {
+    console.log('Annotating positions with display properties:', positions[0])
     return positions
       .sort((a, b) => new Date(a.gpsDate).getTime() - new Date(b.gpsDate).getTime())
       .map((position, index) => ({
@@ -101,6 +105,7 @@ export default class CaseLocationActivityService {
           'N/A',
         ),
         displayGeolocationMechanism: position.geolocationMechanism,
+        displayTagStatus: position.tagStatus,
         positionCardHeader: casesLocationLocale.overlay.point,
         positionCardHeaderConjuction: casesLocationLocale.overlay.conjuction,
         positionCardAccuracyLabel: casesLocationLocale.overlay.accuracy,
@@ -108,6 +113,7 @@ export default class CaseLocationActivityService {
         positionCardLatLngLabel: casesLocationLocale.overlay.latLng,
         positionCardSpeedLabel: casesLocationLocale.overlay.speed,
         positionCardGeolocationMechanismLabel: casesLocationLocale.overlay.geolocationMechanism,
+        positionCardTagStatusLabel: casesLocationLocale.overlay.tagStatus,
       }))
   }
 
@@ -131,6 +137,7 @@ export default class CaseLocationActivityService {
       satellite: location.satellite,
       lbs: location.lbs,
       gpsDate: location.gpsDate,
+      tagStatus: location.tagStatus ?? null,
     }
   }
 }
