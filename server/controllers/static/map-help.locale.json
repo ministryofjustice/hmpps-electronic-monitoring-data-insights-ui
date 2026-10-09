@@ -48,7 +48,7 @@
       "title": "Date and time of activity",
       "image": {
         "src": "/assets/images/multi.png",
-        "alt": "Box containing a number and values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', 'Signal type'"
+        "alt": "Box containing a number and values for 'Accuracy', 'Date, time', 'Tag status', 'Speed', 'Signal type'"
       },
       "first-pagaraphs": [
         "Each point has a timestamp that shows when the tag pinged in that location.",
@@ -59,7 +59,7 @@
       "title": "Speed of travel",
       "image": {
         "src": "/assets/images/multi.png",
-        "alt": "Box containing a number and values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', 'Signal type'"
+        "alt": "Box containing a number and values for 'Accuracy', 'Date, time', 'Tag status', 'Speed', 'Signal type'"
       },
       "first-pagaraphs": [
         "To view the estimated speed of travel, select a point to open its ping card.",
@@ -70,7 +70,7 @@
       "title": "Signal type (GPS or LBS)",
       "image": {
         "src": "/assets/images/multi.png",
-        "alt": "Box containing a number and values for 'Accuracy', 'Date, time', 'Lat, long', 'Speed', 'Signal type'"
+        "alt": "Box containing a number and values for 'Accuracy', 'Date, time', 'Tag status', 'Speed', 'Signal type'"
       },
       "first-pagaraphs": [
         "When the tag is unable to connect to GPS satellite signals, it uses local cellular network towers to estimate its location instead.",

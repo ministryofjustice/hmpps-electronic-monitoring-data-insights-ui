@@ -28,8 +28,6 @@ export type PointFeature = {
     displayGeolocationMechanism?: string
     displayTimestamp?: string
     displayConfidence?: string
-    displayLatitude?: string
-    displayLongitude?: string
   }
   geometry: {
     type: 'Point'

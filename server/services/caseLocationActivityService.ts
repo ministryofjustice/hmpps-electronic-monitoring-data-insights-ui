@@ -36,8 +36,6 @@ export interface CaseLocationPosition extends CaseLocationBasePosition {
   displayTotalPoints: number
   displayGpsDate: string
   displayAccuracy: string
-  displayLatitude: string
-  displayLongitude: string
   displaySpeed: string
   displayGeolocationMechanism: string
   displayTagStatus?: string
@@ -86,7 +84,6 @@ export default class CaseLocationActivityService {
   }
 
   annotatePositionsWithDisplayProperties(positions: Array<CaseLocationBasePosition>): Array<CaseLocationPosition> {
-    console.log('Annotating positions with display properties:', positions[0])
     return positions
       .sort((a, b) => new Date(a.gpsDate).getTime() - new Date(b.gpsDate).getTime())
       .map((position, index) => ({
@@ -97,15 +94,13 @@ export default class CaseLocationActivityService {
         displayTotalPoints: positions.length,
         displayGpsDate: formatGpsDate(position.gpsDate) || 'N/A',
         displayAccuracy: formatDisplayValue(position.precision, ' metres', 'N/A'),
-        displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
-        displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
         displaySpeed: formatDisplayValue(
           convertKilometresPerHourToMilesPerHour(position.speed),
           ' miles per hour',
           'N/A',
         ),
         displayGeolocationMechanism: position.geolocationMechanism,
-        displayTagStatus: position.tagStatus,
+        displayTagStatus: formatDisplayValue(position.tagStatus, '', 'N/A'),
         positionCardHeader: casesLocationLocale.overlay.point,
         positionCardHeaderConjuction: casesLocationLocale.overlay.conjuction,
         positionCardAccuracyLabel: casesLocationLocale.overlay.accuracy,
