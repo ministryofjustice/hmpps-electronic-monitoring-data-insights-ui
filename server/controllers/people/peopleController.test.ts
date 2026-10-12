@@ -287,6 +287,7 @@ describe('PeopleController', () => {
         satellite: null,
         lbs: null,
         gpsDate: '2026-01-12T10:00:00.000Z',
+        tagStatus: 'Exclusion breach',
       },
     ]
     const annotatedPositions = [{ ...positions[0], displayPointNumber: 1 }]
@@ -585,6 +586,7 @@ describe('PeopleController', () => {
           satellite: null,
           lbs: null,
           gpsDate: '2026-01-12T10:00:00.000Z',
+          tagStatus: null,
         },
       ]
       caseLocationActivityService.getPositions.mockResolvedValue(positions)

@@ -29,6 +29,7 @@ describe('CaseLocationActivityService', () => {
           geometry: 'POINT(-2.429 53.578)',
           latitude: 53.578,
           longitude: -2.429,
+          tagStatus: 'Exclusion breach',
         },
       ],
       nextToken: null,
@@ -71,6 +72,7 @@ describe('CaseLocationActivityService', () => {
         satellite: null,
         lbs: null,
         gpsDate: null,
+        tagStatus: null,
       },
     ])
 
@@ -79,17 +81,15 @@ describe('CaseLocationActivityService', () => {
         displayPointNumber: 1,
         displayGpsDate: 'N/A',
         displayAccuracy: '10 metres',
-        displayLatitude: '51.5',
-        displayLongitude: '-0.1',
         displaySpeed: '10 miles per hour',
         displayGeolocationMechanism: 'Unknown',
         positionCardHeader: 'Point',
         positionCardHeaderConjuction: 'of',
         positionCardAccuracyLabel: 'Accuracy',
         positionCardDateTimeLabel: 'Date, time',
-        positionCardLatLngLabel: 'Lat, Long',
         positionCardSpeedLabel: 'Speed',
         positionCardGeolocationMechanismLabel: 'Signal type',
+        positionCardTagStatusLabel: 'Tag status',
       }),
     )
   })
@@ -111,6 +111,7 @@ describe('CaseLocationActivityService', () => {
       satellite: null,
       lbs: null,
       gpsDate: null,
+      tagStatus: null,
     }
 
     const result = caseLocationActivityService.annotatePositionsWithDisplayProperties([position])
@@ -134,6 +135,7 @@ describe('CaseLocationActivityService', () => {
           geometry: null,
           latitude: null,
           longitude: null,
+          tagStatus: null,
         },
         {
           id: null,
@@ -148,6 +150,7 @@ describe('CaseLocationActivityService', () => {
           geometry: null,
           latitude: 51.5,
           longitude: -0.1,
+          tagStatus: null,
         },
       ],
       nextToken: null,

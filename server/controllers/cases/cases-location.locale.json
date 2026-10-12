@@ -11,7 +11,8 @@
     "dateTime": "Date, time",
     "latLng": "Lat, Long",
     "speed": "Speed",
-    "geolocationMechanism": "Signal type"
+    "geolocationMechanism": "Signal type",
+    "tagStatus": "Tag status"
   },
   "links": {
     "mapHelp": "Guide to the map"

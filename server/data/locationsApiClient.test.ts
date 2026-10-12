@@ -29,6 +29,7 @@ describe('LocationsApiClient', () => {
         geometry: 'POINT(-2.429 53.578)',
         latitude: 53.578,
         longitude: -2.429,
+        tagStatus: null,
       },
     ],
     nextToken: null,
