@@ -83,6 +83,7 @@ const defaultMapControlState: MapControlState = {
   numbers: true,
   heatmap: false,
   exclusion: false,
+  heatmapLevels: undefined,
 }
 
 const parseBooleanDataValue = (value: string | undefined): boolean | undefined => {
@@ -112,6 +113,7 @@ const getInitialMapControlState = (mapContainer: HTMLElement): MapControlState =
   numbers: parseBooleanDataValue(mapContainer.dataset.mapControlNumbers) ?? defaultMapControlState.numbers,
   heatmap: parseBooleanDataValue(mapContainer.dataset.mapControlHeatmap) ?? defaultMapControlState.heatmap,
   exclusion: parseBooleanDataValue(mapContainer.dataset.mapControlExclusion) ?? defaultMapControlState.exclusion,
+  heatmapLevels: undefined,
 })
 
 const syncMapControlInputs = (state: MapControlState) => {
@@ -291,6 +293,7 @@ const initialiseLocationDataView = () => {
     const heatmapLayer = new ComposableHeatmapLayer(
       new HeatmapLayer({
         source: heatmapSource,
+        gradient: ['#440154', '#3b528b', '#5ec962', '#fde725'],
         blur: 15,
         radius: 10,
         visible: mapControlState.heatmap,

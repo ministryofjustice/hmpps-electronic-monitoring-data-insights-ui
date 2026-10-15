@@ -8,6 +8,8 @@
  * @returns A formatted string like "42 km/h", or the fallback value
  */
 
+import { HeatmapLevel } from '../views/cases/controls/mapLayersControls'
+
 type Constructor<T> = {
   new (): T
 }
@@ -54,4 +56,11 @@ export const queryElementAll = <T extends Element>(
   }
 
   throw new Error(`Elements matched by "${selector}" are not instances of ${expectedConstructor.name}.`)
+}
+
+export const heatmapLevelColours: Record<HeatmapLevel, string> = {
+  veryHigh: '#fde725',
+  high: '#5ec962',
+  medium: '#3b528b',
+  low: '#440154',
 }
