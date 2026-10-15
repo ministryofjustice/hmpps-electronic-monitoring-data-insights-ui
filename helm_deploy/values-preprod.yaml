@@ -20,6 +20,3 @@ generic-service:
     MPOP_URL: "https://manage-people-on-probation-preprod.hmpps.service.justice.gov.uk"
     FLIPT_URL: "https://feature-toggles-preprod.hmpps.service.justice.gov.uk"
     FLIPT_NAMESPACE: "hmpps-electronic-monitoring-data-insights"
-
-generic-prometheus-alerts:
-  alertSeverity: hmpps-electronic-monitoring-data-insights-preprod
