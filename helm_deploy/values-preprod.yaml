@@ -22,4 +22,4 @@ generic-service:
     FLIPT_NAMESPACE: "hmpps-electronic-monitoring-data-insights"
 
 generic-prometheus-alerts:
-  alertSeverity: hmpps-electronic-monitoring-data-insights-preprod
+  alertSeverityOverride: hmpps-electronic-monitoring-data-insights-preprod

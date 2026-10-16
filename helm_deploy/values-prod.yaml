@@ -18,4 +18,4 @@ generic-service:
     FLIPT_URL: "https://feature-toggles.hmpps.service.justice.gov.uk"
     FLIPT_NAMESPACE: "hmpps-electronic-monitoring-data-insights"
 generic-prometheus-alerts:
-  alertSeverity: hmpps-electronic-monitoring-data-insights-prod
+  alertSeverityOverride: hmpps-electronic-monitoring-data-insights-prod

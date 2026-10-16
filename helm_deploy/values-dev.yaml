@@ -22,4 +22,4 @@ generic-service:
     MPOP_URL: "https://manage-people-on-probation-dev.hmpps.service.justice.gov.uk"
 
 generic-prometheus-alerts:
-  alertSeverity: hmpps-electronic-monitoring-data-insights-dev
+  alertSeverityOverride: hmpps-electronic-monitoring-data-insights-dev
