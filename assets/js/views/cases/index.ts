@@ -21,8 +21,9 @@ import GeoJSON from 'ol/format/GeoJSON'
 import { Fill, Stroke, Style } from 'ol/style'
 import { queryElement } from '../../utils/utils'
 import getRotatedDirection from './controls/getRotatedDirection'
-import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
+import MapLayersControl, { MapControlState, MapControlInitialState } from './controls/mapLayersControls'
 import { getNavVisibilityState, resolveNavTargetIndex } from '../../utils/pingCard'
+import { buildGradient, isHeatmapVisible } from './controls/heatmapGradient'
 
 type MapAdapter = Parameters<ComposableLayer<HeatmapLayer>['attach']>[0]
 type AttachOptions = Parameters<ComposableLayer<HeatmapLayer>['attach']>[1]
@@ -76,14 +77,13 @@ export type OverlayInteraction = Interaction & {
 const TIME_GAP_THRESHOLD_MINS = 50
 const getShadowRoot = (emMap: EmMap): ShadowRoot | null => (emMap as ShadowRootHost).shadowRoot
 
-const defaultMapControlState: MapControlState = {
+const defaultMapControlState: MapControlInitialState = {
   baseLayer: 'street',
   tracks: true,
   confidence: true,
   numbers: true,
   heatmap: false,
   exclusion: false,
-  heatmapLevels: undefined,
 }
 
 const parseBooleanDataValue = (value: string | undefined): boolean | undefined => {
@@ -106,18 +106,17 @@ export const bindPointKeyboardNavigation = (
   })
 }
 
-const getInitialMapControlState = (mapContainer: HTMLElement): MapControlState => ({
+const getInitialMapControlState = (mapContainer: HTMLElement): MapControlInitialState => ({
   baseLayer: mapContainer.dataset.mapControlBaseLayer === 'satellite' ? 'satellite' : 'street',
   tracks: parseBooleanDataValue(mapContainer.dataset.mapControlTracks) ?? defaultMapControlState.tracks,
   confidence: parseBooleanDataValue(mapContainer.dataset.mapControlConfidence) ?? defaultMapControlState.confidence,
   numbers: parseBooleanDataValue(mapContainer.dataset.mapControlNumbers) ?? defaultMapControlState.numbers,
   heatmap: parseBooleanDataValue(mapContainer.dataset.mapControlHeatmap) ?? defaultMapControlState.heatmap,
   exclusion: parseBooleanDataValue(mapContainer.dataset.mapControlExclusion) ?? defaultMapControlState.exclusion,
-  heatmapLevels: undefined,
 })
 
-const syncMapControlInputs = (state: MapControlState) => {
-  ;(Object.keys(state) as Array<keyof MapControlState>).forEach(key => {
+const syncMapControlInputs = (state: MapControlInitialState) => {
+  ;(Object.keys(state) as Array<keyof MapControlInitialState>).forEach(key => {
     const input = document.querySelector<HTMLInputElement>(`[data-map-control-input="${key}"]`)
     if (input) {
       input.value = String(state[key])
@@ -290,16 +289,15 @@ const initialiseLocationDataView = () => {
       ),
     })
 
-    const heatmapLayer = new ComposableHeatmapLayer(
-      new HeatmapLayer({
-        source: heatmapSource,
-        gradient: ['#440154', '#3b528b', '#5ec962', '#fde725'],
-        blur: 15,
-        radius: 10,
-        visible: mapControlState.heatmap,
-        zIndex: 2,
-      }),
-    )
+    const olHeatmapLayer = new HeatmapLayer({
+      source: heatmapSource,
+      gradient: ['#440154', '#3b528b', '#5ec962', '#fde725'],
+      blur: 15,
+      radius: 10,
+      visible: mapControlState.heatmap,
+      zIndex: 2,
+    })
+    const heatmapLayer = new ComposableHeatmapLayer(olHeatmapLayer)
 
     emMap.addLayer(heatmapLayer)
     let exclusionLayer: VectorLayer | undefined
@@ -349,6 +347,9 @@ const initialiseLocationDataView = () => {
 
     emMap.fitToAllLayers({ padding: 80 })
 
+    const updateHeatmapVisibility = (state: MapControlState) =>
+      olHeatmapLayer.setVisible(isHeatmapVisible(state.heatmap, state.heatmapLevels))
+
     const mapLayersControl = new MapLayersControl({
       mapContainer,
       map: emMap,
@@ -360,7 +361,11 @@ const initialiseLocationDataView = () => {
       exclusionLayer,
       enableExclusionZones: mapContainer.dataset.enableExclusionZones === 'true',
       initialState: mapControlState,
-      onChange: syncMapControlInputs,
+      onHeatmapLevelsChange: levels => olHeatmapLayer.setGradient(buildGradient(levels)),
+      onChange: state => {
+        syncMapControlInputs(state)
+        updateHeatmapVisibility(state)
+      },
     })
     map.addControl(mapLayersControl)
 
