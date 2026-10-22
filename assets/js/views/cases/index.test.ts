@@ -70,6 +70,7 @@ jest.mock('ol/geom', () => ({
   LineString: jest.fn().mockImplementation(() => ({})),
 }))
 jest.mock('ol/proj', () => ({
+  ...jest.requireActual('ol/proj'),
   fromLonLat: jest.fn((coord: number[]) => coord),
 }))
 jest.mock('ol/style', () => ({

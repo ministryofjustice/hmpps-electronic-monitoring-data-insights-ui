@@ -19,7 +19,7 @@ import {
 import casesLocationLocale from '../cases/cases-location.locale.json'
 import { defaultLocationMapControls, LocationMapControls } from '../../types/locationMapControls'
 import PeopleExclusionService from '../../services/peopleExclusionService'
-import { ApiExclusionZoneResponse } from '../../data/peopleExclusionApiClient'
+import { RestrictionZonesResult } from '../../data/peopleExclusionApiClient'
 import LocationDataSyncService from '../../services/locationDataSyncService'
 import { ApiLocationDataSyncResponse } from '../../data/locationDataSyncApiClient'
 
@@ -249,7 +249,7 @@ export default class PeopleController {
     const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
     let positions: CaseLocationBasePosition[] = []
     let positionCardData: CaseLocationPosition[] = []
-    let exclusionResult: ApiExclusionZoneResponse | null = null
+    let exclusionResult: RestrictionZonesResult | null = null
     let validationErrors: ValidationError[] = sessionErrors
     let hasSearched = false
     let locationAlert: { text: string } | null = null
@@ -324,9 +324,15 @@ export default class PeopleController {
 
             if (res.locals.enableExclusionZones) {
               try {
-                exclusionResult = await this.peopleExclusionService.getExclusionZone(
+                const exclusions = req.query.exclusions === 'true'
+                const inclusion = req.query.inclusion === 'true'
+                exclusionResult = await this.peopleExclusionService.getRestrictionZones(
                   res.locals.user.username,
                   personContext.personId,
+                  fromDate,
+                  toDate,
+                  exclusions,
+                  inclusion,
                 )
               } catch (error) {
                 console.error('Error fetching exclusion zones:', error)
