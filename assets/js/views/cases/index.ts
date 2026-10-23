@@ -17,12 +17,13 @@ import { Feature } from 'ol'
 import { Point } from 'ol/geom'
 import { fromLonLat } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
-import GeoJSON from 'ol/format/GeoJSON'
 import { Fill, Stroke, Style } from 'ol/style'
 import { queryElement } from '../../utils/utils'
 import getRotatedDirection from './controls/getRotatedDirection'
 import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
 import { getNavVisibilityState, resolveNavTargetIndex } from '../../utils/pingCard'
+import { buildExclusionZoneFeatures } from '../../utils/exclusionZoneFeatures'
+import tempExclusionZones from './temp.json'
 
 type MapAdapter = Parameters<ComposableLayer<HeatmapLayer>['attach']>[0]
 type AttachOptions = Parameters<ComposableLayer<HeatmapLayer>['attach']>[1]
@@ -300,27 +301,14 @@ const initialiseLocationDataView = () => {
 
     emMap.addLayer(heatmapLayer)
     let exclusionLayer: VectorLayer | undefined
-    const exclusionZonesData = mapContainer.dataset.exclusionZones
+    // const exclusionZonesData = mapContainer.dataset.exclusionZones
+    const exclusionZonesData = JSON.stringify(tempExclusionZones)
+    console.log('xxx using temp exclusionZonesData:', exclusionZonesData)
     if (exclusionZonesData && mapContainer.dataset.enableExclusionZones === 'true') {
       try {
-        const exclusionZones = JSON.parse(exclusionZonesData)
-        const polygonZones = (Array.isArray(exclusionZones) ? exclusionZones : []).filter(
-          zone => zone?.geometry?.type === 'Polygon',
-        )
-
-        if (polygonZones.length > 0) {
-          const features = new GeoJSON().readFeatures(
-            {
-              type: 'FeatureCollection',
-              features: polygonZones.map(zone => ({
-                type: 'Feature',
-                properties: { name: zone.name, address: zone.address },
-                geometry: zone.geometry,
-              })),
-            },
-            { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' },
-          )
-
+        const features = buildExclusionZoneFeatures(JSON.parse(exclusionZonesData))
+        console.log('xxx parsed exclusion zone features:', features)
+        if (features.length > 0) {
           exclusionLayer = new VectorLayer({
             source: new VectorSource({ features }),
             style: new Style({
