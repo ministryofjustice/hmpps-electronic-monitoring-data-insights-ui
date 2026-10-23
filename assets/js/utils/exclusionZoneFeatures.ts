@@ -10,7 +10,9 @@ export type ExclusionZoneData = {
   name: string
   address?: string
   radius?: number
-  geometry?: { type: 'Polygon'; coordinates: number[][][] } | { type: 'Point'; coordinates: number[]; radiusMetres?: number }
+  geometry?:
+    | { type: 'Polygon'; coordinates: number[][][] }
+    | { type: 'Point'; coordinates: number[]; radiusMetres?: number }
 }
 
 let geoJson: GeoJSON | undefined
@@ -22,7 +24,6 @@ const getGeoJson = (): GeoJSON => {
 const zoneToFeature = (zone: ExclusionZoneData): Feature | null => {
   const properties = { name: zone.name, address: zone.address }
   const { geometry } = zone
-    console.log('xxx zoneToFeature geometry:', geometry)
   switch (geometry?.type) {
     case 'Polygon':
       return getGeoJson().readFeature(

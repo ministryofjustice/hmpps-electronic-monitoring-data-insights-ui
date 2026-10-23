@@ -23,7 +23,6 @@ import getRotatedDirection from './controls/getRotatedDirection'
 import MapLayersControl, { MapControlState } from './controls/mapLayersControls'
 import { getNavVisibilityState, resolveNavTargetIndex } from '../../utils/pingCard'
 import { buildExclusionZoneFeatures } from '../../utils/exclusionZoneFeatures'
-import tempExclusionZones from './temp.json'
 
 type MapAdapter = Parameters<ComposableLayer<HeatmapLayer>['attach']>[0]
 type AttachOptions = Parameters<ComposableLayer<HeatmapLayer>['attach']>[1]
@@ -301,13 +300,10 @@ const initialiseLocationDataView = () => {
 
     emMap.addLayer(heatmapLayer)
     let exclusionLayer: VectorLayer | undefined
-    // const exclusionZonesData = mapContainer.dataset.exclusionZones
-    const exclusionZonesData = JSON.stringify(tempExclusionZones)
-    console.log('xxx using temp exclusionZonesData:', exclusionZonesData)
+    const exclusionZonesData = mapContainer.dataset.exclusionZones
     if (exclusionZonesData && mapContainer.dataset.enableExclusionZones === 'true') {
       try {
         const features = buildExclusionZoneFeatures(JSON.parse(exclusionZonesData))
-        console.log('xxx parsed exclusion zone features:', features)
         if (features.length > 0) {
           exclusionLayer = new VectorLayer({
             source: new VectorSource({ features }),
