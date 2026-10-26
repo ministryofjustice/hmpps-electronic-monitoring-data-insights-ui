@@ -9,7 +9,6 @@ const CIRCLE_SIDES = 64
 export type ExclusionZoneData = {
   name: string
   address?: string
-  radius?: number
   geometry?:
     | { type: 'Polygon'; coordinates: number[][][] }
     | { type: 'Point'; coordinates: number[]; radiusMetres?: number }
@@ -33,7 +32,7 @@ const zoneToFeature = (zone: ExclusionZoneData): Feature | null => {
 
     case 'Point': {
       const [lon, lat] = geometry.coordinates ?? []
-      const radius = Number(geometry.radiusMetres ?? zone.radius)
+      const radius = Number(geometry.radiusMetres)
       if (!Number.isFinite(lon) || !Number.isFinite(lat) || !(radius > 0)) return null
 
       const polygon = circular([lon, lat], radius, CIRCLE_SIDES).transform(DATA_PROJECTION, MAP_PROJECTION)

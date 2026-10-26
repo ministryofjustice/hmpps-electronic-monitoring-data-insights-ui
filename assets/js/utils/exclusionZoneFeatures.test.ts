@@ -37,12 +37,11 @@ describe('buildExclusionZoneFeatures', () => {
 
   it.each([
     { radiusProperty: 'geometry.radiusMetres', radius: 100, centre: [-0.1, 51.5] },
-    { radiusProperty: 'radius', radius: 250, centre: [-0.1367, 51.5108] },
+    { radiusProperty: 'geometry.radiusMetres', radius: 250, centre: [-0.1367, 51.5108] },
   ])('renders a circle centred on the point using $radiusProperty', ({ radiusProperty, radius, centre }) => {
     const features = buildExclusionZoneFeatures([
       {
         name: 'B',
-        ...(radiusProperty === 'radius' ? { radius } : {}),
         geometry: {
           type: 'Point',
           coordinates: centre,
