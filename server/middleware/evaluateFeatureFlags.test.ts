@@ -4,9 +4,10 @@ import FlagService from '../services/flagService'
 import FeatureFlags from '../models/FeatureFlags'
 
 describe('evaluateFeatureFlags', () => {
-  it('adds evaluated flags to response locals', async () => {
+  it.each([true, false])('adds the evaluated ping cards update value %s to response locals', async enabled => {
     const flags = new FeatureFlags()
     flags.enablePingCardNavigation = false
+    flags.enablePingCardsUpdate = enabled
 
     const flagService = {
       getFlags: jest.fn().mockResolvedValue(flags),
@@ -26,6 +27,7 @@ describe('evaluateFeatureFlags', () => {
     expect(flagService.getFlags).toHaveBeenCalledWith({ username: 'USER1' })
     expect(res.locals.flags).toEqual(flags)
     expect(res.locals.enablePingCardNavigation).toEqual(false)
+    expect(res.locals.enablePingCardsUpdate).toBe(enabled)
     expect(next).toHaveBeenCalledWith()
   })
 
@@ -42,12 +44,15 @@ describe('evaluateFeatureFlags', () => {
         },
       },
     } as Response
+    res.locals.enablePingCardsUpdate = true
     const next = jest.fn() as NextFunction
 
     await evaluateFeatureFlags(flagService)(req, res, next)
 
     expect(res.locals.flags).toEqual(new FeatureFlags())
     expect(res.locals.enablePingCardNavigation).toEqual(false)
+    expect(res.locals.enablePingCardsUpdate).toBe(false)
+    expect(res.locals.flags.enablePingCardsUpdate).toBe(false)
     expect(next).toHaveBeenCalledWith()
   })
 })

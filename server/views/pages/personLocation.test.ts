@@ -3,6 +3,7 @@ import nunjucksSetup from '../../utils/nunjucksSetup'
 import casesLocationLocale from '../../controllers/cases/cases-location.locale.json'
 
 interface RenderOverrides {
+  enablePingCardsUpdate?: boolean
   hasErrors?: boolean
   isDataFreshnessError?: boolean
   dataFreshness?: { statuses: Array<{ code: string; description: string; latestPosition: string }> }
@@ -71,6 +72,9 @@ const renderPersonLocation = async (overrides: RenderOverrides = {}): Promise<st
         locationAlert,
         dataFreshnessLatestDate,
         dataFreshnessLatestTime,
+        ...(overrides.enablePingCardsUpdate === undefined
+          ? {}
+          : { enablePingCardsUpdate: overrides.enablePingCardsUpdate }),
       },
       (error, html) => {
         if (error) {
@@ -85,6 +89,36 @@ const renderPersonLocation = async (overrides: RenderOverrides = {}): Promise<st
 }
 
 describe('personLocation template', () => {
+  it.each([
+    { state: 'off', enabled: false },
+    { state: 'on', enabled: true },
+    { state: 'unset', enabled: undefined },
+  ])('renders the correct ping card coordinate row when the update flag is $state', async ({ enabled }) => {
+    const html = await renderPersonLocation({ enablePingCardsUpdate: enabled })
+    const body = html.match(/<template id="overlay-body-mdss-location">([\s\S]*?)<\/template>/)?.[1]
+
+    expect(body).toBeDefined()
+    if (!body) throw new Error('Expected the ping card body template')
+
+    expect(body.match(/app-map__overlay-value--coords/g)).toHaveLength(1)
+    expect(body).not.toContain('{%')
+    expect(body).toContain('{{ displayLatitude }} {{ displayLongitude }}')
+    expect(body).toContain('{{ displayAccuracy }}')
+    expect(body).toContain('{{ displayGpsDate }}')
+    expect(body).toContain('{{ displayTagStatus }}')
+
+    const coordinates = body.indexOf('{{ displayLatitude }}')
+    const speed = body.indexOf('{{ displaySpeed }}')
+    const mechanism = body.indexOf('{{ displayGeolocationMechanism }}')
+    expect(speed).toBeGreaterThan(-1)
+    expect(mechanism).toBeGreaterThan(-1)
+    if (enabled) {
+      expect(coordinates).toBeGreaterThan(mechanism)
+    } else {
+      expect(coordinates).toBeLessThan(speed)
+    }
+  })
+
   it('renders the map search page without a CRN input', async () => {
     const html = await renderPersonLocation()
 
