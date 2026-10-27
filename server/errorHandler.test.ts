@@ -54,6 +54,16 @@ describe('API errors with a userMessage', () => {
     expect(res.render).toHaveBeenCalledWith('pages/error')
   })
 
+  it('should read the status from responseStatus as set by hmpps-rest-client', () => {
+    const error = Object.assign(new Error('Not Found'), { responseStatus: 404, data: { userMessage } })
+    const res = { locals: {}, redirect: jest.fn(), status: jest.fn(), render: jest.fn() } as unknown as Response
+
+    createErrorHandler(true)(error as never, { originalUrl: '/x' } as Request, res, jest.fn())
+
+    expect(res.locals.message).toEqual(userMessage)
+    expect(res.status).toHaveBeenCalledWith(404)
+  })
+
   it('should still sign out on a 403 without a userMessage', () => {
     const res = { locals: {}, redirect: jest.fn() } as unknown as Response
     handler403(res)
