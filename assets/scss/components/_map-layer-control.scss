@@ -4,7 +4,7 @@
   right: 0.5em;
   z-index: 1000;
   background: white;
-  border: 1px solid #b1b4b6;
+  border: 1px solid govuk-colour("black", $variant: "tint-80");
   border-radius: 4px;
   padding: 8px 12px;
   min-width: 160px;
@@ -20,7 +20,7 @@
     cursor: pointer;
     padding: 0;
     line-height: 1;
-    color: #0b0c0c;
+    color: govuk-colour("black");
     margin-bottom: 8px;
   }
 

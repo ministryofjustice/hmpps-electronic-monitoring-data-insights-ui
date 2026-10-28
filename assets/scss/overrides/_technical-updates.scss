@@ -4,10 +4,10 @@
 }
 
 .technical-updates-banner {
-    background-color: #44247b;
+    background-color: govuk-colour("purple");
 
     & .technical-updates-container {
-        color: #fff;
+        color: govuk-colour("white");
         min-height: 25px;
         display: flex;
         align-items: center;
