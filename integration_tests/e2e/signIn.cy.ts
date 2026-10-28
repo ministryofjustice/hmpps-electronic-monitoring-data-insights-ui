@@ -26,6 +26,14 @@ context('Sign In', () => {
     indexPage.headerUserName().should('contain.text', 'J. Smith')
   })
 
+  it('User without the required role is denied access', () => {
+    cy.task('stubSignIn', { roles: [] })
+    cy.signIn({ failOnStatusCode: false })
+
+    cy.get('h1').should('contain.text', 'Authorisation Error')
+    cy.contains('You are not authorised to use this application.')
+  })
+
   it.skip('Phase banner visible in header', () => {
     cy.signIn()
     const indexPage = Page.verifyOnPage(IndexPage)

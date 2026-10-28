@@ -1,5 +1,6 @@
-import type { Express } from 'express'
+import type { Express, Request, Response } from 'express'
 import request from 'supertest'
+import createErrorHandler from './errorHandler'
 import { appWithAllRoutes } from './routes/testutils/appSetup'
 
 let app: Express
@@ -13,13 +14,13 @@ afterEach(() => {
 })
 
 describe('GET 404', () => {
-  it('should render content with stack in dev mode', () => {
+  it('should render the error message in dev mode', () => {
     return request(app)
       .get('/unknown')
       .expect(404)
       .expect('Content-Type', /html/)
       .expect(res => {
-        expect(res.text).toContain('NotFoundError: Not Found')
+        expect(res.text).toContain('Not Found')
         expect(res.text).not.toContain('Something went wrong. The error has been logged. Please try again')
       })
   })
@@ -35,3 +36,46 @@ describe('GET 404', () => {
       })
   })
 })
+
+describe('API errors with a userMessage', () => {
+  const userMessage =
+    'Person exists in EMDI but is associated with region Probation North West which is not trial region.'
+
+  it.each([403, 404])('should render the userMessage for a %s', status => {
+    const handler = createErrorHandler(true)
+    const error = Object.assign(new Error('boom'), { status, data: { code: 'PERSON_NOT_TRIAL_REGION', userMessage } })
+    const res = { locals: {}, redirect: jest.fn(), status: jest.fn(), render: jest.fn() } as unknown as Response
+
+    handler(error as never, { originalUrl: '/x' } as Request, res, jest.fn())
+
+    expect(res.redirect).not.toHaveBeenCalled()
+    expect(res.locals.message).toEqual(userMessage)
+    expect(res.status).toHaveBeenCalledWith(status)
+    expect(res.render).toHaveBeenCalledWith('pages/error')
+  })
+
+  it('should read the status from responseStatus as set by hmpps-rest-client', () => {
+    const error = Object.assign(new Error('Not Found'), { responseStatus: 404, data: { userMessage } })
+    const res = { locals: {}, redirect: jest.fn(), status: jest.fn(), render: jest.fn() } as unknown as Response
+
+    createErrorHandler(true)(error as never, { originalUrl: '/x' } as Request, res, jest.fn())
+
+    expect(res.locals.message).toEqual(userMessage)
+    expect(res.status).toHaveBeenCalledWith(404)
+  })
+
+  it('should still sign out on a 403 without a userMessage', () => {
+    const res = { locals: {}, redirect: jest.fn() } as unknown as Response
+    handler403(res)
+    expect(res.redirect).toHaveBeenCalledWith('/sign-out')
+  })
+})
+
+function handler403(res: Response) {
+  createErrorHandler(true)(
+    Object.assign(new Error('x'), { status: 403 }) as never,
+    { originalUrl: '/x' } as Request,
+    res,
+    jest.fn(),
+  )
+}
