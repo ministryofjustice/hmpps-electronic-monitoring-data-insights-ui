@@ -107,17 +107,13 @@
     {% if enablePingCardsUpdate %}
       {% raw %}
       <div class="app-map__overlay-row">
-        <span class="app-map__overlay-label">{{ positionCardLatLngLabel }}</span>
-        <span class="app-map__overlay-value app-map__overlay-value--coords">{{ displayLatitude }} {{ displayLongitude }}</span>
+        <span class="app-map__overlay-label">{{ positionCardTagStatusLabel }}</span>
+        <span class="app-map__overlay-value">{{ displayTagStatus }}</span>
       </div>
       {% endraw %}
     {% endif %}
     
     {% raw %}
-    <div class="app-map__overlay-row">
-      <span class="app-map__overlay-label">{{ positionCardTagStatusLabel }}</span>
-      <span class="app-map__overlay-value">{{ displayTagStatus }}</span>
-    </div>
   </template>
 {% endraw %}
 
