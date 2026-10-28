@@ -36,6 +36,8 @@ export interface CaseLocationPosition extends CaseLocationBasePosition {
   displayTotalPoints: number
   displayGpsDate: string
   displayAccuracy: string
+  displayLatitude: string
+  displayLongitude: string
   displaySpeed: string
   displayGeolocationMechanism: string
   displayTagStatus?: string
@@ -94,6 +96,8 @@ export default class CaseLocationActivityService {
         displayTotalPoints: positions.length,
         displayGpsDate: formatGpsDate(position.gpsDate) || 'N/A',
         displayAccuracy: formatDisplayValue(position.precision, ' metres', 'N/A'),
+        displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
+        displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
         displaySpeed: formatDisplayValue(
           convertKilometresPerHourToMilesPerHour(position.speed),
           ' miles per hour',

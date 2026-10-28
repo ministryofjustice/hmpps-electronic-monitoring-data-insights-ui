@@ -16,10 +16,10 @@ describe('FlagService', () => {
   })
 
   it('returns feature flags based on Flipt boolean evaluation results', async () => {
-    evaluateBoolean
-      .mockReturnValueOnce({ flagKey: 'enable-heatmap', enabled: true })
-      .mockReturnValueOnce({ flagKey: 'enable-ping-card-navigation', enabled: false })
-      .mockReturnValueOnce({ flagKey: 'enable-exclusion-zones', enabled: false })
+    evaluateBoolean.mockImplementation(({ flagKey }: { flagKey: string }) => ({
+      flagKey,
+      enabled: flagKey === 'enable-heatmap' || flagKey === 'enable-ping-cards-update',
+    }))
 
     const flags = await new FlagService().getFlags({ username: 'USER1' })
 
@@ -38,6 +38,37 @@ describe('FlagService', () => {
     })
     expect(flags.enablePingCardNavigation).toEqual(false)
     expect(flags.enableExclusionZones).toEqual(false)
+    expect(flags.enablePingCardsUpdate).toEqual(true)
+    expect(flags.enableHeatmap).toEqual(true)
+  })
+
+  it.each([true, false])('sets the ping cards update flag to %s from Flipt', async enabled => {
+    evaluateBoolean.mockImplementation(({ flagKey }: { flagKey: string }) => ({
+      flagKey,
+      enabled: flagKey === 'enable-ping-cards-update' && enabled,
+    }))
+
+    const flags = await new FlagService().getFlags({ username: 'USER1' })
+
+    expect(evaluateBoolean).toHaveBeenCalledWith({
+      flagKey: 'enable-ping-cards-update',
+      entityId: 'user1',
+      context: { username: 'user1' },
+    })
+    expect(flags.enablePingCardsUpdate).toBe(enabled)
+  })
+
+  it.each([
+    { scenario: 'missing', result: undefined },
+    { scenario: 'mismatched', result: { flagKey: 'unexpected-flag', enabled: true } },
+  ])('defaults the ping cards update flag to false for a $scenario evaluation', async ({ result }) => {
+    evaluateBoolean.mockImplementation(({ flagKey }: { flagKey: string }) =>
+      flagKey === 'enable-ping-cards-update' ? result : { flagKey, enabled: false },
+    )
+
+    const flags = await new FlagService().getFlags({})
+
+    expect(flags.enablePingCardsUpdate).toBe(false)
   })
 
   it('defaults a flag to false when Flipt does not return the requested flag key', async () => {

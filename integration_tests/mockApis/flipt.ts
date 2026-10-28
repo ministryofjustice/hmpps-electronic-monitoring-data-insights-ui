@@ -18,10 +18,12 @@ export default {
     enablePingCardNavigation = true,
     enableHeatmap = true,
     enableExclusionZones = true,
+    enablePingCardsUpdate = true,
   }: {
     enablePingCardNavigation?: boolean
     enableHeatmap?: boolean
     enableExclusionZones?: boolean
+    enablePingCardsUpdate?: boolean
   } = {}): SuperAgentRequest =>
     stubFor({
       request: {
@@ -38,6 +40,7 @@ export default {
             flag('enable-heatmap', enableHeatmap),
             flag('enable-ping-card-navigation', enablePingCardNavigation),
             flag('enable-exclusion-zones', enableExclusionZones),
+            flag('enable-ping-cards-update', enablePingCardsUpdate),
           ],
         },
       },

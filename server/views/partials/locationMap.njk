@@ -82,6 +82,18 @@
       <span class="app-map__overlay-label">{{ positionCardDateTimeLabel }}</span>
       <span class="app-map__overlay-value">{{ displayGpsDate }}</span>
     </div>
+    {% endraw %}
+
+    {% if not enablePingCardsUpdate %}
+      {% raw %}
+      <div class="app-map__overlay-row">
+        <span class="app-map__overlay-label">{{ positionCardLatLngLabel }}</span>
+        <span class="app-map__overlay-value app-map__overlay-value--coords">{{ displayLatitude }} {{ displayLongitude }}</span>
+      </div>
+      {% endraw %}
+    {% endif %}
+
+    {% raw %}
     <div class="app-map__overlay-row">
       <span class="app-map__overlay-label">{{ positionCardSpeedLabel }}</span>
       <span class="app-map__overlay-value">{{ displaySpeed }}</span>
@@ -90,6 +102,18 @@
       <span class="app-map__overlay-label">{{ positionCardGeolocationMechanismLabel }}</span>
       <span class="app-map__overlay-value">{{ displayGeolocationMechanism }}</span>
     </div>
+    {% endraw %}
+
+    {% if enablePingCardsUpdate %}
+      {% raw %}
+      <div class="app-map__overlay-row">
+        <span class="app-map__overlay-label">{{ positionCardLatLngLabel }}</span>
+        <span class="app-map__overlay-value app-map__overlay-value--coords">{{ displayLatitude }} {{ displayLongitude }}</span>
+      </div>
+      {% endraw %}
+    {% endif %}
+    
+    {% raw %}
     <div class="app-map__overlay-row">
       <span class="app-map__overlay-label">{{ positionCardTagStatusLabel }}</span>
       <span class="app-map__overlay-value">{{ displayTagStatus }}</span>

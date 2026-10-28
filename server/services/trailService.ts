@@ -29,6 +29,8 @@ export interface PositionCardData extends Position {
   overlayTitleTemplateId: string
   overlayBodyTemplateId: string
   displayPointNumber: number
+  displayLatitude: string
+  displayLongitude: string
   displayGpsDate: string
   displayAccuracy: string
   displaySpeed: string
@@ -67,6 +69,8 @@ export default class TrailService {
         displayPointNumber: index + 1,
         displayGpsDate: formatGpsDate(position.gpsDate) || 'N/A',
         displayAccuracy: formatDisplayValue(position.precision, 'metres', 'N/A'),
+        displayLatitude: formatDisplayValue(position.latitude, '', 'N/A'),
+        displayLongitude: formatDisplayValue(position.longitude, '', 'N/A'),
         displaySpeed: formatDisplayValue(
           convertKilometresPerHourToMilesPerHour(position.speed),
           ' miles per hour',
