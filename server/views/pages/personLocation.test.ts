@@ -93,29 +93,32 @@ describe('personLocation template', () => {
     { state: 'off', enabled: false },
     { state: 'on', enabled: true },
     { state: 'unset', enabled: undefined },
-  ])('renders the correct ping card coordinate row when the update flag is $state', async ({ enabled }) => {
+  ])('renders the correct ping card fields when the enablePingCardsUpdate flag is $state', async ({ enabled }) => {
     const html = await renderPersonLocation({ enablePingCardsUpdate: enabled })
     const body = html.match(/<template id="overlay-body-mdss-location">([\s\S]*?)<\/template>/)?.[1]
 
     expect(body).toBeDefined()
     if (!body) throw new Error('Expected the ping card body template')
 
-    expect(body.match(/app-map__overlay-value--coords/g)).toHaveLength(1)
     expect(body).not.toContain('{%')
-    expect(body).toContain('{{ displayLatitude }} {{ displayLongitude }}')
     expect(body).toContain('{{ displayAccuracy }}')
     expect(body).toContain('{{ displayGpsDate }}')
-    expect(body).toContain('{{ displayTagStatus }}')
+    expect(body).toContain('{{ displaySpeed }}')
+    expect(body).toContain('{{ displayGeolocationMechanism }}')
 
-    const coordinates = body.indexOf('{{ displayLatitude }}')
-    const speed = body.indexOf('{{ displaySpeed }}')
-    const mechanism = body.indexOf('{{ displayGeolocationMechanism }}')
-    expect(speed).toBeGreaterThan(-1)
-    expect(mechanism).toBeGreaterThan(-1)
     if (enabled) {
-      expect(coordinates).toBeGreaterThan(mechanism)
+      expect(body).toContain('{{ positionCardTagStatusLabel }}')
+      expect(body).toContain('{{ displayTagStatus }}')
+      expect(body).not.toContain('{{ positionCardLatLngLabel }}')
+      expect(body).not.toContain('{{ displayLatitude }}')
+      expect(body).not.toContain('{{ displayLongitude }}')
+      expect(body).not.toContain('app-map__overlay-value--coords')
     } else {
-      expect(coordinates).toBeLessThan(speed)
+      expect(body).toContain('{{ positionCardLatLngLabel }}')
+      expect(body).toContain('{{ displayLatitude }} {{ displayLongitude }}')
+      expect(body.match(/app-map__overlay-value--coords/g)).toHaveLength(1)
+      expect(body).not.toContain('{{ positionCardTagStatusLabel }}')
+      expect(body).not.toContain('{{ displayTagStatus }}')
     }
   })
 
