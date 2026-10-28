@@ -37,8 +37,8 @@
     z-index: 2;
     width: 100%;
     max-width: 560px;
-    background: #ffffff;
-    border: 2px solid #0b0c0c;
+    background: govuk-colour("white");
+    border: 2px solid govuk-colour("black");
     padding: 32px;
 
     &--loading {
@@ -59,8 +59,8 @@ body.govuk-modal-open {
   width: 56px;
   height: 56px;
   margin: 0 auto 16px;
-  border: 6px solid #b1b4b6;
-  border-top-color: #1d70b8;
+  border: 6px solid govuk-colour("black", $variant: "tint-80");
+  border-top-color: govuk-colour("blue");
   border-radius: 50%;
   animation: ho-spinner-rotate 0.9s linear infinite;
 }

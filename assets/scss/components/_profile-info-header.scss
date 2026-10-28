@@ -12,7 +12,7 @@
     & {
         margin-bottom: govuk-spacing(0);
         font-family: "GDS Transport", arial, sans-serif;
-        color: #505A5F;
+        color: govuk-colour("black", $variant: "tint-25");
     }
 
     & dt {
