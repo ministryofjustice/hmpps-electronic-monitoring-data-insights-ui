@@ -34,10 +34,11 @@ export default class PeopleExclusionApiClient extends RestClient {
     super('People Exclusion API', config.apis.emdiApi, logger, authenticationClient)
   }
 
-  async getExclusionZone(username: string, personId: string): Promise<ApiExclusionZoneResponse> {
+  async getExclusionZone(username: string, personId: string, crn: string): Promise<ApiExclusionZoneResponse> {
     return this.get<ApiExclusionZoneResponse>(
       {
         path: `/people/${personId}/exclusion-zones`,
+        query: { crn },
       },
       asSystem(username),
     )
