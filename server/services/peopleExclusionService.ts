@@ -4,8 +4,8 @@ import type { ApiExclusionZone, ApiExclusionZoneResponse } from '../data/peopleE
 export default class PeopleExclusionService {
   constructor(private readonly peopleExclusionApiClient: PeopleExclusionApiClient) {}
 
-  async getExclusionZone(username: string, personId: string): Promise<ApiExclusionZoneResponse> {
-    const response = await this.peopleExclusionApiClient.getExclusionZone(username, personId)
+  async getExclusionZone(username: string, personId: string, crn: string): Promise<ApiExclusionZoneResponse> {
+    const response = await this.peopleExclusionApiClient.getExclusionZone(username, personId, crn)
     return {
       exclusionZones: this.mapExclusionZones(response),
       nextToken: response.nextToken,

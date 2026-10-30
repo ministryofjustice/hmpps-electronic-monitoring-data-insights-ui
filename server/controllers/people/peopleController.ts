@@ -327,6 +327,7 @@ export default class PeopleController {
                 exclusionResult = await this.peopleExclusionService.getExclusionZone(
                   res.locals.user.username,
                   personContext.personId,
+                  deliusId,
                 )
               } catch (error) {
                 console.error('Error fetching exclusion zones:', error)

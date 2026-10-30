@@ -469,7 +469,7 @@ describe('PeopleController', () => {
 
       await controller.location(req as Request, res as Response)
 
-      expect(peopleExclusionService.getExclusionZone).toHaveBeenCalledWith(user.username, '41591')
+      expect(peopleExclusionService.getExclusionZone).toHaveBeenCalledWith(user.username, '41591', 'X31092')
       expect(res.render).toHaveBeenCalledWith(
         'pages/personLocation',
         expect.objectContaining({
@@ -485,7 +485,7 @@ describe('PeopleController', () => {
 
       await controller.location(req as Request, res as Response)
 
-      expect(peopleExclusionService.getExclusionZone).toHaveBeenCalledWith(user.username, '41591')
+      expect(peopleExclusionService.getExclusionZone).toHaveBeenCalledWith(user.username, '41591', 'X31092')
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching exclusion zones:', expect.any(Error))
       expect(res.render).toHaveBeenCalledWith(
         'pages/personLocation',
