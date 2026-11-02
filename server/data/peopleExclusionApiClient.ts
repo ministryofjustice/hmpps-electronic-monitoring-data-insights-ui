@@ -9,10 +9,24 @@ export type ApiExclusionZone = {
   geometry: Geometry
 }
 
-export type Geometry = {
-  type: string
-  crs: CoordinateReferenceSystem
-  coordinates: number[][][]
+export type Geometry =
+  | { type: 'Polygon'; crs?: CoordinateReferenceSystem; coordinates: number[][][] }
+  | { type: 'Point'; crs?: CoordinateReferenceSystem; coordinates: number[]; radiusMetres: number }
+
+export type ApiRestrictionZone = ApiExclusionZone & {
+  restrictionZoneId: number
+  restrictionType: 'EXCLUSION' | 'INCLUSION'
+  schedule: {
+    scheduleType: string
+    activeFrom: string
+    activeTo: string
+    applicableFrom: string
+    applicableTo: string
+    recurrence?: {
+      weekFrequency: number
+      daysOfWeek: string[]
+    }
+  }
 }
 
 type CoordinateReferenceSystem = {
@@ -24,9 +38,8 @@ type CoordinateReferenceSystemProperties = {
   name: string
 }
 
-export type ApiExclusionZoneResponse = {
-  exclusionZones: ApiExclusionZone[]
-  nextToken: string | null
+export type ApiRestrictionZoneResponse = {
+  restrictionZones: ApiRestrictionZone[]
 }
 
 export default class PeopleExclusionApiClient extends RestClient {
@@ -34,10 +47,10 @@ export default class PeopleExclusionApiClient extends RestClient {
     super('People Exclusion API', config.apis.emdiApi, logger, authenticationClient)
   }
 
-  async getExclusionZone(username: string, personId: string, crn: string): Promise<ApiExclusionZoneResponse> {
-    return this.get<ApiExclusionZoneResponse>(
+  async getExclusionZone(username: string, personId: string, crn: string): Promise<ApiRestrictionZoneResponse> {
+    return this.get<ApiRestrictionZoneResponse>(
       {
-        path: `/people/${personId}/exclusion-zones`,
+        path: `/people/${personId}/restrictions`,
         query: { crn },
       },
       asSystem(username),

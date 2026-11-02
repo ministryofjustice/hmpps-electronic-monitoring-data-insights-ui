@@ -19,7 +19,7 @@ import {
 import casesLocationLocale from '../cases/cases-location.locale.json'
 import { defaultLocationMapControls, LocationMapControls } from '../../types/locationMapControls'
 import PeopleExclusionService from '../../services/peopleExclusionService'
-import { ApiExclusionZoneResponse } from '../../data/peopleExclusionApiClient'
+import type { ExclusionZonesResult } from '../../services/peopleExclusionService'
 import LocationDataSyncService from '../../services/locationDataSyncService'
 import { ApiLocationDataSyncResponse } from '../../data/locationDataSyncApiClient'
 
@@ -249,7 +249,7 @@ export default class PeopleController {
     const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
     let positions: CaseLocationBasePosition[] = []
     let positionCardData: CaseLocationPosition[] = []
-    let exclusionResult: ApiExclusionZoneResponse | null = null
+    let exclusionResult: ExclusionZonesResult | null = null
     let validationErrors: ValidationError[] = sessionErrors
     let hasSearched = false
     let locationAlert: { text: string } | null = null
