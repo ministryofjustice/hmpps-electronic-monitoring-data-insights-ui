@@ -461,10 +461,24 @@ describe('PeopleController', () => {
 
     it('fetches and passes exclusion zones when enableExclusionZones feature flag is true', async () => {
       res.locals.enableExclusionZones = true
-      const mockExclusionZones = [{ name: 'Zone A', address: '1 Test St', geometry: {} as Geometry }]
+      const mockExclusionZones = [
+        {
+          restrictionZoneId: 1,
+          restrictionType: 'EXCLUSION' as const,
+          name: 'Zone A',
+          address: '1 Test St',
+          geometry: {} as Geometry,
+          schedule: {
+            scheduleType: 'SCHEDULED',
+            activeFrom: '2026-01-12T10:00:00Z',
+            activeTo: '2026-01-14T11:00:00Z',
+            applicableFrom: '2026-01-12T10:00:00Z',
+            applicableTo: '2026-01-14T11:00:00Z',
+          },
+        },
+      ]
       peopleExclusionService.getExclusionZone.mockResolvedValue({
         exclusionZones: mockExclusionZones,
-        nextToken: '',
       })
 
       await controller.location(req as Request, res as Response)

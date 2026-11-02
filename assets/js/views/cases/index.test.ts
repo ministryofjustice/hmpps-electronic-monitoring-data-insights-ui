@@ -9,13 +9,18 @@ import {
   TextLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import HeatmapLayer from 'ol/layer/Heatmap'
+import VectorLayer from 'ol/layer/Vector'
+import VectorSource from 'ol/source/Vector'
+import Feature from 'ol/Feature'
 import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
 import { Interaction } from 'ol/interaction'
 import initialiseLocationDataView, { bindPointKeyboardNavigation } from './index'
 import * as utils from '../../utils/utils'
 import MapLayersControl from './controls/mapLayersControls'
+import buildExclusionZoneFeatures from '../../utils/exclusionZoneFeatures'
 
 interface MockOlMapInstance {
+  addLayer: jest.Mock
   addControl: jest.Mock
   on: jest.Mock
   getView: jest.Mock
@@ -45,6 +50,7 @@ interface MockEmMapWithShadow extends MockEmMapElement {
 }
 
 jest.mock('./controls/mapLayersControls', () => jest.fn().mockImplementation(() => ({})))
+jest.mock('../../utils/exclusionZoneFeatures')
 jest.mock('@ministryofjustice/hmpps-electronic-monitoring-components/map', () => ({}))
 jest.mock('@ministryofjustice/hmpps-electronic-monitoring-components/map/layers', () => ({
   LocationsLayer: jest.fn().mockImplementation(() => ({
@@ -73,6 +79,7 @@ jest.mock('ol/proj', () => ({
   fromLonLat: jest.fn((coord: number[]) => coord),
 }))
 jest.mock('ol/style', () => ({
+  Fill: jest.fn().mockImplementation(() => ({})),
   Style: jest.fn().mockImplementation(() => ({})),
   Stroke: jest.fn().mockImplementation(() => ({})),
 }))
@@ -89,6 +96,7 @@ describe('initialiseLocationDataView', () => {
 
   beforeEach(() => {
     mockMap = {
+      addLayer: jest.fn(),
       addControl: jest.fn(),
       on: jest.fn(),
       getView: jest.fn(() => ({
@@ -153,6 +161,23 @@ describe('initialiseLocationDataView', () => {
   it('should add a LocationsLayer to the map', () => {
     initialiseLocationDataView()
     expect(LocationsLayer).toHaveBeenCalled()
+  })
+
+  it('adds converted exclusion features to the map layer when enabled', () => {
+    const zones = [{ name: 'Circle', geometry: { type: 'Point', coordinates: [-0.1, 51.5], radiusMetres: 100 } }]
+    const features = [new Feature()]
+    jest.mocked(buildExclusionZoneFeatures).mockReturnValueOnce(features)
+    mockMapContainer.dataset.enableExclusionZones = 'true'
+    mockMapContainer.dataset.exclusionZones = JSON.stringify(zones)
+
+    initialiseLocationDataView()
+
+    expect(buildExclusionZoneFeatures).toHaveBeenCalledWith(zones)
+    expect(VectorSource).toHaveBeenLastCalledWith({ features })
+    const source = jest.mocked(VectorSource).mock.results.at(-1)?.value
+    expect(VectorLayer).toHaveBeenCalledWith(expect.objectContaining({ source }))
+    const layer = jest.mocked(VectorLayer).mock.results.at(-1)?.value
+    expect(mockMap.addLayer).toHaveBeenCalledWith(layer)
   })
 
   it('should add TracksLayer with visible set to true', () => {
