@@ -4,6 +4,9 @@ import TileSource from 'ol/source/Tile'
 import type BaseLayer from 'ol/layer/Base'
 import { ComposableLayer } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
+import { HeatmapLevel, heatmapLevelKeys, heatmapLevelLabels, heatmapLevelColours } from './heatmapLevels'
+
+export type { HeatmapLevel }
 
 export interface MapControlState {
   baseLayer: 'street' | 'satellite'
@@ -11,7 +14,12 @@ export interface MapControlState {
   confidence: boolean
   numbers: boolean
   heatmap: boolean
+  heatmapLevels: Record<HeatmapLevel, boolean>
   exclusion: boolean
+}
+
+export type MapControlInitialState = Partial<Omit<MapControlState, 'heatmapLevels'>> & {
+  heatmapLevels?: Partial<Record<HeatmapLevel, boolean>>
 }
 
 interface MapLayersControlOptions {
@@ -20,14 +28,15 @@ interface MapLayersControlOptions {
   tracksLayer: ComposableLayer
   confidenceLayer?: ComposableLayer
   numbersLayer?: ComposableLayer
-  heatmapLayer?: ComposableLayer
+  heatmapLayer?: ComposableLayer<BaseLayer | BaseLayer[]>
   exclusionLayer?: BaseLayer
   enableHeatmap?: boolean
   enableExclusionZones?: boolean
   mapContainer: HTMLElement
   map: EmMap
-  initialState?: MapControlState
+  initialState?: MapControlInitialState
   onChange?: (state: MapControlState) => void
+  onHeatmapLevelsChange?: (levels: Record<HeatmapLevel, boolean>) => void
 }
 
 const defaultMapControlState: MapControlState = {
@@ -36,6 +45,7 @@ const defaultMapControlState: MapControlState = {
   confidence: true,
   numbers: true,
   heatmap: true,
+  heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
   exclusion: false,
 }
 
@@ -60,7 +70,18 @@ export default class MapLayersControl extends Control {
   }
 
   private static createPanel(opts: MapLayersControlOptions): { panel: HTMLElement; openBtn: HTMLElement } {
-    const state: MapControlState = { ...defaultMapControlState, ...opts.initialState }
+    const state: MapControlState = {
+      ...defaultMapControlState,
+      ...opts.initialState,
+      heatmapLevels: {
+        ...defaultMapControlState.heatmapLevels,
+        ...opts.initialState?.heatmapLevels,
+      },
+    }
+    if (opts.enableHeatmap) {
+      state.heatmap = heatmapLevelKeys.some(level => state.heatmapLevels[level])
+    }
+
     const openBtn = document.createElement('button')
     openBtn.setAttribute('aria-label', 'Open map controls')
     openBtn.setAttribute('aria-controls', 'map-controls-panel')
@@ -74,6 +95,22 @@ export default class MapLayersControl extends Control {
     panel.className = 'mlc-panel'
     panel.setAttribute('role', 'region')
     panel.setAttribute('aria-label', 'Map controls')
+
+    const heatmapLevelItems = heatmapLevelKeys
+      .map(
+        level => `
+              <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="mlc-heatmap-${level}" type="checkbox"
+                  data-heatmap-level="${level}" ${state.heatmapLevels[level] ? 'checked' : ''}>
+                <label class="govuk-label govuk-checkboxes__label" for="mlc-heatmap-${level}">
+                  <span class="mlc-swatch" data-swatch-level="${level}" aria-hidden="true"></span>
+                  ${heatmapLevelLabels[level]}
+                </label>
+              </div>`,
+      )
+      .join('')
+
+    const heatmapExpanded = true
 
     panel.innerHTML = `
       <div class="govuk-form-group govuk-!-margin-bottom-0">
@@ -121,15 +158,30 @@ export default class MapLayersControl extends Control {
             ${
               opts.enableHeatmap
                 ? ` 
-             <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="mlc-heatmap" type="checkbox" ${state.heatmap ? 'checked' : ''}>
-              <label class="govuk-label govuk-checkboxes__label" for="mlc-heatmap">Heatmap</label>
-            </div>`
+`
                 : ``
             }
           </div>
         </fieldset>
       </div>
+      ${
+        opts.enableHeatmap
+          ? `
+      <hr class="govuk-section-break govuk-section-break--visible mlc-panel__divider" aria-hidden="true">
+      <div class="govuk-form-group govuk-!-margin-bottom-0 mlc-heatmap">
+        <button type="button" class="mlc-collapsible-trigger" aria-controls="mlc-heatmap-content"
+          aria-expanded="${heatmapExpanded}">
+          <span class="mlc-collapsible-icon" aria-hidden="true"></span>
+          <span class="mlc-collapsible-title">Heatmap</span>
+        </button>
+        <div class="mlc-collapsible-content" id="mlc-heatmap-content" ${heatmapExpanded ? '' : 'hidden'}>
+          <div class="govuk-checkboxes govuk-checkboxes--small">
+            ${heatmapLevelItems}
+          </div>
+        </div>
+      </div>`
+          : ``
+      }
       ${
         opts.enableExclusionZones
           ? `  
@@ -147,6 +199,11 @@ export default class MapLayersControl extends Control {
       </div>`
           : ``
       }`
+    panel.querySelectorAll<HTMLElement>('[data-swatch-level]').forEach(swatch => {
+      // eslint-disable-next-line no-param-reassign
+      swatch.style.backgroundColor = heatmapLevelColours[swatch.dataset.swatchLevel as HeatmapLevel]
+    })
+
     const closeBtn = panel.querySelector('.mlc-panel__close') as HTMLButtonElement
     const setExpanded = (expanded: boolean) => {
       panel.toggleAttribute('data-hidden', !expanded)
@@ -155,7 +212,7 @@ export default class MapLayersControl extends Control {
       closeBtn.setAttribute('aria-expanded', String(expanded))
     }
 
-    const notifyChange = () => opts.onChange?.({ ...state })
+    const notifyChange = () => opts.onChange?.({ ...state, heatmapLevels: { ...state.heatmapLevels } })
 
     opts.streetLayer?.setVisible(state.baseLayer === 'street')
     opts.satelliteLayer?.setVisible(state.baseLayer === 'satellite')
@@ -172,7 +229,7 @@ export default class MapLayersControl extends Control {
 
     const bindCheckbox = (
       id: string,
-      stateKey: 'tracks' | 'confidence' | 'numbers' | 'heatmap' | 'exclusion',
+      stateKey: 'tracks' | 'confidence' | 'numbers' | 'exclusion',
       layer?: ComposableLayer,
     ) => {
       const input = panel.querySelector(id) as HTMLInputElement | null
@@ -210,8 +267,41 @@ export default class MapLayersControl extends Control {
     bindCheckbox('#mlc-tracks', 'tracks', opts.tracksLayer)
     bindCheckbox('#mlc-confidence', 'confidence', opts.confidenceLayer)
     bindCheckbox('#mlc-numbers', 'numbers', opts.numbersLayer)
-    bindCheckbox('#mlc-heatmap', 'heatmap', opts.heatmapLayer)
     bindNativeLayerCheckbox('#mlc-exclusion', 'exclusion', opts.exclusionLayer)
+
+    const levelInputs = panel.querySelectorAll<HTMLInputElement>('[data-heatmap-level]')
+
+    const updateHeatmap = () => {
+      state.heatmap = heatmapLevelKeys.some(level => state.heatmapLevels[level])
+      const raw = opts.heatmapLayer?.getNativeLayer()
+      const layers: BaseLayer[] = []
+      if (Array.isArray(raw)) layers.push(...raw)
+      else if (raw) layers.push(raw)
+      layers.forEach(layer => layer.setVisible(state.heatmap))
+      opts.onHeatmapLevelsChange?.({ ...state.heatmapLevels })
+      notifyChange()
+    }
+
+    levelInputs.forEach(input =>
+      input.addEventListener('change', () => {
+        const level = input.dataset.heatmapLevel as HeatmapLevel
+        state.heatmapLevels[level] = input.checked
+        updateHeatmap()
+      }),
+    )
+
+    const heatmapTrigger = panel.querySelector<HTMLButtonElement>('.mlc-collapsible-trigger')
+    const heatmapContent = panel.querySelector<HTMLElement>('#mlc-heatmap-content')
+
+    heatmapTrigger?.addEventListener('click', () => {
+      const isExpanded = heatmapTrigger.getAttribute('aria-expanded') === 'true'
+      heatmapTrigger.setAttribute('aria-expanded', String(!isExpanded))
+      heatmapContent?.toggleAttribute('hidden', isExpanded)
+    })
+
+    if (opts.enableHeatmap) {
+      updateHeatmap()
+    }
 
     closeBtn.addEventListener('click', () => {
       setExpanded(false)

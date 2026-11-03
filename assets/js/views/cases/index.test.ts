@@ -8,12 +8,12 @@ import {
   CirclesLayer,
   TextLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
-import HeatmapLayer from 'ol/layer/Heatmap'
-import VectorLayer from 'ol/layer/Vector'
-import VectorSource from 'ol/source/Vector'
-import Feature from 'ol/Feature'
 import { EmMap } from '@ministryofjustice/hmpps-electronic-monitoring-components/map'
+import Feature from 'ol/Feature'
+import VectorSource from 'ol/source/Vector'
+import VectorLayer from 'ol/layer/Vector'
 import { Interaction } from 'ol/interaction'
+import BandedHeatmap from './controls/bandedHeatmap'
 import initialiseLocationDataView, { bindPointKeyboardNavigation } from './index'
 import * as utils from '../../utils/utils'
 import MapLayersControl from './controls/mapLayersControls'
@@ -71,7 +71,12 @@ jest.mock('ol/extent', () => ({ isEmpty: jest.fn(() => true) }))
 jest.mock('ol/layer/Vector', () => jest.fn().mockImplementation(() => ({})))
 jest.mock('ol/source/Vector', () => jest.fn().mockImplementation(() => ({})))
 jest.mock('ol/Feature', () => jest.fn().mockImplementation(() => ({})))
-jest.mock('ol/layer/Heatmap', () => jest.fn().mockImplementation(() => ({})))
+jest.mock('./controls/bandedHeatmap', () =>
+  jest.fn().mockImplementation(() => ({
+    setVisible: jest.fn(),
+    setLevels: jest.fn(),
+  })),
+)
 jest.mock('ol/geom', () => ({
   LineString: jest.fn().mockImplementation(() => ({})),
 }))
@@ -185,6 +190,36 @@ describe('initialiseLocationDataView', () => {
     expect(TracksLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: true }))
   })
 
+  it('passes activity selections to the heatmap renderer and controls layer visibility', () => {
+    initialiseLocationDataView()
+    const options = jest.mocked(MapLayersControl).mock.calls.at(-1)![0]
+    const layer = jest.mocked(BandedHeatmap).mock.results.at(-1)!.value
+    const levels = { low: true, medium: false, high: true, veryHigh: true }
+
+    options.onHeatmapLevelsChange?.(levels)
+    expect(layer.setLevels).toHaveBeenCalledWith(levels)
+    options.onChange?.({
+      baseLayer: 'street',
+      tracks: true,
+      confidence: true,
+      numbers: true,
+      exclusion: false,
+      heatmap: true,
+      heatmapLevels: levels,
+    })
+    expect(layer.setVisible).toHaveBeenLastCalledWith(true)
+    options.onChange?.({
+      baseLayer: 'street',
+      tracks: true,
+      confidence: true,
+      numbers: true,
+      exclusion: false,
+      heatmap: false,
+      heatmapLevels: { low: false, medium: false, high: false, veryHigh: false },
+    })
+    expect(layer.setVisible).toHaveBeenLastCalledWith(false)
+  })
+
   it('should initialise custom layers and map controls from the persisted map control state', () => {
     mockMapContainer.dataset.mapControlBaseLayer = 'satellite'
     mockMapContainer.dataset.mapControlTracks = 'false'
@@ -197,7 +232,7 @@ describe('initialiseLocationDataView', () => {
     expect(TracksLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: false }))
     expect(CirclesLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: true }))
     expect(TextLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: false }))
-    expect(HeatmapLayer).toHaveBeenCalledWith(expect.objectContaining({ visible: false }))
+    expect(BandedHeatmap).toHaveBeenCalledWith(expect.objectContaining({ visible: false }))
     expect(MapLayersControl).toHaveBeenCalledWith(
       expect.objectContaining({
         initialState: {
