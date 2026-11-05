@@ -35,7 +35,7 @@
 {% endif %}
 
 <div class="date-time-picker" id="{{ params.id }}-component">
-    <div class="{% if dateErrorMessage %}govuk-form-group--error{% endif %}">
+    <div class="map-search__date {% if dateErrorMessage %}govuk-form-group--error{% endif %}">
         {{ mojDatePicker({
             id: params.id + "-date",
             name: params.name + "[date]",
@@ -52,6 +52,7 @@
     </div>
 
     {% if params.timeLabel %}
+      <div class="map-search__time">
         {{ govukDateInput({
             id: params.id + "-time",
             fieldset: {
@@ -89,5 +90,6 @@
                 text: "For example, 14:55."
             }
         }) }}
+      </div>
     {% endif %}
 </div>

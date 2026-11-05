@@ -2,3 +2,174 @@
   height: 500px;
   margin-bottom: 30px;
 }
+
+.map-workspace__person-name {
+  display: none;
+}
+
+.emdi-map-expanded,
+.emdi-map-expanded body {
+  overflow: hidden;
+}
+
+.map-workspace--expanded {
+  position: fixed;
+  inset: var(--map-workspace-top, 0) 0 0;
+  z-index: 100;
+  display: grid;
+  grid-template-columns: 295px minmax(0, 1fr);
+  background: #f3f2f1;
+
+  .map-workspace__sidebar {
+    overflow-y: auto;
+    padding: 24px;
+    min-height: 0;
+  }
+
+  .map-workspace__person-name {
+    display: block;
+  }
+
+  [data-map-person-name] {
+    margin-bottom: 8px !important;
+    @include govuk-font($size: 19, $weight: bold);
+  }
+
+  .profile-info-header {
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  .profile-info-header ul {
+    margin: 0;
+    color: #0b0c0c;
+    @include govuk-font($size: 16);
+  }
+
+  .profile-info-header li {
+    display: block;
+  }
+
+  .profile-info-header .hide-mobile {
+    display: none;
+  }
+
+  .map-workspace__main {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+  }
+
+  .em-map {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    margin-bottom: 0;
+  }
+
+  em-map {
+    display: block;
+    height: 100%;
+  }
+
+  .map-workspace__main > p {
+    margin: 0;
+    padding: 10px 15px;
+    @include govuk-font($size: 16);
+  }
+
+  .map-search {
+    margin-top: 0;
+    padding: 0 !important;
+  }
+
+  .govuk-width-container,
+  .govuk-grid-row {
+    margin: 0 !important;
+  }
+
+  .govuk-grid-column-one-third {
+    width: 100%;
+    float: none;
+    padding: 0;
+  }
+
+  .map-search__periods {
+    display: flex;
+    flex-direction: column;
+
+    > .govuk-grid-column-one-third,
+    .date-time-picker {
+      display: contents;
+    }
+
+    > h3 {
+      padding-left: 0 !important;
+    }
+  }
+
+  .map-search__date {
+    order: 1;
+    margin-bottom: 16px;
+  }
+
+  .map-search__time {
+    order: 2;
+    margin-bottom: 16px;
+  }
+
+  .map-search__date .govuk-form-group,
+  .map-search__time .govuk-form-group {
+    margin-bottom: 0;
+  }
+
+  .govuk-label,
+  .govuk-hint,
+  .govuk-fieldset__legend,
+  .govuk-input,
+  .govuk-button,
+  .govuk-link,
+  .govuk-heading-s {
+    font-size: 16px;
+  }
+
+  .govuk-fieldset__legend {
+    padding-top: 0 !important;
+  }
+
+  .govuk-hint {
+    font-size: 14px;
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+
+  .govuk-input {
+    height: 32px;
+    padding: 3px 4px;
+  }
+
+  .govuk-button-group {
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .govuk-button-group .govuk-button {
+    width: auto;
+  }
+
+  .map-search__form-actions {
+    margin-top: 16px !important;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: minmax(180px, 40%) minmax(0, 1fr);
+
+    .map-workspace__sidebar {
+      padding: 12px;
+    }
+  }
+}
