@@ -1,8 +1,8 @@
 {
   "PERSON_NOT_FOUND": {
     "title": "This person could not be found in EMDI",
+    "introParagraphs": ["This could be because:"],
     "paragraphs": [
-      "This could be because:",
       "This can sometimes be corrected by EMDI support, who can explain how to add a new identifier to the record.",
       "Please contact EMDI support using the 'report a problem' link above, and provide the CRN of the case you are trying to view and the Person Not Found error code."
     ],

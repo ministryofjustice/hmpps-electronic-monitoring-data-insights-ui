@@ -7,7 +7,7 @@
 
   {% if errorContent %}
     <h1>{{ errorContent.title }}</h1>
-    {% for paragraph in errorContent.paragraphs %}
+    {% for paragraph in errorContent.introParagraphs %}
       <p>{{ paragraph }}</p>
     {% endfor %}
     {% if errorContent.bullets %}
@@ -17,6 +17,9 @@
         {% endfor %}
       </ul>
     {% endif %}
+    {% for paragraph in errorContent.paragraphs %}
+      <p>{{ paragraph }}</p>
+    {% endfor %}
     {% if errorContent.contactIntro %}
       <p>{{ errorContent.contactIntro }}</p>
       <ul class="govuk-list">

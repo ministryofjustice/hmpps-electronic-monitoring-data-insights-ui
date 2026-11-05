@@ -107,6 +107,21 @@ describe('API errors with a userMessage', () => {
     )
   })
 
+  it('should separate the person-not-found intro, bullets, and closing paragraphs', () => {
+    const error = Object.assign(new Error('boom'), {
+      status: 404,
+      data: { code: 'PERSON_NOT_FOUND', metadata: {}, userMessage },
+    })
+    const res = { locals: {}, redirect: jest.fn(), status: jest.fn(), render: jest.fn() } as unknown as Response
+
+    createErrorHandler(true)(error as never, { originalUrl: '/x' } as Request, res, jest.fn())
+
+    expect(res.locals.errorContent.introParagraphs).toEqual(['This could be because:'])
+    expect(res.locals.errorContent.bullets).toHaveLength(2)
+    expect(res.locals.errorContent.paragraphs).toHaveLength(2)
+    expect(res.locals.errorContent.paragraphs[0]).toMatch(/^This can sometimes be corrected/)
+  })
+
   it('should fall back to the API userMessage when required metadata is missing', () => {
     const error = Object.assign(new Error('boom'), {
       status: 404,

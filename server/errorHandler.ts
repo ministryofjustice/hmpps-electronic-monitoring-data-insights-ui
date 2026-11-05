@@ -15,6 +15,7 @@ type ErrorPayload = {
 }
 type ErrorContent = {
   title: string
+  introParagraphs?: string[]
   paragraphs: string[]
   bullets?: string[]
   contactIntro?: string
@@ -40,6 +41,7 @@ const interpolate = (content: ErrorContent, replacements: Record<string, string>
   return {
     ...content,
     title: replace(content.title),
+    ...(content.introParagraphs ? { introParagraphs: content.introParagraphs.map(replace) } : {}),
     paragraphs: content.paragraphs.map(replace),
     ...(content.bullets ? { bullets: content.bullets.map(replace) } : {}),
   }
