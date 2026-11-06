@@ -1,0 +1,56 @@
+{
+  "PERSON_NOT_FOUND": {
+    "title": "This person could not be found in EMDI",
+    "introParagraphs": ["This could be because:"],
+    "paragraphs": [
+      "This can sometimes be corrected by EMDI support, who can explain how to add a new identifier to the record.",
+      "Please contact EMDI support using the 'report a problem' link above, and provide the CRN of the case you are trying to view and the Person Not Found error code."
+    ],
+    "bullets": [
+      "The tag has been fitted within the last 48 hours. Please check again the next day.",
+      "The identifying information from Delius cannot be matched to identifying information in the EM data."
+    ]
+  },
+  "PERSON_NO_POSITION_DATA": {
+    "title": "No location data can currently be displayed by the tool for this case.",
+    "paragraphs": ["The tag itself may still be recording data and EMS may be able to provide access."],
+    "notMonitoredParagraphs": [
+      "If the tag was fitted within the last 48 hours, it may not be providing data yet. Please check again the next day. Otherwise, contact EMDI support through the 'report a problem' link above, and provide the CRN of the case you are trying to view and the No Position Data error code so they can investigate."
+    ],
+    "monitoredParagraphs": [
+      "To resolve the issue with data displaying in the EMDI tool, contact EMDI support through the 'report a problem' link above, and provide the CRN of the case you are trying to view and the No Position Data error code so they can investigate.",
+      "If you require this information urgently, please escalate your request through EMS."
+    ]
+  },
+  "PERSON_OUTSIDE_ORDER_PERIOD": {
+    "title": "This case is no longer available to view via this tool as the monitoring period is recorded as ended within Delius.",
+    "paragraphs": [
+      "If you require information from before the end of the order, or if the person is still wearing a tag and you require their location data, you may be able to request this from EMS."
+    ]
+  },
+  "PERSON_NO_LOCATION_MONITORING": {
+    "title": "This case is available to view, however EMS does not have a location monitoring condition recorded as part of their GPS tag requirement.",
+    "paragraphs": [
+      "The following conditions are recorded on this case: $enforceableConditions",
+      "If you think this is incorrect, please contact your regional EM team and ask them to add location monitoring as an enforceable condition to the record."
+    ],
+    "contactIntro": "Contact your regional EM team:",
+    "contacts": [
+      { "name": "East of England", "email": "EoEPS.EMSRegional@justice.gov.uk" },
+      { "name": "London", "email": "LondonPS.EMQueries@justice.gov.uk" },
+      { "name": "West Midlands", "email": "WMPS.ElectronicMonitoring@justice.gov.uk" }
+    ]
+  },
+  "PERSON_NOT_TRIAL_REGION": {
+    "title": "This case is available to view, however EMS have recorded this person as being in $region which is not currently part of the EMDI pilot.",
+    "paragraphs": [
+      "If you think this region is incorrect, please contact your regional EM team for help in updating this."
+    ],
+    "contactIntro": "Contact your regional EM team:",
+    "contacts": [
+      { "name": "East of England", "email": "EoEPS.EMSRegional@justice.gov.uk" },
+      { "name": "London", "email": "LondonPS.EMQueries@justice.gov.uk" },
+      { "name": "West Midlands", "email": "WMPS.ElectronicMonitoring@justice.gov.uk" }
+    ]
+  }
+}

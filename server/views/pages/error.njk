@@ -5,6 +5,31 @@
 
 {% block content %}
 
-  <h1>{{ message }}</h1>
+  {% if errorContent %}
+    <h1>{{ errorContent.title }}</h1>
+    {% for paragraph in errorContent.introParagraphs %}
+      <p>{{ paragraph }}</p>
+    {% endfor %}
+    {% if errorContent.bullets %}
+      <ul class="govuk-list govuk-list--bullet">
+        {% for bullet in errorContent.bullets %}
+          <li>{{ bullet }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% for paragraph in errorContent.paragraphs %}
+      <p>{{ paragraph }}</p>
+    {% endfor %}
+    {% if errorContent.contactIntro %}
+      <p>{{ errorContent.contactIntro }}</p>
+      <ul class="govuk-list">
+        {% for contact in errorContent.contacts %}
+          <li><a class="govuk-link" href="mailto:{{ contact.email }}">{{ contact.name }} - {{ contact.email }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% else %}
+    <h1>{{ message }}</h1>
+  {% endif %}
 
 {% endblock %}
