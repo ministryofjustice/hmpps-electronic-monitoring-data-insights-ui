@@ -175,6 +175,6 @@
     "@jgoz/esbuild-plugin-typecheck": {
       "esbuild": "$esbuild"
     },
-    "serialize-javascript": "7.0.5"
+    "serialize-javascript": "7.1.3"
   }
 }
