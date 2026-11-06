@@ -12,7 +12,10 @@ interface RenderOverrides {
   dataFreshnessLatestTime?: string | null
 }
 
-const renderPersonLocation = async (overrides: RenderOverrides = {}): Promise<string> => {
+const renderPersonLocation = async (
+  overrides: RenderOverrides = {},
+  page: 'personLocation' | 'casesLocation' = 'personLocation',
+): Promise<string> => {
   const {
     hasErrors = false,
     isDataFreshnessError = false,
@@ -32,7 +35,7 @@ const renderPersonLocation = async (overrides: RenderOverrides = {}): Promise<st
 
   return new Promise((resolve, reject) => {
     app.render(
-      'pages/personLocation',
+      `pages/${page}`,
       {
         locale: casesLocationLocale,
         cspNonce: 'test-nonce',
@@ -89,6 +92,20 @@ const renderPersonLocation = async (overrides: RenderOverrides = {}): Promise<st
 }
 
 describe('personLocation template', () => {
+  it.each(['personLocation', 'casesLocation'] as const)(
+    'renders one reusable fullscreen workspace in %s',
+    async page => {
+      const html = await renderPersonLocation({}, page)
+
+      expect(html.match(/data-map-workspace/g)).toHaveLength(1)
+      expect(html.match(/data-map-sidebar/g)).toHaveLength(1)
+      expect(html.match(/data-map-search/g)).toHaveLength(1)
+      expect(html.match(/id="dateFilterForm"/g)).toHaveLength(1)
+      expect(html.match(/data-qa="em-map"/g)).toHaveLength(1)
+      expect(html).toContain('map-workspace__main')
+    },
+  )
+
   it.each([
     { state: 'off', enabled: false },
     { state: 'on', enabled: true },

@@ -38,7 +38,7 @@
 
   {% include "partials/casesHeader.njk" %}
   <div class="location-activity">
-    <h1 class="govuk-heading-l govuk-!-margin-bottom-4">
+    <h1 class="govuk-heading-l govuk-!-margin-bottom-4" data-map-person-name>
       {{ fullName }}
     </h1>
     <h2 class="govuk-heading-m">{{ locale.title }} </h2>
@@ -62,14 +62,20 @@
        {% include "partials/dataRecency.njk" %}
     {% endif %}
 
-    <div class="date-time-picker">
-      <div class="govuk-grid-row">
-        {% include "partials/mapSearchForm.njk" %}
+    <div class="map-workspace" data-map-workspace>
+      <div class="map-workspace__sidebar" data-map-sidebar>
+        <div class="date-time-picker" data-map-search>
+          <div class="govuk-grid-row">
+            {% include "partials/mapSearchForm.njk" %}
+          </div>
+        </div>
+      </div>
+      <div class="map-workspace__main">
+        {% include "partials/locationMap.njk" %}
+        <p class="govuk-body-m">
+          <a href="/map-help?returnUrl={{ currentUrl }}">{{ locale.links.mapHelp }}</a>
+        </p>
       </div>
     </div>
-    {% include "partials/locationMap.njk" %}
-    <p class="govuk-body-m">
-      <a href="/map-help?returnUrl={{ currentUrl }}">{{ locale.links.mapHelp }}</a>
-    </p>
   </div>
 {% endblock %}
