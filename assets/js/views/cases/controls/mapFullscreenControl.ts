@@ -14,12 +14,12 @@ export const mapFullscreenStyles = `
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 39px;
+    height: 39px;
     margin: 0;
     padding: 0;
-    border: 2px solid #505a5f;
-    border-radius: 6px;
+    border: 1px solid #0b0c0c;
+    border-radius: 4px;
     background: #ffffff;
     color: #505a5f;
     cursor: pointer;
@@ -31,8 +31,8 @@ export const mapFullscreenStyles = `
 
   .emdi-map-fullscreen-toggle__icon {
     display: block;
-    width: 44px;
-    height: 44px;
+    width: 39px;
+    height: 39px;
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
@@ -41,7 +41,7 @@ export const mapFullscreenStyles = `
   }
 
   :host .ol-zoom {
-    top: 62px;
+    top: 54px;
   }
 `
 

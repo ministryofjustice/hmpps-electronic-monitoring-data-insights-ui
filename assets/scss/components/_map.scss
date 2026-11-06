@@ -17,7 +17,7 @@
   inset: var(--map-workspace-top, 0) 0 0;
   z-index: 100;
   display: grid;
-  grid-template-columns: 295px minmax(0, 1fr);
+  grid-template-columns: 388px minmax(0, 1fr);
   background: #f3f2f1;
 
   .map-workspace__sidebar {
@@ -146,7 +146,6 @@
   }
 
   .govuk-input {
-    height: 32px;
     padding: 3px 4px;
   }
 

@@ -62,11 +62,15 @@ describe('map fullscreen layout', () => {
     shadowRoot.appendChild(button)
     container.appendChild(host)
     updateSize = jest.fn()
+    window.sessionStorage.setItem(`emdi-map-fullscreen:${window.location.pathname}`, 'false')
     cleanup = initialiseMapFullscreen(button, container, updateSize)
   })
 
   afterEach(() => {
     cleanup()
+    Reflect.deleteProperty(document.documentElement, 'requestFullscreen')
+    Reflect.deleteProperty(document, 'fullscreenElement')
+    Reflect.deleteProperty(document, 'exitFullscreen')
     jest.restoreAllMocks()
     jest.clearAllMocks()
     document.body.innerHTML = ''
@@ -154,17 +158,41 @@ describe('map fullscreen layout', () => {
     expect(workspace).toHaveClass('map-workspace--expanded')
   })
 
-  it('preserves expanded mode after a search reload in this tab and clears it on exit', () => {
-    button.click()
-    cleanup()
-    cleanup = initialiseMapFullscreen(button, container, updateSize)
+  it('requests browser fullscreen with hidden browser UI and restores layout on browser exit', () => {
+    const requestFullscreen = jest.fn().mockResolvedValue(undefined)
+    const exitFullscreen = jest.fn().mockResolvedValue(undefined)
+    Object.defineProperty(document.documentElement, 'requestFullscreen', {
+      configurable: true,
+      value: requestFullscreen,
+    })
+    Object.defineProperty(document, 'exitFullscreen', { configurable: true, value: exitFullscreen })
+    Object.defineProperty(document, 'fullscreenElement', {
+      configurable: true,
+      value: document.documentElement,
+    })
 
+    button.click()
+
+    expect(requestFullscreen).toHaveBeenCalledWith({ navigationUI: 'hide' })
+    expect(workspace).toHaveClass('map-workspace--expanded')
+    expect(button).toHaveAccessibleName('Exit full screen map')
+
+    button.click()
+
+    expect(exitFullscreen).toHaveBeenCalled()
+    expect(workspace).not.toHaveClass('map-workspace--expanded')
+
+    Object.defineProperty(document, 'fullscreenElement', { configurable: true, value: null })
+    button.click()
+    Object.defineProperty(document, 'fullscreenElement', {
+      configurable: true,
+      value: document.documentElement,
+    })
+    document.dispatchEvent(new Event('fullscreenchange'))
     expect(workspace).toHaveClass('map-workspace--expanded')
 
-    button.click()
-    cleanup()
-    cleanup = initialiseMapFullscreen(button, container, updateSize)
-
+    Object.defineProperty(document, 'fullscreenElement', { configurable: true, value: null })
+    document.dispatchEvent(new Event('fullscreenchange'))
     expect(workspace).not.toHaveClass('map-workspace--expanded')
   })
 

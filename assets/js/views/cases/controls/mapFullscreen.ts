@@ -14,7 +14,6 @@ export default function initialiseMapFullscreen(
   )
   const movedElements: Array<{ element: HTMLElement; placeholder: Comment }> = []
   const backgroundElements: Element[] = []
-  const storageKey = `emdi-map-fullscreen:${window.location.pathname}`
   let expanded = false
   let scrollPosition = { x: 0, y: 0 }
 
@@ -28,7 +27,14 @@ export default function initialiseMapFullscreen(
     updateSize()
   }
 
-  const setExpanded = (next: boolean, persist = true, focus = true) => {
+  const exitBrowserFullscreen = () => {
+    const { exitFullscreen } = document
+    if (document.fullscreenElement && exitFullscreen) {
+      exitFullscreen.call(document).catch(() => {})
+    }
+  }
+
+  const setExpanded = (next: boolean, focus = true) => {
     if (next === expanded) return
     expanded = next
     if (expanded) {
@@ -74,38 +80,54 @@ export default function initialiseMapFullscreen(
     button.setAttribute('aria-label', label)
     button.setAttribute('title', label)
     button.setAttribute('aria-expanded', String(expanded))
-    if (persist) {
-      if (expanded) window.sessionStorage.setItem(storageKey, 'true')
-      else window.sessionStorage.removeItem(storageKey)
-    }
     if (!expanded) window.scrollTo(scrollPosition.x, scrollPosition.y)
     updateLayout()
     if (focus) button.focus()
   }
 
   button.setAttribute('aria-expanded', 'false')
-  const toggle = () => setExpanded(!expanded)
+  const toggle = () => {
+    if (expanded) {
+      exitBrowserFullscreen()
+      setExpanded(false)
+      return
+    }
+
+    const root = document.documentElement
+    let request: Promise<void> | undefined
+    try {
+      request = root.requestFullscreen?.({ navigationUI: 'hide' })
+    } catch {
+      request = undefined
+    }
+    setExpanded(true)
+    request?.catch(() => {})
+  }
   const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape' && expanded && !event.defaultPrevented) {
+    if (event.key === 'Escape' && expanded && !document.fullscreenElement && !event.defaultPrevented) {
       event.preventDefault()
       setExpanded(false)
     }
   }
+  const onFullscreenChange = () => {
+    if (expanded && document.fullscreenElement !== document.documentElement) setExpanded(false)
+  }
   button.addEventListener('click', toggle)
   document.addEventListener('keydown', onKeyDown)
+  document.addEventListener('fullscreenchange', onFullscreenChange)
   window.addEventListener('resize', updateLayout)
   const observer = new ResizeObserver(updateLayout)
   document
     .querySelectorAll('header, [data-qa="primary-navigation"], [aria-label="Service information"]')
     .forEach(element => observer.observe(element))
 
-  if (window.sessionStorage.getItem(storageKey) === 'true') setExpanded(true, false, false)
-
   return () => {
     button.removeEventListener('click', toggle)
     document.removeEventListener('keydown', onKeyDown)
+    document.removeEventListener('fullscreenchange', onFullscreenChange)
     window.removeEventListener('resize', updateLayout)
     observer.disconnect()
-    setExpanded(false, false, false)
+    exitBrowserFullscreen()
+    setExpanded(false, false)
   }
 }
