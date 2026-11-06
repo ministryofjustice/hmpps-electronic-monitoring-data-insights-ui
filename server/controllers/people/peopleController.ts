@@ -324,7 +324,7 @@ export default class PeopleController {
 
             if (res.locals.enableExclusionZones) {
               try {
-                const exclusions = req.query.exclusions === 'true'
+                const exclusions = true
                 const inclusion = req.query.inclusion === 'true'
                 exclusionResult = await this.peopleExclusionService.getRestrictionZones(
                   res.locals.user.username,
