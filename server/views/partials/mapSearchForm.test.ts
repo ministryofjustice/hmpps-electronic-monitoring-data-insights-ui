@@ -24,6 +24,7 @@ const renderMapSearchForm = async (showCrn?: boolean, errors: ValidationError[] 
           confidence: true,
           numbers: true,
           heatmap: false,
+          heatmapLevels: { veryHigh: true, high: false, medium: true, low: false },
         },
         dateFilterForm: {
           action: '/people/X31092/locations',
@@ -55,6 +56,17 @@ describe('mapSearchForm template', () => {
 
     expect(html).toContain('name="mapControls[heatmap]"')
     expect(html).toContain('value="false"')
+  })
+
+  it('renders each heatmap level so search requests preserve activity selections', async () => {
+    const html = await renderMapSearchForm()
+
+    expect(html).toContain('name="mapControls[heatmapLevels][veryHigh]"')
+    expect(html).toContain('name="mapControls[heatmapLevels][high]"')
+    expect(html).toContain('name="mapControls[heatmapLevels][medium]"')
+    expect(html).toContain('name="mapControls[heatmapLevels][low]"')
+    expect(html).toContain('value="false" data-map-control-input="heatmapLevelHigh"')
+    expect(html).toContain('value="false" data-map-control-input="heatmapLevelLow"')
   })
 
   it('renders the exclusion zones map control hidden input so search requests preserve state', async () => {

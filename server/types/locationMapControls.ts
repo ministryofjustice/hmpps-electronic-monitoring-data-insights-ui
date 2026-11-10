@@ -1,4 +1,7 @@
 export type MapBaseLayer = 'street' | 'satellite'
+export type HeatmapLevel = 'veryHigh' | 'high' | 'medium' | 'low'
+
+export const heatmapLevelKeys: HeatmapLevel[] = ['veryHigh', 'high', 'medium', 'low']
 
 export interface LocationMapControls {
   baseLayer: MapBaseLayer
@@ -6,6 +9,7 @@ export interface LocationMapControls {
   confidence: boolean
   numbers: boolean
   heatmap: boolean
+  heatmapLevels: Record<HeatmapLevel, boolean>
   exclusion: boolean
 }
 
@@ -15,5 +19,6 @@ export const defaultLocationMapControls: LocationMapControls = {
   confidence: true,
   numbers: true,
   heatmap: false,
+  heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
   exclusion: false,
 }

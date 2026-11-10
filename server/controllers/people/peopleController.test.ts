@@ -255,6 +255,7 @@ describe('PeopleController', () => {
           confidence: true,
           numbers: true,
           heatmap: false,
+          heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
           exclusion: false,
         },
         currentUrl: encodeURIComponent('/people/X31092/locations'),

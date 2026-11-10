@@ -44,6 +44,10 @@
         <input type="hidden" name="mapControls[numbers]" value="{{ mapControls.numbers }}" data-map-control-input="numbers"/>
         {% if enableHeatmap %}
            <input type="hidden" name="mapControls[heatmap]" value="{{ mapControls.heatmap }}" data-map-control-input="heatmap"/>
+            <input type="hidden" name="mapControls[heatmapLevels][veryHigh]" value="{{ mapControls.heatmapLevels.veryHigh }}" data-map-control-input="heatmapLevelVeryHigh"/>
+            <input type="hidden" name="mapControls[heatmapLevels][high]" value="{{ mapControls.heatmapLevels.high }}" data-map-control-input="heatmapLevelHigh"/>
+            <input type="hidden" name="mapControls[heatmapLevels][medium]" value="{{ mapControls.heatmapLevels.medium }}" data-map-control-input="heatmapLevelMedium"/>
+            <input type="hidden" name="mapControls[heatmapLevels][low]" value="{{ mapControls.heatmapLevels.low }}" data-map-control-input="heatmapLevelLow"/>
         {% endif %}
         {% if enableExclusionZones %}
           <input type="hidden" name="mapControls[exclusion]" value="{{ mapControls.exclusion }}" data-map-control-input="exclusion"/>

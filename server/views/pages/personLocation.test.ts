@@ -56,6 +56,7 @@ const renderPersonLocation = async (overrides: RenderOverrides = {}): Promise<st
           confidence: true,
           numbers: true,
           heatmap: false,
+          heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
         },
         dateFilterForm: {
           action: '/people/X31092/locations',

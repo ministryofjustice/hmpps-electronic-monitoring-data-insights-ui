@@ -17,7 +17,7 @@ import {
   parseDateTimeFromISOString,
 } from '../../utils/date'
 import casesLocationLocale from '../cases/cases-location.locale.json'
-import { defaultLocationMapControls, LocationMapControls } from '../../types/locationMapControls'
+import { defaultLocationMapControls, heatmapLevelKeys, LocationMapControls } from '../../types/locationMapControls'
 import PeopleExclusionService from '../../services/peopleExclusionService'
 import type { ExclusionZonesResult } from '../../services/peopleExclusionService'
 import LocationDataSyncService from '../../services/locationDataSyncService'
@@ -186,6 +186,15 @@ export default class PeopleController {
       const value = this.parseBooleanMapControlValue(queryControls[key])
       if (value !== undefined) {
         controls[key] = value
+      }
+    })
+
+    heatmapLevelKeys.forEach(level => {
+      const value = this.parseBooleanMapControlValue(
+        (queryControls.heatmapLevels as Partial<Record<typeof level, unknown>> | undefined)?.[level],
+      )
+      if (value !== undefined) {
+        controls.heatmapLevels[level] = value
       }
     })
 
