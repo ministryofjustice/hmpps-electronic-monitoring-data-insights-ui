@@ -226,6 +226,10 @@ describe('initialiseLocationDataView', () => {
     mockMapContainer.dataset.mapControlConfidence = 'true'
     mockMapContainer.dataset.mapControlNumbers = 'false'
     mockMapContainer.dataset.mapControlHeatmap = 'false'
+    mockMapContainer.dataset.mapControlHeatmapLevelVeryHigh = 'false'
+    mockMapContainer.dataset.mapControlHeatmapLevelHigh = 'false'
+    mockMapContainer.dataset.mapControlHeatmapLevelMedium = 'false'
+    mockMapContainer.dataset.mapControlHeatmapLevelLow = 'false'
 
     initialiseLocationDataView()
 
@@ -241,6 +245,7 @@ describe('initialiseLocationDataView', () => {
           confidence: true,
           numbers: false,
           heatmap: false,
+          heatmapLevels: { low: false, medium: false, high: false, veryHigh: false },
           exclusion: false,
         },
         onChange: expect.any(Function),

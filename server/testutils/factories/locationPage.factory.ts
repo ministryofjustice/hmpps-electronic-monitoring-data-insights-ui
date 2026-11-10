@@ -88,6 +88,7 @@ export interface LocationMapControls {
   confidence: boolean
   numbers: boolean
   heatmap: boolean
+  heatmapLevels: { veryHigh: boolean; high: boolean; medium: boolean; low: boolean }
   exclusion: boolean
 }
 
@@ -112,6 +113,7 @@ const defaultMapControls = (): LocationMapControls => ({
   confidence: true,
   numbers: true,
   heatmap: false,
+  heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
   exclusion: false,
 })
 

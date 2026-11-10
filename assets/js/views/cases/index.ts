@@ -113,15 +113,29 @@ const getInitialMapControlState = (mapContainer: HTMLElement): MapControlInitial
   confidence: parseBooleanDataValue(mapContainer.dataset.mapControlConfidence) ?? defaultMapControlState.confidence,
   numbers: parseBooleanDataValue(mapContainer.dataset.mapControlNumbers) ?? defaultMapControlState.numbers,
   heatmap: parseBooleanDataValue(mapContainer.dataset.mapControlHeatmap) ?? defaultMapControlState.heatmap,
+  heatmapLevels: {
+    veryHigh: parseBooleanDataValue(mapContainer.dataset.mapControlHeatmapLevelVeryHigh) ?? true,
+    high: parseBooleanDataValue(mapContainer.dataset.mapControlHeatmapLevelHigh) ?? true,
+    medium: parseBooleanDataValue(mapContainer.dataset.mapControlHeatmapLevelMedium) ?? true,
+    low: parseBooleanDataValue(mapContainer.dataset.mapControlHeatmapLevelLow) ?? true,
+  },
   exclusion: parseBooleanDataValue(mapContainer.dataset.mapControlExclusion) ?? defaultMapControlState.exclusion,
 })
 
 const syncMapControlInputs = (state: MapControlInitialState) => {
   ;(Object.keys(state) as Array<keyof MapControlInitialState>).forEach(key => {
+    if (key === 'heatmapLevels') return
     const input = document.querySelector<HTMLInputElement>(`[data-map-control-input="${key}"]`)
     if (input) {
       input.value = String(state[key])
     }
+  })
+
+  Object.entries(state.heatmapLevels ?? {}).forEach(([level, enabled]) => {
+    const input = document.querySelector<HTMLInputElement>(
+      `[data-map-control-input="heatmapLevel${level[0].toUpperCase()}${level.slice(1)}"]`,
+    )
+    if (input) input.value = String(enabled)
   })
 }
 
