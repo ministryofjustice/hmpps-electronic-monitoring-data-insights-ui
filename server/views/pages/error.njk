@@ -29,7 +29,10 @@
       </ul>
     {% endif %}
   {% else %}
-    <h1>{{ message }}</h1>
+    <h1>{{ title or message }}</h1>
+    {% if message %}
+      <p class="govuk-body">{{ message }}</p>
+    {% endif %}
   {% endif %}
 
 {% endblock %}
