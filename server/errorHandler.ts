@@ -34,6 +34,10 @@ const getUserMessage = (error: ApiError): string | undefined => {
   return typeof userMessage === 'string' && userMessage.trim() ? userMessage : undefined
 }
 
+const isRestrictedOffender = (userMessage: string | undefined): boolean => {
+  return Boolean(userMessage?.includes('restricted offender record'))
+}
+
 const interpolate = (content: ErrorContent, replacements: Record<string, string> = {}): ErrorContent => {
   const replace = (text: string) =>
     Object.entries(replacements).reduce((result, [key, value]) => result.split(`$${key}`).join(value), text)
@@ -91,11 +95,16 @@ export default function createErrorHandler(production: boolean) {
       return res.redirect('/sign-out')
     }
 
-    res.locals.errorContent = errorContent
-    res.locals.message =
-      errorContent?.title ??
-      userMessage ??
-      (production ? 'Something went wrong. The error has been logged. Please try again' : error.message)
+    if (isRestrictedOffender(userMessage)) {
+      res.locals.title = 'You cannot access this page'
+      res.locals.message = userMessage
+    } else {
+      res.locals.errorContent = errorContent
+      res.locals.message =
+        errorContent?.title ??
+        userMessage ??
+        (production ? 'Something went wrong. The error has been logged. Please try again' : error.message)
+    }
     res.locals.status = status
     res.locals.stack = production ? null : error.stack
 
