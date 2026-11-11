@@ -146,17 +146,17 @@ describe('API errors with a userMessage', () => {
   })
 
   it('should render restricted offender error with specific heading and message in paragraph', () => {
-    const userMessage =
+    const restrictedMessage =
       'Forbidden: This is a restricted offender record. Please contact Team: Nuneaton & Rugby Team 2, xxx'
     const handler = createErrorHandler(true)
-    const error = Object.assign(new Error('boom'), { status: 403, data: { userMessage } })
+    const error = Object.assign(new Error('boom'), { status: 403, data: { userMessage: restrictedMessage } })
     const res = { locals: {}, redirect: jest.fn(), status: jest.fn(), render: jest.fn() } as unknown as Response
 
     handler(error as never, { originalUrl: '/x' } as Request, res, jest.fn())
 
     expect(res.redirect).not.toHaveBeenCalled()
     expect(res.locals.title).toEqual('You cannot access this page')
-    expect(res.locals.message).toEqual(userMessage)
+    expect(res.locals.message).toEqual(restrictedMessage)
     expect(res.locals.errorContent).toBeUndefined()
     expect(res.status).toHaveBeenCalledWith(403)
     expect(res.render).toHaveBeenCalledWith('pages/error')
