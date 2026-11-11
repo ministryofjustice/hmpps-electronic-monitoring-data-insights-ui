@@ -18,6 +18,7 @@ import initialiseLocationDataView, { bindPointKeyboardNavigation } from './index
 import * as utils from '../../utils/utils'
 import MapLayersControl from './controls/mapLayersControls'
 import buildExclusionZoneFeatures from '../../utils/exclusionZoneFeatures'
+import MapFullscreenControl from './controls/mapFullscreenControl'
 
 interface MockOlMapInstance {
   addLayer: jest.Mock
@@ -168,6 +169,12 @@ describe('initialiseLocationDataView', () => {
     expect(LocationsLayer).toHaveBeenCalled()
   })
 
+  it('adds the fullscreen button through the map control API', () => {
+    initialiseLocationDataView()
+
+    expect(mockMap.addControl).toHaveBeenCalledWith(expect.any(MapFullscreenControl))
+  })
+
   it('adds converted exclusion features to the map layer when enabled', () => {
     const zones = [{ name: 'Circle', geometry: { type: 'Point', coordinates: [-0.1, 51.5], radiusMetres: 100 } }]
     const features = [new Feature()]
@@ -293,7 +300,7 @@ describe('initialiseLocationDataView', () => {
   it('should add map layers control to the map', () => {
     initialiseLocationDataView()
     expect(MapLayersControl).toHaveBeenCalled()
-    expect(mockMap.addControl).toHaveBeenCalledTimes(1)
+    expect(mockMap.addControl).toHaveBeenCalledTimes(2)
   })
 
   it('should dispatch app:map:layers:ready event', () => {
@@ -327,6 +334,15 @@ describe('initialiseLocationDataView', () => {
       expect(mockReplaceSync).toHaveBeenCalledWith(expect.stringContaining(':host .ol-zoom-in:focus'))
       expect(mockReplaceSync).toHaveBeenCalledWith(expect.stringContaining('outline: 3px solid #ffdd00 !important'))
       expect(mockReplaceSync).toHaveBeenCalledWith(expect.stringContaining(':focus:not(:focus-visible)'))
+    })
+
+    it('includes the fullscreen button styles in the adopted shadow stylesheet', () => {
+      initialiseLocationDataView()
+
+      expect(mockReplaceSync).toHaveBeenCalledWith(
+        expect.stringContaining(':host .emdi-map-fullscreen-control .emdi-map-fullscreen-toggle'),
+      )
+      expect(mockReplaceSync).toHaveBeenCalledWith(expect.stringContaining('.emdi-map-fullscreen-toggle__icon'))
     })
 
     it('should preserve any existing stylesheets on the shadow root', () => {

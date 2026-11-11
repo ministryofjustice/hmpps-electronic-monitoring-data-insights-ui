@@ -98,6 +98,18 @@ describe('mapSearchForm template', () => {
     fieldsets.forEach(fieldset => expect(fieldset).toContain('<legend'))
   })
 
+  it('keeps each time label, hint and inputs together when the fullscreen layout moves them', async () => {
+    const html = await renderMapSearchForm(false)
+    const timeGroups = html.match(/<div class="map-search__time">[\s\S]*?<\/fieldset>[\s\S]*?<\/div>/g) ?? []
+
+    expect(timeGroups).toHaveLength(2)
+    expect(timeGroups[0]).toContain('Time from')
+    expect(timeGroups[0]).toContain('id="start-hour"')
+    expect(timeGroups[1]).toContain('Time to')
+    expect(timeGroups[1]).toContain('id="end-hour"')
+    timeGroups.forEach(group => expect(group).toContain('For example, 14:55.'))
+  })
+
   it('gives each time input a distinct accessible name', async () => {
     const html = await renderMapSearchForm()
 

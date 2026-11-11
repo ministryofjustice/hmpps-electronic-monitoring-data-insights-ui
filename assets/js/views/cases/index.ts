@@ -25,6 +25,7 @@ import { getNavVisibilityState, resolveNavTargetIndex } from '../../utils/pingCa
 import isHeatmapVisible from './controls/heatmapGradient'
 import BandedHeatmap from './controls/bandedHeatmap'
 import buildExclusionZoneFeatures from '../../utils/exclusionZoneFeatures'
+import MapFullscreenControl, { mapFullscreenStyles } from './controls/mapFullscreenControl'
 
 type MapAdapter = Parameters<ComposableLayer<HeatmapLayer>['attach']>[0]
 type AttachOptions = Parameters<ComposableLayer<HeatmapLayer>['attach']>[1]
@@ -173,6 +174,7 @@ const injectShadowFocusStyles = (emMap: EmMap) => {
 
   const sheet = new CSSStyleSheet()
   sheet.replaceSync(`
+     ${mapFullscreenStyles}
      :host .ol-control button:focus,
      :host .ol-zoom-in:focus,
      :host .ol-zoom-out:focus {
@@ -211,6 +213,7 @@ const initialiseLocationDataView = () => {
     })
 
     injectShadowFocusStyles(emMap as EmMap)
+    map.addControl(new MapFullscreenControl(mapContainer))
     const { positions } = emMap
     const enableHeatmap = mapContainer.dataset.enableHeatmap === 'true'
     const enableExclusionZones = mapContainer.dataset.enableExclusionZones === 'true'
