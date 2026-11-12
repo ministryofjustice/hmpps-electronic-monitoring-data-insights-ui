@@ -322,23 +322,25 @@ describe('MapLayersControl', () => {
   })
 
   describe('enableHeatmap', () => {
-    it('renders the activity levels without a master checkbox when enableHeatmap is true', () => {
+    it('renders the accordion and activity levels without a master checkbox when enabled', () => {
       const opts = makeOpts(makeMockMap())
       const localContainer = opts.mapContainer
 
       new MapLayersControl({ ...opts, enableHeatmap: true })
 
-      expect(localContainer.querySelector('#mlc-heatmap')).toBeNull()
+      expect(localContainer.querySelector('#mlc-heatmap')).toBe(null)
+      expect(localContainer.querySelector('.mlc-collapsible-trigger')).toBeTruthy()
       expect(localContainer.querySelectorAll('[data-heatmap-level]')).toHaveLength(4)
     })
 
-    it('does not render the heatmap checkbox when enableHeatmap is false', () => {
+    it('does not render the heatmap accordion when enableHeatmap is false', () => {
       const opts = makeOpts(makeMockMap())
       const localContainer = opts.mapContainer
 
       new MapLayersControl({ ...opts, enableHeatmap: false })
 
       expect(localContainer.querySelector('#mlc-heatmap')).toBe(null)
+      expect(localContainer.querySelector('.mlc-collapsible-trigger')).toBe(null)
     })
 
     it('does not bind or throw when heatmapLayer is provided but enableHeatmap is false', () => {
@@ -377,18 +379,18 @@ describe('MapLayersControl', () => {
       expect(heatmapNativeLayer.setVisible).toHaveBeenCalledWith(true)
     })
 
-    it('uses the selected levels even when the previous master state was off', () => {
+    it('hides the heatmap when all activity levels are off initially', () => {
       const heatmapNativeLayer = makeNativeLayer()
 
       setupHeatmap({
         heatmapLayer: makeLayer('heatmap', heatmapNativeLayer),
-        initialState: { heatmap: false },
+        initialState: { heatmapLevels: { veryHigh: false, high: false, medium: false, low: false } },
       })
 
-      expect(heatmapNativeLayer.setVisible).toHaveBeenCalledWith(true)
+      expect(heatmapNativeLayer.setVisible).toHaveBeenCalledWith(false)
     })
 
-    it('calls onChange with the derived heatmap state on initialisation', () => {
+    it('derives the initial heatmap state from the selected levels', () => {
       const onChange = jest.fn()
       const heatmapNativeLayer = makeNativeLayer()
       const opts = makeOpts(makeMockMap())
@@ -433,6 +435,8 @@ describe('MapLayersControl', () => {
       expect(trigger(container)).toHaveAttribute('type', 'button')
       expect(trigger(container)).toHaveTextContent('Heatmap')
       expect(trigger(container)).toHaveAttribute('aria-controls', 'mlc-heatmap-content')
+      expect(trigger(container).firstElementChild).toHaveClass('mlc-collapsible-icon')
+      expect(trigger(container).lastElementChild).toHaveClass('mlc-collapsible-title')
       expect(content(container)).toBeTruthy()
     })
 
@@ -450,12 +454,14 @@ describe('MapLayersControl', () => {
       expect(content(container).hasAttribute('hidden')).toBe(false)
     })
 
-    it('keeps the activity levels expanded and usable when the previous master state was off', () => {
-      const { container } = setupHeatmap({ initialState: { heatmap: false } })
+    it('keeps the activity levels expanded and usable when all levels are off', () => {
+      const { container } = setupHeatmap({
+        initialState: { heatmapLevels: { veryHigh: false, high: false, medium: false, low: false } },
+      })
 
       expect(trigger(container)).toHaveAttribute('aria-expanded', 'true')
       expect(content(container).hasAttribute('hidden')).toBe(false)
-      expect(container.querySelector('#mlc-heatmap')).toBeNull()
+      expect(container.querySelector('#mlc-heatmap')).toBe(null)
       allLevels.forEach(level => expect(levelInput(container, level)).toBeTruthy())
     })
 
@@ -480,7 +486,7 @@ describe('MapLayersControl', () => {
 
       expect(onChange).not.toHaveBeenCalled()
       expect(levelInput(container, 'high').checked).toBe(false)
-      expect(container.querySelector('#mlc-heatmap')).toBeNull()
+      expect(container.querySelector('#mlc-heatmap')).toBe(null)
     })
 
     it('adds a decorative divider before the section', () => {
@@ -556,8 +562,10 @@ describe('MapLayersControl', () => {
       expect(onHeatmapLevelsChange).not.toHaveBeenCalled()
     })
 
-    it('keeps the level checkboxes enabled when the previous master state was off', () => {
-      const { container } = setupHeatmap({ initialState: { heatmap: false } })
+    it('keeps the level checkboxes enabled when no levels are selected', () => {
+      const { container } = setupHeatmap({
+        initialState: { heatmapLevels: { veryHigh: false, high: false, medium: false, low: false } },
+      })
 
       allLevels.forEach(level => {
         expect(levelInput(container, level).disabled).toBe(false)
