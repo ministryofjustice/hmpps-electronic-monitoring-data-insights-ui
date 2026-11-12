@@ -78,9 +78,6 @@ export default class MapLayersControl extends Control {
         ...opts.initialState?.heatmapLevels,
       },
     }
-    if (opts.enableHeatmap) {
-      state.heatmap = heatmapLevelKeys.some(level => state.heatmapLevels[level])
-    }
 
     const openBtn = document.createElement('button')
     openBtn.setAttribute('aria-label', 'Open map controls')
@@ -270,14 +267,19 @@ export default class MapLayersControl extends Control {
     bindNativeLayerCheckbox('#mlc-exclusion', 'exclusion', opts.exclusionLayer)
 
     const levelInputs = panel.querySelectorAll<HTMLInputElement>('[data-heatmap-level]')
+    const rawHeatmapLayer = opts.heatmapLayer?.getNativeLayer()
+    const heatmapLayers: BaseLayer[] = (() => {
+      if (Array.isArray(rawHeatmapLayer)) return rawHeatmapLayer
+      if (rawHeatmapLayer) return [rawHeatmapLayer]
+      return []
+    })()
 
-    const updateHeatmap = () => {
+    const updateHeatmapVisibility = () => {
       state.heatmap = heatmapLevelKeys.some(level => state.heatmapLevels[level])
-      const raw = opts.heatmapLayer?.getNativeLayer()
-      const layers: BaseLayer[] = []
-      if (Array.isArray(raw)) layers.push(...raw)
-      else if (raw) layers.push(raw)
-      layers.forEach(layer => layer.setVisible(state.heatmap))
+      heatmapLayers.forEach(layer => layer.setVisible(state.heatmap))
+    }
+
+    const notifyHeatmapLevelsChange = () => {
       opts.onHeatmapLevelsChange?.({ ...state.heatmapLevels })
       notifyChange()
     }
@@ -286,7 +288,8 @@ export default class MapLayersControl extends Control {
       input.addEventListener('change', () => {
         const level = input.dataset.heatmapLevel as HeatmapLevel
         state.heatmapLevels[level] = input.checked
-        updateHeatmap()
+        updateHeatmapVisibility()
+        notifyHeatmapLevelsChange()
       }),
     )
 
@@ -300,7 +303,8 @@ export default class MapLayersControl extends Control {
     })
 
     if (opts.enableHeatmap) {
-      updateHeatmap()
+      updateHeatmapVisibility()
+      notifyHeatmapLevelsChange()
     }
 
     closeBtn.addEventListener('click', () => {
