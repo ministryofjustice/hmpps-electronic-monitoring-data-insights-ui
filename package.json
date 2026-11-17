@@ -12,8 +12,8 @@
     "start:dev": "concurrently -k -p \"[{name}]\" -n \"ESBuild,Node\" -c \"yellow.bold,cyan.bold\" \"node esbuild/esbuild.config.js --build --watch\" \"node esbuild/esbuild.config.js --dev-server\"",
     "start-feature": " node $NODE_DEBUG_OPTION --env-file=feature.env dist/server.js | bunyan -o short",
     "start-feature:dev": "concurrently -k -p \"[{name}]\" -n \"ESBuild,Node\" -c \"yellow.bold,cyan.bold\" \"node esbuild/esbuild.config.js  --build --watch \" \"node esbuild/esbuild.config.js --dev-test-server\"",
-    "lint": "eslint . --cache --max-warnings 0",
-    "lint-fix": "eslint . --cache --max-warnings 0 --fix",
+    "lint": "eslint . --cache --max-warnings 0 && stylelint \"assets/**/*.scss\"",
+    "lint-fix": "eslint . --cache --max-warnings 0 --fix && stylelint \"assets/**/*.scss\" --fix",
     "typecheck": "tsc && tsc -p integration_tests && tsc -p accessibility_tests",
     "test": "jest",
     "test:ci": "jest --runInBand",
@@ -77,6 +77,9 @@
     "*.{ts,js,css}": [
       "prettier --write",
       "eslint --fix"
+    ],
+    "*.scss": [
+      "stylelint --fix"
     ],
     "*.json": [
       "prettier --write"
@@ -165,8 +168,10 @@
     "lint-staged": "^17.5.1",
     "mocha-junit-reporter": "^2.2.1",
     "nock": "^14.0.4",
+    "postcss-scss": "4.0.9",
     "prettier": "^3.5.3",
     "prettier-plugin-jinja-template": "^2.1.0",
+    "stylelint": "17.16.0",
     "supertest": "^7.1.0",
     "ts-jest": "^29.3.2",
     "typescript": "^5.8.3"
