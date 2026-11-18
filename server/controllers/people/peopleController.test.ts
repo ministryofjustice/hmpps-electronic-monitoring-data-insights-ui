@@ -463,6 +463,29 @@ describe('PeopleController', () => {
       caseLocationActivityService.getPositions.mockResolvedValue([])
     })
 
+    it('starts the restriction lookup before the positions request completes', async () => {
+      res.locals.enableExclusionZones = true
+      let releasePositions!: (positions: CaseLocationBasePosition[]) => void
+      caseLocationActivityService.getPositions.mockImplementation(
+        () =>
+          new Promise<CaseLocationBasePosition[]>(resolve => {
+            releasePositions = resolve
+          }),
+      )
+      peopleExclusionService.getRestrictionZones.mockResolvedValue({ exclusionZones: [], inclusionZones: [] })
+
+      const locationRequest = controller.location(req as Request, res as Response)
+      await new Promise<void>(resolve => {
+        setImmediate(resolve)
+      })
+
+      expect(caseLocationActivityService.getPositions).toHaveBeenCalled()
+      expect(peopleExclusionService.getRestrictionZones).toHaveBeenCalled()
+
+      releasePositions([])
+      await locationRequest
+    })
+
     it('fetches and passes exclusion zones when enableExclusionZones feature flag is true', async () => {
       res.locals.enableExclusionZones = true
       const mockExclusionZones = [
