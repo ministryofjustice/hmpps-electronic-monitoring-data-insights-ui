@@ -150,6 +150,7 @@ describe('CasesController', () => {
             heatmap: false,
             heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
             exclusion: false,
+            inclusion: false,
           },
         }),
       )
@@ -165,6 +166,8 @@ describe('CasesController', () => {
           numbers: false,
           heatmap: true,
           heatmapLevels: { veryHigh: true, high: true, medium: false, low: true },
+          exclusion: false,
+          inclusion: false,
         },
       } as Request['session']
 
@@ -181,6 +184,7 @@ describe('CasesController', () => {
             heatmap: true,
             heatmapLevels: { veryHigh: true, high: true, medium: false, low: true },
             exclusion: false,
+            inclusion: false,
           },
         }),
       )
@@ -211,6 +215,7 @@ describe('CasesController', () => {
         heatmap: true,
         heatmapLevels: { veryHigh: true, high: false, medium: true, low: false },
         exclusion: true,
+        inclusion: false,
       })
       expect(res.render).toHaveBeenCalledWith(
         'pages/casesLocation',
@@ -229,6 +234,7 @@ describe('CasesController', () => {
           confidence: 'no',
           numbers: 'invalid',
           exclusion: 'false',
+          inclusion: 'false',
         },
       }
       req.session = {
@@ -238,6 +244,7 @@ describe('CasesController', () => {
           confidence: false,
           numbers: true,
           exclusion: false,
+          inclusion: false,
         },
       } as Request['session']
 
@@ -251,6 +258,7 @@ describe('CasesController', () => {
         heatmap: false,
         heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
         exclusion: false,
+        inclusion: false,
       })
     })
 

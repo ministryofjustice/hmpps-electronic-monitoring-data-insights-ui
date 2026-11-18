@@ -121,6 +121,7 @@ const getInitialMapControlState = (mapContainer: HTMLElement): MapControlInitial
     low: parseBooleanDataValue(mapContainer.dataset.mapControlHeatmapLevelLow) ?? true,
   },
   exclusion: parseBooleanDataValue(mapContainer.dataset.mapControlExclusion) ?? defaultMapControlState.exclusion,
+  inclusion: parseBooleanDataValue(mapContainer.dataset.mapControlInclusion) ?? defaultMapControlState.inclusion,
 })
 
 const syncMapControlInputs = (state: MapControlInitialState) => {
@@ -225,6 +226,8 @@ const initialiseLocationDataView = () => {
     }
     if (!enableExclusionZones) {
       mapControlState.exclusion = false
+      mapControlState.inclusion = false
+      mapControlState.inclusion = false
     }
     syncMapControlInputs(mapControlState)
 
@@ -317,29 +320,52 @@ const initialiseLocationDataView = () => {
     const heatmapLayer = new ComposableHeatmapLayer(olHeatmapLayer)
 
     emMap.addLayer(heatmapLayer)
-    let exclusionLayer: VectorLayer | undefined
-    const exclusionZonesData = mapContainer.dataset.exclusionZones
-    if (exclusionZonesData && mapContainer.dataset.enableExclusionZones === 'true') {
-      try {
-        const features = buildExclusionZoneFeatures(JSON.parse(exclusionZonesData))
-        if (features.length > 0) {
-          exclusionLayer = new VectorLayer({
-            source: new VectorSource({ features }),
-            style: new Style({
-              fill: new Fill({ color: 'rgba(255, 0, 0, 0.3)' }),
-              stroke: new Stroke({ color: 'rgba(255, 0, 0, 1)', width: 2 }),
-            }),
-            zIndex: 5,
-            visible: mapControlState.exclusion,
-          })
+    const parseRestrictionFeatures = (zonesData: string | undefined): Feature[] => {
+      if (!zonesData || !enableExclusionZones) return []
 
-          map.addLayer(exclusionLayer) // native ol.Map, not emMap.addLayer
-        }
+      try {
+        return buildExclusionZoneFeatures(JSON.parse(zonesData))
       } catch (error) {
         /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-        console.error('Error parsing exclusion zone data:', error)
+        console.error('Error parsing restriction zone data:', error)
+        return []
       }
     }
+
+    const exclusionFeatures = parseRestrictionFeatures(mapContainer.dataset.exclusionZones)
+    const inclusionFeatures = parseRestrictionFeatures(mapContainer.dataset.inclusionZones)
+    const createRestrictionLayer = (
+      features: Feature[],
+      fillColor: string,
+      strokeColor: string,
+      visible: boolean,
+    ): VectorLayer | undefined => {
+      if (features.length === 0) return undefined
+
+      const layer = new VectorLayer({
+        source: new VectorSource({ features }),
+        style: new Style({
+          fill: new Fill({ color: fillColor }),
+          stroke: new Stroke({ color: strokeColor, width: 2 }),
+        }),
+        zIndex: 5,
+        visible,
+      })
+      map.addLayer(layer) // native ol.Map, not emMap.addLayer
+      return layer
+    }
+    const exclusionLayer = createRestrictionLayer(
+      exclusionFeatures,
+      'rgba(255, 0, 0, 0.3)',
+      'rgba(255, 0, 0, 1)',
+      mapControlState.exclusion,
+    )
+    const inclusionLayer = createRestrictionLayer(
+      inclusionFeatures,
+      'rgba(0, 112, 84, 0.3)',
+      'rgba(0, 112, 84, 1)',
+      mapControlState.inclusion,
+    )
 
     emMap.addLayer(locationsLayer)
     emMap.addLayer(tracksLayer)
@@ -357,7 +383,10 @@ const initialiseLocationDataView = () => {
       heatmapLayer,
       enableHeatmap: mapContainer.dataset.enableHeatmap === 'true',
       exclusionLayer,
-      enableExclusionZones: mapContainer.dataset.enableExclusionZones === 'true',
+      inclusionLayer,
+      exclusionCount: exclusionFeatures.length,
+      inclusionCount: inclusionFeatures.length,
+      enableExclusionZones,
       initialState: mapControlState,
       onHeatmapLevelsChange: levels => olHeatmapLayer.setLevels(levels),
       onChange: state => {

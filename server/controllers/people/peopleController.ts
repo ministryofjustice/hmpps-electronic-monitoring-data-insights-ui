@@ -182,7 +182,7 @@ export default class PeopleController {
       ...(baseLayer ? { baseLayer } : {}),
     }
 
-    ;(['tracks', 'confidence', 'numbers', 'heatmap', 'exclusion'] as const).forEach(key => {
+    ;(['tracks', 'confidence', 'numbers', 'heatmap', 'exclusion', 'inclusion'] as const).forEach(key => {
       const value = this.parseBooleanMapControlValue(queryControls[key])
       if (value !== undefined) {
         controls[key] = value
@@ -333,8 +333,8 @@ export default class PeopleController {
 
             if (res.locals.enableExclusionZones) {
               try {
-                const exclusions = req.query.exclusions === 'true'
-                const inclusions = req.query.inclusions === 'true'
+                const exclusions = true
+                const inclusions = true
                 restrictionZonesResult = await this.peopleExclusionService.getRestrictionZones(
                   res.locals.user.username,
                   personContext.personId,

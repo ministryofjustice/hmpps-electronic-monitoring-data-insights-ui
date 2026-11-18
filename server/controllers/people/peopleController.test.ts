@@ -259,6 +259,7 @@ describe('PeopleController', () => {
           heatmap: false,
           heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
           exclusion: false,
+          inclusion: false,
         },
         currentUrl: encodeURIComponent('/people/X31092/locations'),
       }),
@@ -491,8 +492,8 @@ describe('PeopleController', () => {
         user.username,
         '41591',
         'X31092',
-        false,
-        false,
+        true,
+        true,
       )
       expect(res.render).toHaveBeenCalledWith(
         'pages/personLocation',
@@ -513,8 +514,8 @@ describe('PeopleController', () => {
         user.username,
         '41591',
         'X31092',
-        false,
-        false,
+        true,
+        true,
       )
 
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching exclusion zones:', expect.any(Error))

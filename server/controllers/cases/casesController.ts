@@ -180,7 +180,7 @@ export default class CasesController {
       ...(baseLayer ? { baseLayer } : {}),
     }
 
-    ;(['tracks', 'confidence', 'numbers', 'heatmap', 'exclusion'] as const).forEach(key => {
+    ;(['tracks', 'confidence', 'numbers', 'heatmap', 'exclusion', 'inclusion'] as const).forEach(key => {
       const value = this.parseBooleanMapControlValue(queryControls[key])
       if (value !== undefined) {
         controls[key] = value

@@ -69,10 +69,11 @@ describe('mapSearchForm template', () => {
     expect(html).toContain('value="false" data-map-control-input="heatmapLevelLow"')
   })
 
-  it('renders the exclusion zones map control hidden input so search requests preserve state', async () => {
+  it('renders restriction-zone map control inputs so search requests preserve state', async () => {
     const html = await renderMapSearchForm()
 
     expect(html).toContain('name="mapControls[exclusion]"')
+    expect(html).toContain('name="mapControls[inclusion]"')
     expect(html).toContain('value="false"')
   })
 
