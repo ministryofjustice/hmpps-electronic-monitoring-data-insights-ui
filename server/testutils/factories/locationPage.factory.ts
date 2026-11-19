@@ -90,6 +90,7 @@ export interface LocationMapControls {
   heatmap: boolean
   heatmapLevels: { veryHigh: boolean; high: boolean; medium: boolean; low: boolean }
   exclusion: boolean
+  inclusion: boolean
 }
 
 // ============================================================================
@@ -115,6 +116,7 @@ const defaultMapControls = (): LocationMapControls => ({
   heatmap: false,
   heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
   exclusion: false,
+  inclusion: false,
 })
 
 const defaultDateFilterForm = (): DateFilterForm => ({

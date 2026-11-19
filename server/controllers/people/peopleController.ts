@@ -182,7 +182,7 @@ export default class PeopleController {
       ...(baseLayer ? { baseLayer } : {}),
     }
 
-    ;(['tracks', 'confidence', 'numbers', 'heatmap', 'exclusion'] as const).forEach(key => {
+    ;(['tracks', 'confidence', 'numbers', 'heatmap', 'exclusion', 'inclusion'] as const).forEach(key => {
       const value = this.parseBooleanMapControlValue(queryControls[key])
       if (value !== undefined) {
         controls[key] = value
@@ -316,36 +316,36 @@ export default class PeopleController {
 
         if (validation.success) {
           if (personContext.personId) {
-            try {
-              const crn = deliusId
-              positions = await this.caseLocationActivityService.getPositions(
+            const crn = deliusId
+            const positionsPromise = this.caseLocationActivityService
+              .getPositions(
                 res.locals.user.username,
                 personContext.personId,
                 queryResult.data.fromDate,
                 queryResult.data.toDate,
                 { crn },
               )
-              positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
-            } catch (error) {
-              console.error('Error fetching locations:', error)
-              locationAlert = { text: casesLocationLocale.alerts.fetchError }
-            }
+              .then(fetchedPositions => {
+                positions = fetchedPositions
+                positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
+              })
+              .catch(error => {
+                console.error('Error fetching locations:', error)
+                locationAlert = { text: casesLocationLocale.alerts.fetchError }
+              })
 
-            if (res.locals.enableExclusionZones) {
-              try {
-                const exclusions = req.query.exclusions === 'true'
-                const inclusions = req.query.inclusions === 'true'
-                restrictionZonesResult = await this.peopleExclusionService.getRestrictionZones(
-                  res.locals.user.username,
-                  personContext.personId,
-                  deliusId,
-                  exclusions,
-                  inclusions,
-                )
-              } catch (error) {
-                console.error('Error fetching exclusion zones:', error)
-              }
-            }
+            const restrictionZonesPromise = res.locals.enableExclusionZones
+              ? this.peopleExclusionService
+                  .getRestrictionZones(res.locals.user.username, personContext.personId, deliusId, true, true)
+                  .then(result => {
+                    restrictionZonesResult = result
+                  })
+                  .catch(error => {
+                    console.error('Error fetching exclusion zones:', error)
+                  })
+              : Promise.resolve()
+
+            await Promise.all([positionsPromise, restrictionZonesPromise])
           } else {
             locationAlert = { text: casesLocationLocale.alerts.fetchError }
           }

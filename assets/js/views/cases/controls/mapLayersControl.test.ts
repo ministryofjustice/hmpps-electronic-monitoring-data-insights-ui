@@ -221,6 +221,7 @@ describe('MapLayersControl', () => {
         numbers: true,
         heatmap: true,
         exclusion: false,
+        inclusion: false,
       })
     })
 
@@ -419,6 +420,7 @@ describe('MapLayersControl', () => {
         numbers: true,
         heatmap: true,
         exclusion: false,
+        inclusion: false,
       })
     })
   })
@@ -683,13 +685,21 @@ describe('MapLayersControl', () => {
   })
 
   describe('enableExclusionZones', () => {
-    it('should render the exclusion checkbox when enableExclusionZones is true', () => {
+    it('renders the Zones accordion and separate checkbox counts when enabled', () => {
       const opts = makeOpts(makeMockMap())
       const localContainer = opts.mapContainer
 
-      new MapLayersControl({ ...opts, enableExclusionZones: true })
+      new MapLayersControl({ ...opts, enableExclusionZones: true, exclusionCount: 2, inclusionCount: 3 })
 
-      expect(localContainer.querySelector('#mlc-exclusion')).toBeTruthy()
+      expect(localContainer.querySelector('#mlc-exclusion-content')).toBeTruthy()
+      expect(localContainer.querySelector('#mlc-restriction-exclusion')).toBeTruthy()
+      expect(localContainer.querySelector('#mlc-restriction-inclusion')).toBeTruthy()
+      expect(localContainer.querySelector('label[for="mlc-restriction-exclusion"]')).toHaveTextContent('Exclusion (2)')
+      expect(localContainer.querySelector('label[for="mlc-restriction-inclusion"]')).toHaveTextContent('Inclusion (3)')
+      expect(localContainer.querySelector('#mlc-exclusion-content .govuk-checkboxes--small')).toHaveAttribute(
+        'data-module',
+        'govuk-checkboxes',
+      )
     })
 
     it('does not render the exclusion checkbox when enableExclusionZones is false', () => {
@@ -698,7 +708,8 @@ describe('MapLayersControl', () => {
 
       new MapLayersControl({ ...opts, enableExclusionZones: false })
 
-      expect(localContainer.querySelector('#mlc-exclusion')).toBe(null)
+      expect(localContainer.querySelector('#mlc-restriction-exclusion')).toBe(null)
+      expect(localContainer.querySelector('#mlc-restriction-inclusion')).toBe(null)
     })
 
     it('does not bind or throw when exclusionLayer is provided but enableExclusionZones is false', () => {
@@ -737,6 +748,31 @@ describe('MapLayersControl', () => {
       expect(exclusionLayer.setVisible).toHaveBeenCalledWith(true)
     })
 
+    it('applies and changes inclusion state independently', () => {
+      const inclusionLayer = makeBaseLayer()
+      const onChange = jest.fn()
+      const opts = makeOpts(makeMockMap())
+      const localContainer = opts.mapContainer
+
+      new MapLayersControl({
+        ...opts,
+        enableExclusionZones: true,
+        inclusionLayer: inclusionLayer as unknown as BaseLayer,
+        initialState: { inclusion: true },
+        onChange,
+      })
+
+      expect(inclusionLayer.setVisible).toHaveBeenCalledWith(true)
+      const inclusion = localContainer.querySelector('#mlc-restriction-inclusion') as HTMLInputElement
+      expect(inclusion.checked).toBe(true)
+
+      inclusion.checked = false
+      inclusion.dispatchEvent(new Event('change'))
+
+      expect(inclusionLayer.setVisible).toHaveBeenCalledWith(false)
+      expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({ inclusion: false }))
+    })
+
     it('calls onChange with updated exclusion state when the exclusion checkbox changes', () => {
       const onChange = jest.fn()
       const exclusionLayer = makeBaseLayer()
@@ -758,7 +794,7 @@ describe('MapLayersControl', () => {
         onChange,
       })
 
-      const exclusion = localContainer.querySelector('#mlc-exclusion') as HTMLInputElement
+      const exclusion = localContainer.querySelector('#mlc-restriction-exclusion') as HTMLInputElement
       exclusion.checked = true
       exclusion.dispatchEvent(new Event('change'))
 
@@ -771,6 +807,7 @@ describe('MapLayersControl', () => {
         numbers: true,
         heatmap: true,
         exclusion: true,
+        inclusion: false,
       })
     })
   })

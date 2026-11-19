@@ -6,6 +6,7 @@
     data-enable-heatmap="{{ enableHeatmap }}"
     data-enable-ping-card-navigation="{{ enablePingCardNavigation }}"
     data-exclusion-zones="{{ exclusionZones | dump }}"
+    data-inclusion-zones="{{ inclusionZones | dump }}"
     data-map-control-base-layer="{{ mapControls.baseLayer }}"
     data-map-control-tracks="{{ mapControls.tracks }}"
     data-map-control-confidence="{{ mapControls.confidence }}"
@@ -16,6 +17,7 @@
     data-map-control-heatmap-level-medium="{{ mapControls.heatmapLevels.medium }}"
     data-map-control-heatmap-level-low="{{ mapControls.heatmapLevels.low }}"
     data-map-control-exclusion="{{ mapControls.exclusion }}"
+    data-map-control-inclusion="{{ mapControls.inclusion }}"
     role="region"
     aria-label="{{ locale.map.ariaLabel }}" aria-describedby="map-instructions"
     tabindex="0">

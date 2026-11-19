@@ -178,20 +178,52 @@ describe('initialiseLocationDataView', () => {
   })
 
   it('adds converted exclusion features to the map layer when enabled', () => {
-    const zones = [{ name: 'Circle', geometry: { type: 'Point', coordinates: [-0.1, 51.5], radiusMetres: 100 } }]
-    const features = [new Feature()]
-    jest.mocked(buildExclusionZoneFeatures).mockReturnValueOnce(features)
+    const exclusionZones = [
+      { name: 'Circle', geometry: { type: 'Point', coordinates: [-0.1, 51.5], radiusMetres: 100 } },
+    ]
+    const inclusionZones = [
+      { name: 'Inclusion', geometry: { type: 'Point', coordinates: [-0.2, 51.6], radiusMetres: 200 } },
+    ]
+    const exclusionFeatures = [new Feature(), new Feature()]
+    const inclusionFeatures = [new Feature()]
+    jest
+      .mocked(buildExclusionZoneFeatures)
+      .mockReturnValueOnce(exclusionFeatures)
+      .mockReturnValueOnce(inclusionFeatures)
     mockMapContainer.dataset.enableExclusionZones = 'true'
-    mockMapContainer.dataset.exclusionZones = JSON.stringify(zones)
+    mockMapContainer.dataset.exclusionZones = JSON.stringify(exclusionZones)
+    mockMapContainer.dataset.inclusionZones = JSON.stringify(inclusionZones)
+    mockMapContainer.dataset.mapControlExclusion = 'true'
+    mockMapContainer.dataset.mapControlInclusion = 'true'
 
     initialiseLocationDataView()
 
-    expect(buildExclusionZoneFeatures).toHaveBeenCalledWith(zones)
-    expect(VectorSource).toHaveBeenLastCalledWith({ features })
-    const source = jest.mocked(VectorSource).mock.results.at(-1)?.value
-    expect(VectorLayer).toHaveBeenCalledWith(expect.objectContaining({ source }))
-    const layer = jest.mocked(VectorLayer).mock.results.at(-1)?.value
-    expect(mockMap.addLayer).toHaveBeenCalledWith(layer)
+    expect(buildExclusionZoneFeatures).toHaveBeenNthCalledWith(1, exclusionZones)
+    expect(buildExclusionZoneFeatures).toHaveBeenNthCalledWith(2, inclusionZones)
+    expect(VectorSource).toHaveBeenNthCalledWith(2, { features: exclusionFeatures })
+    expect(VectorSource).toHaveBeenNthCalledWith(3, { features: inclusionFeatures })
+    const exclusionSource = jest.mocked(VectorSource).mock.results.at(-2)?.value
+    const inclusionSource = jest.mocked(VectorSource).mock.results.at(-1)?.value
+    expect(VectorLayer).toHaveBeenNthCalledWith(1, expect.objectContaining({ source: exclusionSource, visible: true }))
+    expect(VectorLayer).toHaveBeenNthCalledWith(2, expect.objectContaining({ source: inclusionSource, visible: true }))
+    const exclusionLayer = jest.mocked(VectorLayer).mock.results.at(-2)?.value
+    const inclusionLayer = jest.mocked(VectorLayer).mock.results.at(-1)?.value
+    expect(mockMap.addLayer).toHaveBeenCalledWith(exclusionLayer)
+    expect(mockMap.addLayer).toHaveBeenCalledWith(inclusionLayer)
+    expect(MapLayersControl).toHaveBeenCalledWith(
+      expect.objectContaining({ exclusionLayer, inclusionLayer, exclusionCount: 2, inclusionCount: 1 }),
+    )
+  })
+
+  it('passes zero exclusion and inclusion counts when restriction data is unavailable', () => {
+    mockMapContainer.dataset.enableExclusionZones = 'true'
+    mockMapContainer.dataset.exclusionZones = 'null'
+    mockMapContainer.dataset.inclusionZones = 'null'
+    jest.mocked(buildExclusionZoneFeatures).mockReturnValue([])
+
+    initialiseLocationDataView()
+
+    expect(MapLayersControl).toHaveBeenCalledWith(expect.objectContaining({ exclusionCount: 0, inclusionCount: 0 }))
   })
 
   it('should add TracksLayer with visible set to true', () => {
@@ -213,6 +245,7 @@ describe('initialiseLocationDataView', () => {
       confidence: true,
       numbers: true,
       exclusion: false,
+      inclusion: false,
       heatmap: true,
       heatmapLevels: levels,
     })
@@ -223,6 +256,7 @@ describe('initialiseLocationDataView', () => {
       confidence: true,
       numbers: true,
       exclusion: false,
+      inclusion: false,
       heatmap: false,
       heatmapLevels: { low: false, medium: false, high: false, veryHigh: false },
     })
@@ -256,6 +290,7 @@ describe('initialiseLocationDataView', () => {
           heatmap: false,
           heatmapLevels: { low: false, medium: false, high: false, veryHigh: false },
           exclusion: false,
+          inclusion: false,
         },
         onChange: expect.any(Function),
       }),
@@ -480,6 +515,7 @@ describe('initialiseLocationDataView', () => {
     it('should override heatmap and exclusion states to false when feature flags are disabled', () => {
       mockMapContainer.dataset.mapControlHeatmap = 'true'
       mockMapContainer.dataset.mapControlExclusion = 'true'
+      mockMapContainer.dataset.mapControlInclusion = 'true'
       mockMapContainer.dataset.enableHeatmap = 'false'
       mockMapContainer.dataset.enableExclusionZones = 'false'
 
@@ -490,6 +526,7 @@ describe('initialiseLocationDataView', () => {
           initialState: expect.objectContaining({
             heatmap: false,
             exclusion: false,
+            inclusion: false,
           }),
           enableHeatmap: false,
           enableExclusionZones: false,
@@ -500,6 +537,7 @@ describe('initialiseLocationDataView', () => {
     it('should allow heatmap and exclusion states to be true when feature flags are enabled', () => {
       mockMapContainer.dataset.mapControlHeatmap = 'true'
       mockMapContainer.dataset.mapControlExclusion = 'true'
+      mockMapContainer.dataset.mapControlInclusion = 'true'
       mockMapContainer.dataset.enableHeatmap = 'true'
       mockMapContainer.dataset.enableExclusionZones = 'true'
 
@@ -510,6 +548,7 @@ describe('initialiseLocationDataView', () => {
           initialState: expect.objectContaining({
             heatmap: true,
             exclusion: true,
+            inclusion: true,
           }),
           enableHeatmap: true,
           enableExclusionZones: true,

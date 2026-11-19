@@ -11,6 +11,7 @@ export interface LocationMapControls {
   heatmap: boolean
   heatmapLevels: Record<HeatmapLevel, boolean>
   exclusion: boolean
+  inclusion: boolean
 }
 
 export const defaultLocationMapControls: LocationMapControls = {
@@ -21,4 +22,5 @@ export const defaultLocationMapControls: LocationMapControls = {
   heatmap: false,
   heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
   exclusion: false,
+  inclusion: false,
 }

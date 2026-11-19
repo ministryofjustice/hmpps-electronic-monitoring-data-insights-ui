@@ -259,6 +259,7 @@ describe('PeopleController', () => {
           heatmap: false,
           heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
           exclusion: false,
+          inclusion: false,
         },
         currentUrl: encodeURIComponent('/people/X31092/locations'),
       }),
@@ -462,6 +463,29 @@ describe('PeopleController', () => {
       caseLocationActivityService.getPositions.mockResolvedValue([])
     })
 
+    it('starts the restriction lookup before the positions request completes', async () => {
+      res.locals.enableExclusionZones = true
+      let releasePositions!: (positions: CaseLocationBasePosition[]) => void
+      caseLocationActivityService.getPositions.mockImplementation(
+        () =>
+          new Promise<CaseLocationBasePosition[]>(resolve => {
+            releasePositions = resolve
+          }),
+      )
+      peopleExclusionService.getRestrictionZones.mockResolvedValue({ exclusionZones: [], inclusionZones: [] })
+
+      const locationRequest = controller.location(req as Request, res as Response)
+      await new Promise<void>(resolve => {
+        setImmediate(resolve)
+      })
+
+      expect(caseLocationActivityService.getPositions).toHaveBeenCalled()
+      expect(peopleExclusionService.getRestrictionZones).toHaveBeenCalled()
+
+      releasePositions([])
+      await locationRequest
+    })
+
     it('fetches and passes exclusion zones when enableExclusionZones feature flag is true', async () => {
       res.locals.enableExclusionZones = true
       const mockExclusionZones = [
@@ -491,8 +515,8 @@ describe('PeopleController', () => {
         user.username,
         '41591',
         'X31092',
-        false,
-        false,
+        true,
+        true,
       )
       expect(res.render).toHaveBeenCalledWith(
         'pages/personLocation',
@@ -513,8 +537,8 @@ describe('PeopleController', () => {
         user.username,
         '41591',
         'X31092',
-        false,
-        false,
+        true,
+        true,
       )
 
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching exclusion zones:', expect.any(Error))
@@ -522,6 +546,7 @@ describe('PeopleController', () => {
         'pages/personLocation',
         expect.objectContaining({
           exclusionZones: null,
+          inclusionZones: null,
         }),
       )
 
