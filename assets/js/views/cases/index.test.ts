@@ -184,7 +184,7 @@ describe('initialiseLocationDataView', () => {
     const inclusionZones = [
       { name: 'Inclusion', geometry: { type: 'Point', coordinates: [-0.2, 51.6], radiusMetres: 200 } },
     ]
-    const exclusionFeatures = [new Feature()]
+    const exclusionFeatures = [new Feature(), new Feature()]
     const inclusionFeatures = [new Feature()]
     jest
       .mocked(buildExclusionZoneFeatures)
@@ -211,8 +211,19 @@ describe('initialiseLocationDataView', () => {
     expect(mockMap.addLayer).toHaveBeenCalledWith(exclusionLayer)
     expect(mockMap.addLayer).toHaveBeenCalledWith(inclusionLayer)
     expect(MapLayersControl).toHaveBeenCalledWith(
-      expect.objectContaining({ exclusionLayer, inclusionLayer, exclusionCount: 1, inclusionCount: 1 }),
+      expect.objectContaining({ exclusionLayer, inclusionLayer, exclusionCount: 2, inclusionCount: 1 }),
     )
+  })
+
+  it('passes zero exclusion and inclusion counts when restriction data is unavailable', () => {
+    mockMapContainer.dataset.enableExclusionZones = 'true'
+    mockMapContainer.dataset.exclusionZones = 'null'
+    mockMapContainer.dataset.inclusionZones = 'null'
+    jest.mocked(buildExclusionZoneFeatures).mockReturnValue([])
+
+    initialiseLocationDataView()
+
+    expect(MapLayersControl).toHaveBeenCalledWith(expect.objectContaining({ exclusionCount: 0, inclusionCount: 0 }))
   })
 
   it('should add TracksLayer with visible set to true', () => {

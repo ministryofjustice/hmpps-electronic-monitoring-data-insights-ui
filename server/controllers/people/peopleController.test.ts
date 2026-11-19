@@ -546,6 +546,7 @@ describe('PeopleController', () => {
         'pages/personLocation',
         expect.objectContaining({
           exclusionZones: null,
+          inclusionZones: null,
         }),
       )
 
