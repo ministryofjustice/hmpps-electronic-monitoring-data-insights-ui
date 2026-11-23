@@ -9,7 +9,7 @@ permissions:
 jobs:
   node_integration_tests:
     name: node and browser tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       wiremock:
         image: wiremock/wiremock
