@@ -4,6 +4,7 @@ export default class FeatureFlags {
   enablePingCardNavigation = false
   enableExclusionZones = false
   enablePingCardsUpdate = false
+  enableHeatmap = false
 }
 
 export type FeatureFlagName =

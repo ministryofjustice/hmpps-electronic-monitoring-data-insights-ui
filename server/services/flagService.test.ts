@@ -1,18 +1,19 @@
-import { FliptClient } from '@flipt-io/flipt-client-js'
+import { FliptClient } from '@flipt-io/flipt-client-js/node'
 import FlagService from './flagService'
 
-jest.mock('@flipt-io/flipt-client-js', () => ({
+jest.mock('@flipt-io/flipt-client-js/node', () => ({
   FliptClient: {
     init: jest.fn(),
   },
 }))
 
 const evaluateBoolean = jest.fn()
+const close = jest.fn()
 
 describe('FlagService', () => {
   beforeEach(() => {
     jest.resetAllMocks()
-    ;(FliptClient.init as jest.Mock).mockResolvedValue({ evaluateBoolean })
+    ;(FliptClient.init as jest.Mock).mockResolvedValue({ evaluateBoolean, close })
   })
 
   it('returns feature flags based on Flipt boolean evaluation results', async () => {
@@ -40,6 +41,34 @@ describe('FlagService', () => {
     expect(flags.enableExclusionZones).toEqual(false)
     expect(flags.enablePingCardsUpdate).toEqual(true)
     expect(flags.enableHeatmap).toEqual(true)
+  })
+
+  it('initializes one client and evaluates flags with each request user context', async () => {
+    const service = new FlagService()
+
+    await service.getFlags({ username: 'USER1' })
+    await service.getFlags({ username: 'USER2' })
+
+    expect(FliptClient.init).toHaveBeenCalledTimes(1)
+    expect(evaluateBoolean).toHaveBeenLastCalledWith({
+      flagKey: 'enable-ping-cards-update',
+      entityId: 'user2',
+      context: { username: 'user2' },
+    })
+  })
+
+  it('retries client initialization after a failure and closes the initialized client', async () => {
+    ;(FliptClient.init as jest.Mock)
+      .mockRejectedValueOnce(new Error('Flipt unavailable'))
+      .mockResolvedValueOnce({ evaluateBoolean, close })
+    const service = new FlagService()
+
+    await expect(service.getFlags({ username: 'USER1' })).rejects.toThrow('Flipt unavailable')
+    await service.getFlags({ username: 'USER1' })
+
+    expect(FliptClient.init).toHaveBeenCalledTimes(2)
+    service.close()
+    expect(close).toHaveBeenCalledTimes(1)
   })
 
   it.each([true, false])('sets the ping cards update flag to %s from Flipt', async enabled => {
