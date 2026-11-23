@@ -16,13 +16,12 @@
   },
   "exclude": [
     "node_modules",
-    "dist",
+    "assets/**/*.js",
     "playwright_tests",
+    "dist",
     "playwright.config.ts",
     "esbuild",
-    "eslint.config.mjs",
-    "server/**/*.test.ts",
-    "server/**/testutils/**"
+    "eslint.config.mjs"
   ],
-  "include": ["server.ts", "server/**/*.ts"]
+  "include": ["**/*.js", "**/*.ts"]
 }

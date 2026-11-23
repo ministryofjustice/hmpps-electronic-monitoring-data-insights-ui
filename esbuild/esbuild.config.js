@@ -37,7 +37,11 @@ const buildConfig = {
     outDir: path.join(cwd, 'dist'),
     entryPoints: glob
       .sync([path.join(cwd, '*.ts'), path.join(cwd, 'server/**/*.ts')])
-      .filter(file => !file.endsWith('.test.ts') && !file.split(path.sep).includes('testutils')),
+      .filter(
+        file =>
+          !file.endsWith('.test.ts') &&
+          !file.split(path.sep).some(segment => ['__mocks__', 'fixtures', 'mocks', 'testutils'].includes(segment)),
+      ),
     copy: [
       {
         from: path.join(cwd, 'server/views/**/*.njk'),
@@ -57,7 +61,9 @@ const buildConfig = {
 
   assets: {
     outDir: path.join(cwd, 'dist/assets'),
-    entryPoints: globSync([path.join(cwd, 'assets/js/*.ts'), path.join(cwd, 'assets/scss/*.scss')]),
+    entryPoints: globSync([path.join(cwd, 'assets/js/*.ts'), path.join(cwd, 'assets/scss/*.scss')]).filter(
+      file => !file.endsWith('.test.ts'),
+    ),
     copy: [
       {
         from: path.join(cwd, 'assets/images/**/*'),
@@ -66,6 +72,7 @@ const buildConfig = {
       },
     ],
     clear: globSync([path.join(cwd, 'dist/assets/{css,js}')]),
+    clearImages: globSync([path.join(cwd, 'dist/assets/images')]),
   },
 }
 
