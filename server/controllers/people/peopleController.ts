@@ -7,7 +7,6 @@ import CaseLocationActivityService, {
   type CaseLocationPosition,
 } from '../../services/caseLocationActivityService'
 import DateSearchValidationService from '../../services/dateSearchValidationService'
-import { ValidationResult } from '../../models/ValidationResult'
 import { searchLocationsQuerySchema } from '../../schemas/locationActivity/searchDateFormSchema'
 import {
   calculateAge,
@@ -30,11 +29,6 @@ interface LocationDateFilterFormData {
   hour: string
   minute: string
   second?: string
-}
-
-interface FilterStateProps {
-  errors: ValidationResult
-  formData: LocationBuildProps
 }
 
 interface LocationBuildProps {
@@ -75,34 +69,7 @@ export default class PeopleController {
     private readonly locationDataSyncService: LocationDataSyncService,
   ) {}
 
-  private conssumeDateFilterState(req: Request): FilterStateProps {
-    const validationErrors = req.session?.validationErrors || []
-    const formData = req.session?.formData as LocationBuildProps | undefined
-
-    delete req.session?.validationErrors
-    delete req.session?.formData
-
-    return {
-      errors: validationErrors,
-      formData,
-    }
-  }
-
-  private normalizeDateFilterFormData(dateFilter: LocationDateFilterFormData): LocationDateFilterFormData {
-    const date = new Date(dateFilter.date)
-    const normalizedDate = date.toISOString().split('T')[0]
-
-    const hour = dateFilter.hour.padStart(2, '0')
-    const minute = dateFilter.minute.padStart(2, '0')
-    return {
-      date: normalizedDate,
-      hour,
-      minute,
-    }
-  }
-
   private buildDateFilterFormValues(
-    sessionFormData: LocationBuildProps | undefined,
     queryRange: { fromDate: string; toDate: string },
     submittedFormData?: LocationBuildProps,
   ): LocationBuildProps {
@@ -110,13 +77,6 @@ export default class PeopleController {
       date: '',
       hour: '',
       minute: '',
-    }
-
-    if (sessionFormData?.fromDate && sessionFormData?.toDate) {
-      return {
-        fromDate: this.normalizeDateFilterFormData(sessionFormData?.fromDate),
-        toDate: this.normalizeDateFilterFormData(sessionFormData.toDate),
-      }
     }
 
     const fromDateRange = queryRange.fromDate ? parseDateTimeFromISOString(queryRange.fromDate) : null
@@ -259,11 +219,10 @@ export default class PeopleController {
       return
     }
 
-    const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
     let positions: CaseLocationBasePosition[] = []
     let positionCardData: CaseLocationPosition[] = []
     let exclusionResult: ExclusionZonesResult | null = null
-    let validationErrors: ValidationError[] = sessionErrors
+    let validationErrors: ValidationError[] = []
     let hasSearched = false
     let locationAlert: { text: string } | null = null
     let queryRange = { fromDate: '', toDate: '' }
@@ -354,13 +313,12 @@ export default class PeopleController {
         }
 
         formValues = this.buildDateFilterFormValues(
-          sessionFormData,
           queryRange,
           this.buildSubmittedDateFilterFormValues(req.query as QueryParams),
         )
       }
     } else {
-      formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
+      formValues = this.buildDateFilterFormValues(queryRange)
     }
 
     if (!locationAlert && hasSearched && validationErrors.length === 0 && positions.length === 0) {
