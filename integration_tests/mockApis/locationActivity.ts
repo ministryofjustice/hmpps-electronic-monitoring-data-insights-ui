@@ -1,5 +1,22 @@
 import { stubFor } from './wiremock'
-import { Position } from '../../server/services/trailService'
+
+interface Position {
+  positionId: number
+  latitude: number
+  longitude: number
+  precision: number
+  speed: number
+  direction: number
+  timestamp: string
+  geolocationMechanism: string
+  sequenceNumber: number
+  deviceId?: string
+  hdop?: number
+  geometry?: string
+  satellite?: number
+  lbs?: number
+  gpsDate?: string
+}
 
 export default {
   stubGetLocations: (

@@ -6,7 +6,6 @@ import FlagService from './flagService'
 import LocationsService from './locationsService'
 import PeopleExclusionService from './peopleExclusionService'
 import PeopleService from './peopleService'
-import TrailService from './trailService'
 import LocationDataSyncService from './locationDataSyncService'
 import SatelliteMapService from './satelliteMapService'
 import config from '../config'
@@ -25,7 +24,6 @@ export const services = () => {
   const locationsService = new LocationsService(locationsApiClient)
   const caseLocationActivityService = new CaseLocationActivityService(locationsService)
   const peopleService = new PeopleService(peopleApiClient)
-  const trailService = new TrailService()
   const dateSearchValidationService = new DateSearchValidationService()
   const flagService = new FlagService()
   const peopleExclusionService = new PeopleExclusionService(peopleExclusionApiClient)
@@ -40,7 +38,6 @@ export const services = () => {
     caseLocationActivityService,
     locationsService,
     peopleService,
-    trailService,
     dateSearchValidationService,
     flagService,
     peopleExclusionService,
