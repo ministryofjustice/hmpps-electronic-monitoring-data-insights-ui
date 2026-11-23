@@ -18,10 +18,10 @@ import {
 import locationLocale from '../../locales/location.locale.json'
 import { defaultLocationMapControls, heatmapLevelKeys, LocationMapControls } from '../../types/locationMapControls'
 import PeopleExclusionService from '../../services/peopleExclusionService'
-import type { ExclusionZonesResult } from '../../services/peopleExclusionService'
 import LocationDataSyncService from '../../services/locationDataSyncService'
 import { ApiLocationDataSyncResponse } from '../../data/locationDataSyncApiClient'
 import logger from '../../../logger'
+import type { RestrictionZonesResult } from '../../data/peopleExclusionApiClient'
 
 type SelectedPersonContext = session.SessionData['peopleSelection'][string]
 
@@ -147,7 +147,7 @@ export default class PeopleController {
       },
     }
 
-    ;(['tracks', 'confidence', 'numbers', 'heatmap', 'exclusion'] as const).forEach(key => {
+    ;(['tracks', 'confidence', 'numbers', 'heatmap', 'exclusion', 'inclusion'] as const).forEach(key => {
       const value = this.parseBooleanMapControlValue(queryControls[key])
       if (value !== undefined) {
         controls[key] = value
@@ -222,7 +222,7 @@ export default class PeopleController {
 
     let positions: CaseLocationBasePosition[] = []
     let positionCardData: CaseLocationPosition[] = []
-    let exclusionResult: ExclusionZonesResult | null = null
+    let restrictionZonesResult: RestrictionZonesResult | null = null
     let validationErrors: ValidationError[] = []
     let hasSearched = false
     let locationAlert: { text: string } | null = null
@@ -282,38 +282,42 @@ export default class PeopleController {
 
         if (validation.success) {
           if (personContext.personId) {
-            try {
-              const crn = deliusId
-              positions = await this.caseLocationActivityService.getPositions(
+            const crn = deliusId
+            const positionsPromise = this.caseLocationActivityService
+              .getPositions(
                 res.locals.user.username,
                 personContext.personId,
                 queryResult.data.fromDate,
                 queryResult.data.toDate,
                 { crn },
               )
-              positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
-            } catch (error) {
-              logger.error(
-                { correlationId: req.id, errorType: error instanceof Error ? error.name : typeof error },
-                'Error fetching locations',
-              )
-              locationAlert = { text: locationLocale.alerts.fetchError }
-            }
-
-            if (res.locals.enableExclusionZones) {
-              try {
-                exclusionResult = await this.peopleExclusionService.getExclusionZone(
-                  res.locals.user.username,
-                  personContext.personId,
-                  deliusId,
-                )
-              } catch (error) {
+              .then(fetchedPositions => {
+                positions = fetchedPositions
+                positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
+              })
+              .catch(error => {
                 logger.error(
                   { correlationId: req.id, errorType: error instanceof Error ? error.name : typeof error },
-                  'Error fetching exclusion zones',
+                  'Error fetching locations',
                 )
-              }
-            }
+                locationAlert = { text: locationLocale.alerts.fetchError }
+              })
+
+            const restrictionZonesPromise = res.locals.enableExclusionZones
+              ? this.peopleExclusionService
+                  .getRestrictionZones(res.locals.user.username, personContext.personId, deliusId, true, true)
+                  .then(result => {
+                    restrictionZonesResult = result
+                  })
+                  .catch(error => {
+                    logger.error(
+                      { correlationId: req.id, errorType: error instanceof Error ? error.name : typeof error },
+                      'Error fetching exclusion zones',
+                    )
+                  })
+              : Promise.resolve()
+
+            await Promise.all([positionsPromise, restrictionZonesPromise])
           } else {
             locationAlert = { text: locationLocale.alerts.fetchError }
           }
@@ -366,7 +370,8 @@ export default class PeopleController {
       locationAlert,
       mapControls,
       currentUrl: encodeURIComponent(String(req.originalUrl)),
-      exclusionZones: exclusionResult?.exclusionZones ?? null,
+      exclusionZones: restrictionZonesResult?.exclusionZones ?? null,
+      inclusionZones: restrictionZonesResult?.inclusionZones ?? null,
       dataFreshness: locationDataSyncResponse,
       dataFreshnessLatestDate: latestPosition ? formatSyncDate(latestPosition) : null,
       dataFreshnessLatestTime: latestPosition ? formatSyncTime(latestPosition) : null,

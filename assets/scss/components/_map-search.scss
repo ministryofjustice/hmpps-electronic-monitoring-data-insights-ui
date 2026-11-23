@@ -1,6 +1,6 @@
 .map-search {
   margin-top: 20px;
-  background: #F3F2F1;
+  background: govuk-colour("black", $variant: "tint-95");
   & .map-search__form-actions {
     & .govuk-button-group {
       margin-bottom: 0;

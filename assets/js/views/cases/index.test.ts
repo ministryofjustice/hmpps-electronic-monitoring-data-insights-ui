@@ -16,8 +16,9 @@ import { Interaction } from 'ol/interaction'
 import BandedHeatmap from './controls/bandedHeatmap'
 import initialiseLocationDataView, { bindPointKeyboardNavigation } from './index'
 import * as utils from '../../utils/utils'
+import * as exclusionZoneFeatures from '../../utils/exclusionZoneFeatures'
 import MapLayersControl from './controls/mapLayersControls'
-import buildExclusionZoneFeatures from '../../utils/exclusionZoneFeatures'
+import { buildExclusionZoneFeatures } from '../../utils/exclusionZoneFeatures'
 import MapFullscreenControl from './controls/mapFullscreenControl'
 
 interface MockOlMapInstance {
@@ -82,6 +83,7 @@ jest.mock('ol/geom', () => ({
   LineString: jest.fn().mockImplementation(() => ({})),
 }))
 jest.mock('ol/proj', () => ({
+  ...jest.requireActual('ol/proj'),
   fromLonLat: jest.fn((coord: number[]) => coord),
 }))
 jest.mock('ol/style', () => ({
@@ -175,20 +177,52 @@ describe('initialiseLocationDataView', () => {
   })
 
   it('adds converted exclusion features to the map layer when enabled', () => {
-    const zones = [{ name: 'Circle', geometry: { type: 'Point', coordinates: [-0.1, 51.5], radiusMetres: 100 } }]
-    const features = [new Feature()]
-    jest.mocked(buildExclusionZoneFeatures).mockReturnValueOnce(features)
+    const exclusionZones = [
+      { name: 'Circle', geometry: { type: 'Point', coordinates: [-0.1, 51.5], radiusMetres: 100 } },
+    ]
+    const inclusionZones = [
+      { name: 'Inclusion', geometry: { type: 'Point', coordinates: [-0.2, 51.6], radiusMetres: 200 } },
+    ]
+    const exclusionFeatures = [new Feature(), new Feature()]
+    const inclusionFeatures = [new Feature()]
+    jest
+      .mocked(buildExclusionZoneFeatures)
+      .mockReturnValueOnce(exclusionFeatures)
+      .mockReturnValueOnce(inclusionFeatures)
     mockMapContainer.dataset.enableExclusionZones = 'true'
-    mockMapContainer.dataset.exclusionZones = JSON.stringify(zones)
+    mockMapContainer.dataset.exclusionZones = JSON.stringify(exclusionZones)
+    mockMapContainer.dataset.inclusionZones = JSON.stringify(inclusionZones)
+    mockMapContainer.dataset.mapControlExclusion = 'true'
+    mockMapContainer.dataset.mapControlInclusion = 'true'
 
     initialiseLocationDataView()
 
-    expect(buildExclusionZoneFeatures).toHaveBeenCalledWith(zones)
-    expect(VectorSource).toHaveBeenLastCalledWith({ features })
-    const source = jest.mocked(VectorSource).mock.results.at(-1)?.value
-    expect(VectorLayer).toHaveBeenCalledWith(expect.objectContaining({ source }))
-    const layer = jest.mocked(VectorLayer).mock.results.at(-1)?.value
-    expect(mockMap.addLayer).toHaveBeenCalledWith(layer)
+    expect(buildExclusionZoneFeatures).toHaveBeenNthCalledWith(1, exclusionZones)
+    expect(buildExclusionZoneFeatures).toHaveBeenNthCalledWith(2, inclusionZones)
+    expect(VectorSource).toHaveBeenNthCalledWith(2, { features: exclusionFeatures })
+    expect(VectorSource).toHaveBeenNthCalledWith(3, { features: inclusionFeatures })
+    const exclusionSource = jest.mocked(VectorSource).mock.results.at(-2)?.value
+    const inclusionSource = jest.mocked(VectorSource).mock.results.at(-1)?.value
+    expect(VectorLayer).toHaveBeenNthCalledWith(1, expect.objectContaining({ source: exclusionSource, visible: true }))
+    expect(VectorLayer).toHaveBeenNthCalledWith(2, expect.objectContaining({ source: inclusionSource, visible: true }))
+    const exclusionLayer = jest.mocked(VectorLayer).mock.results.at(-2)?.value
+    const inclusionLayer = jest.mocked(VectorLayer).mock.results.at(-1)?.value
+    expect(mockMap.addLayer).toHaveBeenCalledWith(exclusionLayer)
+    expect(mockMap.addLayer).toHaveBeenCalledWith(inclusionLayer)
+    expect(MapLayersControl).toHaveBeenCalledWith(
+      expect.objectContaining({ exclusionLayer, inclusionLayer, exclusionCount: 2, inclusionCount: 1 }),
+    )
+  })
+
+  it('passes zero exclusion and inclusion counts when restriction data is unavailable', () => {
+    mockMapContainer.dataset.enableExclusionZones = 'true'
+    mockMapContainer.dataset.exclusionZones = 'null'
+    mockMapContainer.dataset.inclusionZones = 'null'
+    jest.mocked(buildExclusionZoneFeatures).mockReturnValue([])
+
+    initialiseLocationDataView()
+
+    expect(MapLayersControl).toHaveBeenCalledWith(expect.objectContaining({ exclusionCount: 0, inclusionCount: 0 }))
   })
 
   it('should add TracksLayer with visible set to true', () => {
@@ -210,6 +244,7 @@ describe('initialiseLocationDataView', () => {
       confidence: true,
       numbers: true,
       exclusion: false,
+      inclusion: false,
       heatmap: true,
       heatmapLevels: levels,
     })
@@ -220,6 +255,7 @@ describe('initialiseLocationDataView', () => {
       confidence: true,
       numbers: true,
       exclusion: false,
+      inclusion: false,
       heatmap: false,
       heatmapLevels: { low: false, medium: false, high: false, veryHigh: false },
     })
@@ -253,6 +289,7 @@ describe('initialiseLocationDataView', () => {
           heatmap: false,
           heatmapLevels: { low: false, medium: false, high: false, veryHigh: false },
           exclusion: false,
+          inclusion: false,
         },
         onChange: expect.any(Function),
       }),
@@ -436,9 +473,48 @@ describe('initialiseLocationDataView', () => {
   })
 
   describe('Exclusion Zones and heatmap feature Flags', () => {
+    it.each([
+      {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-0.1, 51.5],
+            [-0.1, 51.51],
+            [-0.09, 51.51],
+            [-0.1, 51.5],
+          ],
+        ],
+      },
+      { type: 'Point', coordinates: [-0.1, 51.5], radiusMetres: 100 },
+    ])('should pass converted $type features to the map exclusion layer', geometry => {
+      const zones = [{ name: 'Exclusion zone', geometry }]
+      const features = [new Feature()]
+      const buildFeatures = jest
+        .spyOn(exclusionZoneFeatures, 'buildExclusionZoneFeatures')
+        .mockReturnValueOnce(features)
+      mockMapContainer.dataset.exclusionZones = JSON.stringify(zones)
+      mockMapContainer.dataset.enableExclusionZones = 'true'
+      mockMapContainer.dataset.mapControlExclusion = 'true'
+
+      try {
+        initialiseLocationDataView()
+
+        expect(buildFeatures).toHaveBeenCalledWith(zones)
+        expect(VectorSource).toHaveBeenLastCalledWith({ features })
+        const source = jest.mocked(VectorSource).mock.results.at(-1)?.value
+        expect(VectorLayer).toHaveBeenLastCalledWith(expect.objectContaining({ source, visible: true }))
+        const layer = jest.mocked(VectorLayer).mock.results.at(-1)?.value
+        expect(mockMap.addLayer).toHaveBeenCalledWith(layer)
+        expect(MapLayersControl).toHaveBeenCalledWith(expect.objectContaining({ exclusionLayer: layer }))
+      } finally {
+        buildFeatures.mockRestore()
+      }
+    })
+
     it('should override heatmap and exclusion states to false when feature flags are disabled', () => {
       mockMapContainer.dataset.mapControlHeatmap = 'true'
       mockMapContainer.dataset.mapControlExclusion = 'true'
+      mockMapContainer.dataset.mapControlInclusion = 'true'
       mockMapContainer.dataset.enableHeatmap = 'false'
       mockMapContainer.dataset.enableExclusionZones = 'false'
 
@@ -449,6 +525,7 @@ describe('initialiseLocationDataView', () => {
           initialState: expect.objectContaining({
             heatmap: false,
             exclusion: false,
+            inclusion: false,
           }),
           enableHeatmap: false,
           enableExclusionZones: false,
@@ -459,6 +536,7 @@ describe('initialiseLocationDataView', () => {
     it('should allow heatmap and exclusion states to be true when feature flags are enabled', () => {
       mockMapContainer.dataset.mapControlHeatmap = 'true'
       mockMapContainer.dataset.mapControlExclusion = 'true'
+      mockMapContainer.dataset.mapControlInclusion = 'true'
       mockMapContainer.dataset.enableHeatmap = 'true'
       mockMapContainer.dataset.enableExclusionZones = 'true'
 
@@ -469,6 +547,7 @@ describe('initialiseLocationDataView', () => {
           initialState: expect.objectContaining({
             heatmap: true,
             exclusion: true,
+            inclusion: true,
           }),
           enableHeatmap: true,
           enableExclusionZones: true,

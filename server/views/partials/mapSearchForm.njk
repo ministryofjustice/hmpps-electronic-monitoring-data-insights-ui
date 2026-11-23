@@ -51,6 +51,7 @@
         {% endif %}
         {% if enableExclusionZones %}
           <input type="hidden" name="mapControls[exclusion]" value="{{ mapControls.exclusion }}" data-map-control-input="exclusion"/>
+          <input type="hidden" name="mapControls[inclusion]" value="{{ mapControls.inclusion }}" data-map-control-input="inclusion"/>
         {% endif %}
         {% if form.showCrn != false %}
           <div class="govuk-form-group">

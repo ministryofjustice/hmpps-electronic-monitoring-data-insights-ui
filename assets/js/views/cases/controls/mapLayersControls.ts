@@ -16,6 +16,7 @@ export interface MapControlState {
   heatmap: boolean
   heatmapLevels: Record<HeatmapLevel, boolean>
   exclusion: boolean
+  inclusion: boolean
 }
 
 export type MapControlInitialState = Partial<Omit<MapControlState, 'heatmapLevels'>> & {
@@ -30,6 +31,9 @@ interface MapLayersControlOptions {
   numbersLayer?: ComposableLayer
   heatmapLayer?: ComposableLayer<BaseLayer | BaseLayer[]>
   exclusionLayer?: BaseLayer
+  inclusionLayer?: BaseLayer
+  exclusionCount?: number
+  inclusionCount?: number
   enableHeatmap?: boolean
   enableExclusionZones?: boolean
   mapContainer: HTMLElement
@@ -47,6 +51,7 @@ const defaultMapControlState: MapControlState = {
   heatmap: true,
   heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
   exclusion: false,
+  inclusion: false,
 }
 
 export default class MapLayersControl extends Control {
@@ -107,7 +112,22 @@ export default class MapLayersControl extends Control {
       )
       .join('')
 
+    const restrictionKeys = ['exclusion', 'inclusion'] as const
+    const restrictionItems = restrictionKeys
+      .map(
+        item => `
+              <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="mlc-restriction-${item}" type="checkbox"
+                  data-restriction-level="${item}" ${state[item] ? 'checked' : ''}>
+                <label class="govuk-label govuk-checkboxes__label" for="mlc-restriction-${item}">
+                  ${item[0].toUpperCase()}${item.slice(1)} (${item === 'exclusion' ? (opts.exclusionCount ?? 0) : (opts.inclusionCount ?? 0)})
+                </label>
+              </div>`,
+      )
+      .join('')
+
     const heatmapExpanded = true
+    const exclusionExpanded = true
 
     panel.innerHTML = `
       <div class="govuk-form-group govuk-!-margin-bottom-0">
@@ -183,17 +203,20 @@ export default class MapLayersControl extends Control {
         opts.enableExclusionZones
           ? `  
       <hr class="govuk-section-break govuk-section-break--visible mlc-panel__divider" aria-hidden="true">
-      <div class="govuk-form-group govuk-!-margin-bottom-0">
-        <fieldset class="govuk-fieldset">
-            <span class="govuk-fieldset__heading govuk-!-font-weight-bold">Zones</span>
-          <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="mlc-exclusion" type="checkbox" ${state.exclusion ? 'checked' : ''}>
-              <label class="govuk-label govuk-checkboxes__label" for="mlc-exclusion">Exclusion</label>
-            </div>
-          </div>
-        </fieldset>
-      </div>`
+
+      <div class="govuk-form-group govuk-!-margin-bottom-0 mlc-heatmap">
+        <button type="button" class="mlc-collapsible-trigger" aria-controls="mlc-exclusion-content"
+          aria-expanded="${exclusionExpanded}">
+          <span class="mlc-collapsible-icon" aria-hidden="true"></span>
+          <span class="mlc-collapsible-title">Zones</span>
+        </button>
+        <div class="mlc-collapsible-content" id="mlc-exclusion-content" ${exclusionExpanded ? '' : 'hidden'}>
+            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+            ${restrictionItems}
+           </div>
+        </div>
+      </div>
+      `
           : ``
       }`
     panel.querySelectorAll<HTMLElement>('[data-swatch-level]').forEach(swatch => {
@@ -247,16 +270,13 @@ export default class MapLayersControl extends Control {
       })
     }
 
-    const bindNativeLayerCheckbox = (id: string, stateKey: 'exclusion', layer?: BaseLayer) => {
+    const bindNativeLayerCheckbox = (id: string, stateKey: 'exclusion' | 'inclusion', layer?: BaseLayer) => {
       const input = panel.querySelector(id) as HTMLInputElement | null
       if (!input) return
-      if (!layer) {
-        return
-      }
-      layer.setVisible(state[stateKey])
+      layer?.setVisible(state[stateKey])
       input.addEventListener('change', () => {
         state[stateKey] = input.checked
-        layer.setVisible(input.checked)
+        layer?.setVisible(input.checked)
         notifyChange()
       })
     }
@@ -264,7 +284,8 @@ export default class MapLayersControl extends Control {
     bindCheckbox('#mlc-tracks', 'tracks', opts.tracksLayer)
     bindCheckbox('#mlc-confidence', 'confidence', opts.confidenceLayer)
     bindCheckbox('#mlc-numbers', 'numbers', opts.numbersLayer)
-    bindNativeLayerCheckbox('#mlc-exclusion', 'exclusion', opts.exclusionLayer)
+    bindNativeLayerCheckbox('#mlc-restriction-exclusion', 'exclusion', opts.exclusionLayer)
+    bindNativeLayerCheckbox('#mlc-restriction-inclusion', 'inclusion', opts.inclusionLayer)
 
     const levelInputs = panel.querySelectorAll<HTMLInputElement>('[data-heatmap-level]')
     const rawHeatmapLayer = opts.heatmapLayer?.getNativeLayer()
@@ -293,13 +314,15 @@ export default class MapLayersControl extends Control {
       }),
     )
 
-    const heatmapTrigger = panel.querySelector<HTMLButtonElement>('.mlc-collapsible-trigger')
-    const heatmapContent = panel.querySelector<HTMLElement>('#mlc-heatmap-content')
+    panel.querySelectorAll<HTMLButtonElement>('.mlc-collapsible-trigger').forEach(trigger => {
+      const contentId = trigger.getAttribute('aria-controls')
+      const content = contentId ? panel.querySelector<HTMLElement>(`#${contentId}`) : null
 
-    heatmapTrigger?.addEventListener('click', () => {
-      const isExpanded = heatmapTrigger.getAttribute('aria-expanded') === 'true'
-      heatmapTrigger.setAttribute('aria-expanded', String(!isExpanded))
-      heatmapContent?.toggleAttribute('hidden', isExpanded)
+      trigger.addEventListener('click', () => {
+        const isExpanded = trigger.getAttribute('aria-expanded') === 'true'
+        trigger.setAttribute('aria-expanded', String(!isExpanded))
+        content?.toggleAttribute('hidden', isExpanded)
+      })
     })
 
     if (opts.enableHeatmap) {

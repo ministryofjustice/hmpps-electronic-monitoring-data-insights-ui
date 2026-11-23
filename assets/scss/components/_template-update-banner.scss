@@ -1,5 +1,5 @@
 .technical-updates-banner {
-    background-color: #44247b;
+    background-color: govuk-colour("purple");
     padding: 10px 0 10px 0;
 
     & .technical-updates-column {
@@ -17,7 +17,7 @@
         justify-content: flex-start;
         flex-wrap: wrap;
         gap: 32px;
-        color: #fff;
+        color: govuk-colour("white");
     }
 
     & .technical-updates-content {
