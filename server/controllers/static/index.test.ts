@@ -8,6 +8,11 @@ import whatsNewLocale from './whats-new.locale.json'
 jest.mock('../../services/auditService')
 
 describe('StaticController', () => {
+  const pages = [
+    { method: 'mapHelp', template: 'pages/mapHelp', locale: mapHelpLocale },
+    { method: 'whatsNew', template: 'pages/whatsNew', locale: whatsNewLocale },
+  ] as const
+
   let auditService: jest.Mocked<AuditService>
   let controller: StaticController
   let req: Partial<Request>
@@ -25,6 +30,23 @@ describe('StaticController', () => {
 
   afterEach(() => {
     jest.resetAllMocks()
+  })
+
+  it.each(pages)('$method preserves URL encoding in the parsed return URL', async ({ method, template, locale }) => {
+    const returnUrl = '/people/X123456/locations?filter=%E0%A4%A&next=%25'
+    req = { id: 'test-id', query: { returnUrl } }
+
+    await controller[method](req as Request, res as Response)
+
+    expect(res.render).toHaveBeenCalledWith(template, { locale, returnUrl })
+  })
+
+  it.each(pages)('$method defaults non-string return URLs to "/"', async ({ method, template, locale }) => {
+    req = { id: 'test-id', query: { returnUrl: ['/people/X123456/locations', '/'] } }
+
+    await controller[method](req as Request, res as Response)
+
+    expect(res.render).toHaveBeenCalledWith(template, { locale, returnUrl: '/' })
   })
 
   describe('mapHelp', () => {

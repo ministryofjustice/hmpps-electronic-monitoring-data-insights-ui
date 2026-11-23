@@ -6,6 +6,11 @@ import whatsNewLocale from './whats-new.locale.json'
 export default class StaticController {
   constructor(private readonly auditService: AuditService) {}
 
+  private getReturnUrl(req: Request): string {
+    const returnUrl = req.query?.returnUrl
+    return typeof returnUrl === 'string' && returnUrl ? returnUrl : '/'
+  }
+
   async mapHelp(req: Request, res: Response): Promise<void> {
     await this.auditService.logPageView(Page.MAP_HELP_PAGE, {
       who: res.locals.user.username,
@@ -13,7 +18,7 @@ export default class StaticController {
     })
     res.render('pages/mapHelp', {
       locale: mapHelplocale,
-      returnUrl: req.query?.returnUrl ? decodeURIComponent(req.query.returnUrl as string) : '/',
+      returnUrl: this.getReturnUrl(req),
     })
   }
 
@@ -24,7 +29,7 @@ export default class StaticController {
     })
     res.render('pages/whatsNew', {
       locale: whatsNewLocale,
-      returnUrl: req.query?.returnUrl ? decodeURIComponent(req.query.returnUrl as string) : '/',
+      returnUrl: this.getReturnUrl(req),
     })
   }
 }
