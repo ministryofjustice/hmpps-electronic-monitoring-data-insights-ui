@@ -1,4 +1,4 @@
-name: Node Integration Tests
+name: Node and Browser Tests
 
 on:
   workflow_call:
@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   node_integration_tests:
-    name: node integration tests
+    name: node and browser tests
     runs-on: ubuntu-latest
     services:
       wiremock:
@@ -25,14 +25,6 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Restore Cypress binary cache
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/Cypress
-          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            cypress-${{ runner.os }}-
-
       - name: Install dependencies
         run: npm ci
 
@@ -44,10 +36,6 @@ jobs:
           restore-keys: |
             playwright-${{ runner.os }}-
 
-      - name: Install and verify Cypress binary
-        run: |
-          npx cypress install
-          npx cypress verify
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
@@ -79,18 +67,14 @@ jobs:
           cat app.log
           exit 1
 
-      - name: Run integration tests
-        run: npm run int-test
       - name: Run Playwright browser tests
         run: npm run test:browser
       - name: Upload integration test artifacts
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: node-integration-test-artifacts
+          name: browser-test-artifacts
           path: |
             app.log
             test_results
-            integration_tests/screenshots
-            integration_tests/videos
           if-no-files-found: ignore

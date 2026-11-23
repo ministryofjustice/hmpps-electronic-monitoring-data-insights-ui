@@ -225,46 +225,31 @@ for the in-memory DB used by Auth
 
 `npm run test`
 
-### Running integration tests
+### Running browser tests
 
-For local running, start a wiremock instance by:
+Start a WireMock instance with:
 
 `docker compose -f docker-compose-test.yml up`
 
-Then run the server in test mode by:
+Then start the application in test mode:
 
 `npm run start-feature` (or `npm run start-feature:dev` to run with auto-restart on changes)
 
-And then either, run tests in headless mode with:
-
-`npm run int-test`
-
-Or run tests with the cypress UI:
-
-`npm run int-test-ui`
-
-### Running accessibility tests
-
-Accessibility tests use Playwright and axe. They are intended for local/manual use initially and are not run in the
-GitHub Actions pipeline.
-
-For local running, start WireMock and the test-mode server as described in the integration test section.
-
-The first time you run the tests, install the Playwright Chromium browser:
+Install the Playwright Chromium browser the first time you run the tests:
 
 `npx playwright install chromium`
 
-Then run the accessibility tests in headless mode with:
+Run the browser and accessibility tests in headless mode:
 
-`npm run test:a11y`
+`npm run test:browser`
 
-Or run the tests with the Playwright UI:
+Or run them with the Playwright UI:
 
-`npm run test:a11y-ui`
+`npm run test:browser-ui`
 
-To view the last HTML report:
+Accessibility checks use axe and run as part of this suite in GitHub Actions. To view the last HTML report:
 
-`npm run test:a11y-report`
+`npm run test:browser-report`
 
 ## Change log
 

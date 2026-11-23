@@ -1,9 +1,9 @@
 import { expect, type Page } from '@playwright/test'
 
-import auth from '../../integration_tests/mockApis/auth'
-import flipt from '../../integration_tests/mockApis/flipt'
-import { resetStubs, stubFor } from '../../integration_tests/mockApis/wiremock'
-import vectorStyle from '../../integration_tests/fixtures/vectorStyle.json'
+import auth from './mockApis/auth'
+import flipt from './mockApis/flipt'
+import { resetStubs, stubFor } from './mockApis/wiremock'
+import vectorStyle from '../fixtures/vectorStyle.json'
 
 export const stubCommonApis = async (): Promise<void> => {
   await resetStubs()
