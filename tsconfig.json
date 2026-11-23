@@ -5,7 +5,7 @@
     "lib": ["dom", "dom.iterable", "es2018"],
     "outDir": "./dist",
     "sourceMap": true,
-    "noEmit": false,
+    "noEmit": true,
     "allowJs": false,
     "strict": false,
     "resolveJsonModule": true,
@@ -16,12 +16,13 @@
   },
   "exclude": [
     "node_modules",
-    "assets/**/*.js",
-    "playwright_tests",
     "dist",
+    "playwright_tests",
     "playwright.config.ts",
     "esbuild",
-    "eslint.config.mjs"
+    "eslint.config.mjs",
+    "server/**/*.test.ts",
+    "server/**/testutils/**"
   ],
-  "include": ["**/*.js", "**/*.ts"]
+  "include": ["server.ts", "server/**/*.ts"]
 }

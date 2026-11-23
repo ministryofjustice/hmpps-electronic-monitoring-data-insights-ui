@@ -1,4 +1,5 @@
 const { copy } = require('esbuild-plugin-copy')
+const { clean } = require('esbuild-plugin-clean')
 const { typecheckPlugin } = require('@jgoz/esbuild-plugin-typecheck')
 const esbuild = require('esbuild')
 const glob = require('glob')
@@ -16,6 +17,9 @@ const buildApp = buildConfig => {
     platform: 'node',
     format: 'cjs',
     plugins: [
+      clean({
+        patterns: glob.sync(buildConfig.app.clear),
+      }),
       typecheckPlugin(),
       copy({
         resolveFrom: 'cwd',

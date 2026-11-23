@@ -37,14 +37,14 @@ const buildConfig = {
     outDir: path.join(cwd, 'dist'),
     entryPoints: glob
       .sync([path.join(cwd, '*.ts'), path.join(cwd, 'server/**/*.ts')])
-      .filter(file => !file.endsWith('.test.ts')),
+      .filter(file => !file.endsWith('.test.ts') && !file.split(path.sep).includes('testutils')),
     copy: [
       {
-        from: path.join(cwd, 'server/views/**/*'),
+        from: path.join(cwd, 'server/views/**/*.njk'),
         to: path.join(cwd, 'dist/server/views'),
       },
       {
-        from: path.join(cwd, 'server/**/*.json'),
+        from: path.join(cwd, 'server/**/*.locale.json'),
         to: path.join(cwd, 'dist/server'),
       },
       {
@@ -52,6 +52,7 @@ const buildConfig = {
         to: path.join(cwd, 'dist'),
       },
     ],
+    clear: globSync([path.join(cwd, 'dist/server')]),
   },
 
   assets: {
