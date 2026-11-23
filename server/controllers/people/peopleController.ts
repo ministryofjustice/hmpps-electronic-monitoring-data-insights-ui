@@ -180,6 +180,10 @@ export default class PeopleController {
       ...defaultLocationMapControls,
       ...sessionControls,
       ...(baseLayer ? { baseLayer } : {}),
+      heatmapLevels: {
+        ...defaultLocationMapControls.heatmapLevels,
+        ...sessionControls.heatmapLevels,
+      },
     }
 
     ;(['tracks', 'confidence', 'numbers', 'heatmap', 'exclusion'] as const).forEach(key => {

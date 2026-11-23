@@ -263,6 +263,31 @@ describe('PeopleController', () => {
     )
   })
 
+  it('keeps heatmap defaults isolated between sessions', async () => {
+    setPersonContext()
+    req.query = { mapControls: { heatmapLevels: { high: 'false' } } }
+
+    await controller.location(req as Request, res as Response)
+
+    expect(req.session?.locationMapControls?.heatmapLevels.high).toBe(false)
+
+    req.session = {} as Request['session']
+    req.query = {}
+    setPersonContext()
+    res.render = jest.fn()
+
+    await controller.location(req as Request, res as Response)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'pages/personLocation',
+      expect.objectContaining({
+        mapControls: expect.objectContaining({
+          heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
+        }),
+      }),
+    )
+  })
+
   it('fetches locations using person context personId for a valid search', async () => {
     setPersonContext()
     req.query = {
