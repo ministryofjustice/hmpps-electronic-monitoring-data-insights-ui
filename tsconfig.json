@@ -18,7 +18,7 @@
     "node_modules",
     "assets/**/*.js",
     "integration_tests",
-    "accessibility_tests",
+    "playwright_tests",
     "dist",
     "cypress.config.ts",
     "playwright.config.ts",
