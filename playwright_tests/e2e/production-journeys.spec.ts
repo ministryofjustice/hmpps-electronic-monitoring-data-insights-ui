@@ -109,7 +109,7 @@ test('the locations search validates dates and displays returned GPS positions',
   const invalidSearch = new URLSearchParams(validSearch)
   invalidSearch.set('start[date]', '32/01/2026')
   await page.goto(`/people/${firstPerson.deliusId}/locations?${invalidSearch}`)
-  await expect(page.getByText('Enter a correct date')).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Enter a correct date' })).toBeVisible()
 
   await page.goto(`/people/${firstPerson.deliusId}/locations?${validSearch}`)
 
@@ -123,10 +123,16 @@ test('map help and whats-new return to their internal locations URL', async ({ p
   await signIn(page)
 
   await page.goto('/map-help?returnUrl=%2Fpeople%2FX123456%2Flocations')
-  await expect(page.getByRole('link', { name: 'Back' })).toHaveAttribute('href', '/people/X123456/locations')
+  await expect(page.getByRole('link', { name: 'Back', exact: true })).toHaveAttribute(
+    'href',
+    '/people/X123456/locations',
+  )
 
   await page.goto('/whats-new?returnUrl=%2Fpeople%2FX123456%2Flocations')
-  await expect(page.getByRole('link', { name: 'Back' })).toHaveAttribute('href', '/people/X123456/locations')
+  await expect(page.getByRole('link', { name: 'Back', exact: true })).toHaveAttribute(
+    'href',
+    '/people/X123456/locations',
+  )
 })
 
 test('the mixed-case authError URL renders the authentication error page', async ({ page }) => {

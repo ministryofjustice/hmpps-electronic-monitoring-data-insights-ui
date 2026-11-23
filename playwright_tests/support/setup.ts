@@ -155,7 +155,7 @@ export const openPersonLocations = async (page: Page, crn: string): Promise<void
 }
 
 export const mockMapAssets = async (page: Page): Promise<void> => {
-  await page.route('**/os-map/vector/style', async route => {
+  await page.route('**/os-map/vector/style*', async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',

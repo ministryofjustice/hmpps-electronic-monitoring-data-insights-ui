@@ -8,7 +8,7 @@
 
   <a href="{{ returnUrl or '/' }}" class="govuk-back-link">Back</a>
 
-  <h2 class="govuk-heading-l">{{ locale.title }}</h2>
+  <h1 class="govuk-heading-l">{{ locale.title }}</h1>
   <div class="govuk-width-container">
   {% if locale and locale.content %}
     {% for _, section in locale.content %}

@@ -4,6 +4,7 @@ export default defineConfig({
   testDir: './playwright_tests/e2e',
   outputDir: './test_results/playwright/results',
   fullyParallel: false,
+  workers: 1,
   reporter: [
     ['list'],
     ['junit', { outputFile: './test_results/playwright/results.xml' }],

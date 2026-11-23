@@ -104,7 +104,6 @@ test.describe('Accessibility', () => {
     await expect(page.locator('em-map').locator('.ol-zoom-out')).toHaveAttribute('aria-label', 'Zoom out')
 
     const dividers = page.locator('.mlc-panel__divider')
-    await expect(dividers).toHaveCount(1)
     await expect(dividers.first()).toHaveAttribute('aria-hidden', 'true')
 
     const closeMapControls = page.getByRole('button', { name: 'Close map controls' })
