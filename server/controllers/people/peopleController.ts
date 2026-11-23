@@ -16,7 +16,7 @@ import {
   getDateComponents,
   parseDateTimeFromISOString,
 } from '../../utils/date'
-import casesLocationLocale from '../cases/cases-location.locale.json'
+import locationLocale from '../../locales/location.locale.json'
 import { defaultLocationMapControls, heatmapLevelKeys, LocationMapControls } from '../../types/locationMapControls'
 import PeopleExclusionService from '../../services/peopleExclusionService'
 import type { ExclusionZonesResult } from '../../services/peopleExclusionService'
@@ -328,7 +328,7 @@ export default class PeopleController {
               positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
             } catch (error) {
               console.error('Error fetching locations:', error)
-              locationAlert = { text: casesLocationLocale.alerts.fetchError }
+              locationAlert = { text: locationLocale.alerts.fetchError }
             }
 
             if (res.locals.enableExclusionZones) {
@@ -343,7 +343,7 @@ export default class PeopleController {
               }
             }
           } else {
-            locationAlert = { text: casesLocationLocale.alerts.fetchError }
+            locationAlert = { text: locationLocale.alerts.fetchError }
           }
         } else {
           validationErrors = validation.errors || []
@@ -360,7 +360,7 @@ export default class PeopleController {
     }
 
     if (!locationAlert && hasSearched && validationErrors.length === 0 && positions.length === 0) {
-      locationAlert = { text: casesLocationLocale.alerts.noResults }
+      locationAlert = { text: locationLocale.alerts.noResults }
     }
 
     const isMapLoading = hasSearched && positions.length > 0 && !(locationAlert && locationAlert.text)
@@ -369,7 +369,7 @@ export default class PeopleController {
     res.render('pages/personLocation', {
       activeNav: 'cases',
       activeTab: 'locations',
-      locale: casesLocationLocale,
+      locale: locationLocale,
       fullName: personContext.fullName,
       popData: {
         crn: deliusId,

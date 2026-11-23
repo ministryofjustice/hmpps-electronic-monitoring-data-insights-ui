@@ -55,18 +55,13 @@ describe('GET /', () => {
 })
 
 describe('Routes', () => {
-  it('GET /search', () => {
-    return request(app)
-      .get('/search')
-      .expect('Content-Type', /html/)
-      .expect(200)
-      .expect(res => {
-        expect(res.text).toContain('Search')
-        expect(auditService.logPageView).toHaveBeenCalledWith(Page.SEARCH_PAGE, {
-          who: user.username,
-          correlationId: expect.any(String),
-        })
-      })
+  it.each(['/search', '/cases/X123456/overview', '/cases/X123456/location-activity'])(
+    'GET %s returns not found',
+    path => request(app).get(path).expect(404),
+  )
+
+  it('POST /cases/X123456/location-activity returns not found', () => {
+    return request(app).post('/cases/X123456/location-activity').expect(404)
   })
 
   it('GET /map-help', () => {

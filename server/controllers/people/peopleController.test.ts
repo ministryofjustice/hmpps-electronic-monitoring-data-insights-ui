@@ -8,7 +8,7 @@ import CaseLocationActivityService, { type CaseLocationBasePosition } from '../.
 import DateSearchValidationService from '../../services/dateSearchValidationService'
 import PeopleExclusionService from '../../services/peopleExclusionService'
 import LocationDataSyncService from '../../services/locationDataSyncService'
-import casesLocationLocale from '../cases/cases-location.locale.json'
+import locationLocale from '../../locales/location.locale.json'
 import PeopleController from './peopleController'
 import { Geometry } from '../../data/peopleExclusionApiClient'
 import { ApiLocationDataSyncResponse } from '../../data/locationDataSyncApiClient'
@@ -218,7 +218,7 @@ describe('PeopleController', () => {
       expect.objectContaining({
         activeNav: 'cases',
         activeTab: 'locations',
-        locale: casesLocationLocale,
+        locale: locationLocale,
         fullName: 'DEVWR0004718',
         popData: {
           age: 6,
@@ -402,7 +402,7 @@ describe('PeopleController', () => {
     expect(res.render).toHaveBeenCalledWith(
       'pages/personLocation',
       expect.objectContaining({
-        locationAlert: { text: casesLocationLocale.alerts.noResults },
+        locationAlert: { text: locationLocale.alerts.noResults },
       }),
     )
   })
@@ -420,7 +420,7 @@ describe('PeopleController', () => {
     expect(res.render).toHaveBeenCalledWith(
       'pages/personLocation',
       expect.objectContaining({
-        locationAlert: { text: casesLocationLocale.alerts.fetchError },
+        locationAlert: { text: locationLocale.alerts.fetchError },
       }),
     )
   })
@@ -438,7 +438,7 @@ describe('PeopleController', () => {
     expect(res.render).toHaveBeenCalledWith(
       'pages/personLocation',
       expect.objectContaining({
-        locationAlert: { text: casesLocationLocale.alerts.fetchError },
+        locationAlert: { text: locationLocale.alerts.fetchError },
       }),
     )
   })

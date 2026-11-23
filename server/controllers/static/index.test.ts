@@ -31,7 +31,7 @@ describe('StaticController', () => {
     it('logs page view and renders the map help page with locale content', async () => {
       req = {
         id: 'test-correlation-id',
-        query: { returnUrl: '/cases/123?tab=map' },
+        query: { returnUrl: '/people/X123456/locations?tab=map' },
       }
       await controller.mapHelp(req as Request, res as Response)
 
@@ -41,7 +41,7 @@ describe('StaticController', () => {
       })
       expect(res.render).toHaveBeenCalledWith('pages/mapHelp', {
         locale: mapHelpLocale,
-        returnUrl: '/cases/123?tab=map',
+        returnUrl: '/people/X123456/locations?tab=map',
       })
     })
 
@@ -61,7 +61,7 @@ describe('StaticController', () => {
     it('logs page view and renders the whats new page with locale content', async () => {
       req = {
         id: 'test-correlation-id',
-        query: { returnUrl: '/cases/123?tab=something' },
+        query: { returnUrl: '/people/X123456/locations?tab=something' },
       }
       await controller.whatsNew(req as Request, res as Response)
 
@@ -71,7 +71,7 @@ describe('StaticController', () => {
       })
       expect(res.render).toHaveBeenCalledWith('pages/whatsNew', {
         locale: whatsNewLocale,
-        returnUrl: '/cases/123?tab=something',
+        returnUrl: '/people/X123456/locations?tab=something',
       })
     })
 
