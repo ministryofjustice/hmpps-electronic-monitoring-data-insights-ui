@@ -25,7 +25,6 @@ context('Cases', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubExampleTime')
     cy.intercept('GET', '**/os-map/vector/style', {
       statusCode: 200,
       fixture: 'vectorStyle.json',

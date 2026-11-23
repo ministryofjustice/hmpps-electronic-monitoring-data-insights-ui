@@ -5,7 +5,6 @@ context('Cases', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubExampleTime')
   })
 
   it('Navigates to Cases page and sub navigation is present', () => {

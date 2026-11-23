@@ -17,7 +17,6 @@ import InMemoryTokenStore from './tokenStore/inMemoryTokenStore'
 import config from '../config'
 import HmppsAuditClient from './hmppsAuditClient'
 import logger from '../../logger'
-import EmdiApiClient from './emdiApiClient'
 import LocationsApiClient from './locationsApiClient'
 import PeopleApiClient from './peopleApiClient'
 import PeopleExclusionApiClient from './peopleExclusionApiClient'
@@ -34,7 +33,6 @@ export const dataAccess = () => {
     applicationInfo,
     hmppsAuthClient,
     hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
-    emdiApiClient: new EmdiApiClient(hmppsAuthClient),
     locationsApiClient: new LocationsApiClient(hmppsAuthClient),
     peopleApiClient: new PeopleApiClient(hmppsAuthClient),
     peopleExclusionApiClient: new PeopleExclusionApiClient(hmppsAuthClient),

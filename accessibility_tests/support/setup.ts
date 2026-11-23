@@ -1,7 +1,6 @@
 import { expect, type Page } from '@playwright/test'
 
 import auth from '../../integration_tests/mockApis/auth'
-import emdiApi from '../../integration_tests/mockApis/emdiApi'
 import locationActivity from '../../integration_tests/mockApis/locationActivity'
 import { resetStubs, stubFor } from '../../integration_tests/mockApis/wiremock'
 import vectorStyle from '../../integration_tests/fixtures/vectorStyle.json'
@@ -9,7 +8,6 @@ import vectorStyle from '../../integration_tests/fixtures/vectorStyle.json'
 export const stubCommonApis = async (): Promise<void> => {
   await resetStubs()
   await auth.stubSignIn()
-  await emdiApi.stubExampleTime()
   await stubFor({
     request: {
       method: 'GET',

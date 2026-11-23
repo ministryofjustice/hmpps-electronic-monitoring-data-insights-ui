@@ -6,7 +6,6 @@ context('PoP Alert', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubExampleTime')
   })
 
   it('Navigates to Cases page and the PoP Alert is present', () => {

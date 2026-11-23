@@ -5,7 +5,6 @@ context('Layout', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubExampleTime')
   })
 
   it('Layout uses probation components fallback header', () => {

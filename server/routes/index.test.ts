@@ -2,14 +2,11 @@ import type { Express } from 'express'
 import request from 'supertest'
 import { appWithAllRoutes, user } from './testutils/appSetup'
 import AuditService, { Page } from '../services/auditService'
-import EmdiService from '../services/emdiService'
 import TrailService from '../services/trailService'
 
 jest.mock('../services/auditService')
-jest.mock('../services/emdiService')
 
 const auditService = new AuditService(null) as jest.Mocked<AuditService>
-const emdiService = new EmdiService(null) as jest.Mocked<EmdiService>
 const trailService = new TrailService() as jest.Mocked<TrailService>
 
 let app: Express
@@ -18,7 +15,6 @@ beforeEach(() => {
   app = appWithAllRoutes({
     services: {
       auditService,
-      emdiService,
       trailService,
     },
     userSupplier: () => user,
