@@ -12,6 +12,7 @@ import locationLocale from '../../locales/location.locale.json'
 import PeopleController from './peopleController'
 import { Geometry } from '../../data/peopleExclusionApiClient'
 import { ApiLocationDataSyncResponse } from '../../data/locationDataSyncApiClient'
+import logger from '../../../logger'
 
 jest.mock('../../services/auditService')
 
@@ -520,13 +521,16 @@ describe('PeopleController', () => {
 
     it('handles service errors gracefully when fetching exclusion zones fails', async () => {
       res.locals.enableExclusionZones = true
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+      const loggerErrorSpy = jest.spyOn(logger, 'error')
       peopleExclusionService.getExclusionZone.mockRejectedValue(new Error('Exclusion service down'))
 
       await controller.location(req as Request, res as Response)
 
       expect(peopleExclusionService.getExclusionZone).toHaveBeenCalledWith(user.username, '41591', 'X31092')
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching exclusion zones:', expect.any(Error))
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
+        { correlationId: 'test-correlation-id', errorType: 'Error' },
+        'Error fetching exclusion zones',
+      )
       expect(res.render).toHaveBeenCalledWith(
         'pages/personLocation',
         expect.objectContaining({
@@ -534,7 +538,7 @@ describe('PeopleController', () => {
         }),
       )
 
-      consoleErrorSpy.mockRestore()
+      loggerErrorSpy.mockRestore()
     })
 
     it('does not attempt to fetch exclusion zones when enableExclusionZones is false or undefined', async () => {
@@ -590,13 +594,16 @@ describe('PeopleController', () => {
     })
 
     it('handles service errors gracefully when fetching data freshness fails', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+      const loggerErrorSpy = jest.spyOn(logger, 'error')
       locationDataSyncService.getLocationDataSyncStatus.mockRejectedValue(new Error('Data sync service down'))
 
       await controller.location(req as Request, res as Response)
 
       expect(locationDataSyncService.getLocationDataSyncStatus).toHaveBeenCalledWith(user.username)
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching data freshness:', expect.any(Error))
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
+        { correlationId: 'test-correlation-id', errorType: 'Error' },
+        'Error fetching data freshness',
+      )
       expect(res.render).toHaveBeenCalledWith(
         'pages/personLocation',
         expect.objectContaining({
@@ -605,7 +612,7 @@ describe('PeopleController', () => {
         }),
       )
 
-      consoleErrorSpy.mockRestore()
+      loggerErrorSpy.mockRestore()
     })
 
     it('still renders locations and search results when data freshness fetch fails', async () => {

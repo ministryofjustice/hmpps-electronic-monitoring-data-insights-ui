@@ -21,6 +21,7 @@ import PeopleExclusionService from '../../services/peopleExclusionService'
 import type { ExclusionZonesResult } from '../../services/peopleExclusionService'
 import LocationDataSyncService from '../../services/locationDataSyncService'
 import { ApiLocationDataSyncResponse } from '../../data/locationDataSyncApiClient'
+import logger from '../../../logger'
 
 type SelectedPersonContext = session.SessionData['peopleSelection'][string]
 
@@ -236,8 +237,10 @@ export default class PeopleController {
       locationDataSyncResponse = await this.locationDataSyncService.getLocationDataSyncStatus(res.locals.user.username)
     } catch (error) {
       isDataSyncError = true
-      /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-      console.error('Error fetching data freshness:', error)
+      logger.error(
+        { correlationId: req.id, errorType: error instanceof Error ? error.name : typeof error },
+        'Error fetching data freshness',
+      )
     }
 
     if (hasQueryParams) {
@@ -290,7 +293,10 @@ export default class PeopleController {
               )
               positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
             } catch (error) {
-              console.error('Error fetching locations:', error)
+              logger.error(
+                { correlationId: req.id, errorType: error instanceof Error ? error.name : typeof error },
+                'Error fetching locations',
+              )
               locationAlert = { text: locationLocale.alerts.fetchError }
             }
 
@@ -302,7 +308,10 @@ export default class PeopleController {
                   deliusId,
                 )
               } catch (error) {
-                console.error('Error fetching exclusion zones:', error)
+                logger.error(
+                  { correlationId: req.id, errorType: error instanceof Error ? error.name : typeof error },
+                  'Error fetching exclusion zones',
+                )
               }
             }
           } else {
