@@ -504,7 +504,10 @@ describe('initialiseLocationDataView', () => {
       })
       const features = [feature, { ...feature }, { ...feature }] as Feature[]
       const showAtCoordinate = jest.fn()
-      mockMap.getInteractions.mockReturnValue({ getArray: () => [{ overlay: { showAtCoordinate } }] })
+      const setPositioning = jest.fn()
+      const setOffset = jest.fn()
+      const overlay = { showAtCoordinate, setPositioning, setOffset }
+      mockMap.getInteractions.mockReturnValue({ getArray: () => [{ overlay }] })
       mockMapContainer.dataset.enableExclusionZones = 'true'
       mockMapContainer.dataset[`${zoneType}ZoneTitle`] = title
       mockMapContainer.dataset[`${zoneType}Zones`] = '[]'
@@ -520,6 +523,9 @@ describe('initialiseLocationDataView', () => {
       })
       const handleClick = mockMap.on.mock.calls.find(([event]) => event === 'singleclick')?.[1]
       handleClick({ pixel: [10, 20], coordinate: [100, 200] })
+
+      expect(setPositioning).toHaveBeenLastCalledWith('bottom-center')
+      expect(setOffset).toHaveBeenLastCalledWith([0, -24])
 
       expect(showAtCoordinate).toHaveBeenCalledWith([100, 200], {
         overlayTitleTemplateId: 'overlay-title-mdss-restriction-zone',
@@ -554,6 +560,10 @@ describe('initialiseLocationDataView', () => {
           restrictionZoneLastDisplay: 'inline-flex',
         }),
       )
+
+      overlay.showAtCoordinate([1, 2], { overlayBodyTemplateId: 'overlay-body-mdss-location' })
+      expect(setPositioning).toHaveBeenLastCalledWith('top-center')
+      expect(setOffset).toHaveBeenLastCalledWith([0, 0])
     })
 
     it.each([

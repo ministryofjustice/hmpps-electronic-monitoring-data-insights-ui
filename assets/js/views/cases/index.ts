@@ -73,6 +73,8 @@ export interface TrackPosition extends Position {
 export type OverlayInteraction = Interaction & {
   overlay?: {
     showAtCoordinate?: (coords: number[], properties?: Record<string, unknown>) => void
+    setPositioning?: (positioning: 'top-center' | 'bottom-center') => void
+    setOffset?: (offset: number[]) => void
   }
 }
 
@@ -441,12 +443,16 @@ const initialiseLocationDataView = () => {
 
     let currentPointIndex: number | null = null
 
-    const offsetMapCenterForOverlay = (targetMap: NonNullable<EmMap['olMapInstance']>, coords: Coordinate) => {
+    const offsetMapCenterForOverlay = (
+      targetMap: NonNullable<EmMap['olMapInstance']>,
+      coords: Coordinate,
+      above = false,
+    ) => {
       const view = targetMap.getView()
       const resolution = view.getResolution() ?? 1
       const overlayHeightPx = 300
       const offsetMetres = (overlayHeightPx / 2) * resolution
-      const offsetCenter: [number, number] = [coords[0], coords[1] - offsetMetres]
+      const offsetCenter: [number, number] = [coords[0], coords[1] + (above ? offsetMetres : -offsetMetres)]
       view.animate({ center: offsetCenter, duration: 300 })
     }
 
@@ -510,6 +516,9 @@ const initialiseLocationDataView = () => {
     if (clickInteraction) {
       const originalShowAtCoordinate = clickInteraction.overlay!.showAtCoordinate!.bind(clickInteraction.overlay)
       clickInteraction.overlay!.showAtCoordinate = (coords, properties) => {
+        const isRestrictionZone = properties?.overlayBodyTemplateId === 'overlay-body-mdss-restriction-zone'
+        clickInteraction.overlay!.setPositioning?.(isRestrictionZone ? 'bottom-center' : 'top-center')
+        clickInteraction.overlay!.setOffset?.(isRestrictionZone ? [0, -24] : [0, 0])
         const pointNumber = properties?.displayPointNumber
         const index = positions.findIndex(p => (p as TrackPosition).displayPointNumber === pointNumber)
         if (index !== -1) currentPointIndex = index
@@ -553,7 +562,7 @@ const initialiseLocationDataView = () => {
         .join(', ')
       const scheduleLines = [dates.join(' - '), times.join(' to '), days].filter(Boolean)
 
-      offsetMapCenterForOverlay(map, coordinate)
+      offsetMapCenterForOverlay(map, coordinate, true)
       clickInteraction!.overlay!.showAtCoordinate!(coordinate, {
         overlayTitleTemplateId: 'overlay-title-mdss-restriction-zone',
         overlayBodyTemplateId: 'overlay-body-mdss-restriction-zone',

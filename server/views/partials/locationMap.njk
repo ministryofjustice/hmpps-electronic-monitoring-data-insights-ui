@@ -172,7 +172,6 @@
 
           .app-map__overlay {
             border-radius: 16px !important;
-            /* Removed overflow: hidden to allow the triangle pointer to show */
             min-width: 320px !important;
             filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15)) !important;
           }
@@ -196,6 +195,20 @@
     .app-map__overlay:has(.zone-details-popup__summary) {
       min-width: 0 !important;
       width: min(320px, calc(100vw - 32px));
+      bottom: 0;
+    }
+
+    .app-map__overlay:has(.zone-details-popup__summary)::before {
+      top: auto;
+      bottom: -24px;
+      border-color: #0b0c0c transparent transparent transparent;
+      z-index: 0;
+    }
+
+    .app-map__overlay:has(.zone-details-popup__summary)::after {
+      top: auto;
+      bottom: -21px;
+      border-color: #ffffff transparent transparent transparent;
     }
 
     .zone-details-popup__title {
