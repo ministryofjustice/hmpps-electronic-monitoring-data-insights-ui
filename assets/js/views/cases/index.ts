@@ -8,12 +8,12 @@ import {
   type ComposableLayer,
 } from '@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
 
-import { isEmpty } from 'ol/extent'
+import { getCenter, isEmpty } from 'ol/extent'
 import VectorLayer from 'ol/layer/Vector'
 import { Interaction } from 'ol/interaction'
 import HeatmapLayer from 'ol/layer/Heatmap'
 import VectorSource from 'ol/source/Vector'
-import { Feature } from 'ol'
+import Feature from 'ol/Feature'
 import { Point } from 'ol/geom'
 import { fromLonLat } from 'ol/proj'
 import { Coordinate } from 'ol/coordinate'
@@ -92,6 +92,34 @@ const parseBooleanDataValue = (value: string | undefined): boolean | undefined =
   if (value === 'true') return true
   if (value === 'false') return false
   return undefined
+}
+
+const escapeOverlayValue = (value: unknown): string =>
+  String(value ?? 'N/A')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+
+const zoneDateFormat = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/London',
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+})
+const zoneTimeFormat = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/London',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+})
+
+const formatZoneValue = (value: string | undefined, formatter: Intl.DateTimeFormat): string => {
+  if (!value) return ''
+  if (formatter === zoneTimeFormat && /^([01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/.test(value)) return value.slice(0, 5)
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? '' : formatter.format(date)
 }
 
 export const bindPointKeyboardNavigation = (
@@ -470,6 +498,10 @@ const initialiseLocationDataView = () => {
       if (targetIndex !== null) openOverlayForIndex(targetIndex)
     })
 
+    let activeRestrictionFeatures: Feature[] = []
+    let activeRestrictionType: 'exclusion' | 'inclusion' = 'exclusion'
+    let activeRestrictionIndex = -1
+
     const interactions = map.getInteractions().getArray()
     const clickInteraction = interactions.find(
       (i): i is OverlayInteraction => !!(i as OverlayInteraction).overlay?.showAtCoordinate,
@@ -485,6 +517,99 @@ const initialiseLocationDataView = () => {
         if (index !== -1) updateNavVisibility(index)
       }
     }
+
+    let highlightedExclusion: Feature | undefined
+    const highlightStyle = new Style({
+      fill: new Fill({ color: 'rgba(255, 0, 0, 0.3)' }),
+      stroke: new Stroke({ color: 'rgba(255, 0, 0, 1)', width: 3 }),
+    })
+
+    const showRestrictionZone = (index: number, clickedCoordinate?: Coordinate) => {
+      const feature = activeRestrictionFeatures[index]
+      const geometry = feature?.getGeometry()
+      if (!feature || !geometry) return
+
+      const coordinate = clickedCoordinate ?? getCenter(geometry.getExtent())
+      activeRestrictionIndex = index
+
+      highlightedExclusion?.setStyle(undefined)
+      highlightedExclusion = undefined
+      if (activeRestrictionType === 'exclusion') {
+        feature.setStyle(highlightStyle)
+        highlightedExclusion = feature
+      }
+
+      const { address, schedule } = feature.getProperties()
+      const dates = [
+        formatZoneValue(schedule?.activeFrom, zoneDateFormat),
+        formatZoneValue(schedule?.activeTo, zoneDateFormat),
+      ].filter(Boolean)
+      const times = [
+        formatZoneValue(schedule?.applicableFrom, zoneTimeFormat),
+        formatZoneValue(schedule?.applicableTo, zoneTimeFormat),
+      ].filter(Boolean)
+      const days = schedule?.recurrence?.daysOfWeek
+        ?.map((day: string) => day.charAt(0).toUpperCase() + day.slice(1).toLowerCase())
+        .join(', ')
+      const scheduleLines = [dates.join(' - '), times.join(' to '), days].filter(Boolean)
+
+      offsetMapCenterForOverlay(map, coordinate)
+      clickInteraction!.overlay!.showAtCoordinate!(coordinate, {
+        overlayTitleTemplateId: 'overlay-title-mdss-restriction-zone',
+        overlayBodyTemplateId: 'overlay-body-mdss-restriction-zone',
+        restrictionZoneCardTitle: escapeOverlayValue(
+          activeRestrictionType === 'inclusion'
+            ? mapContainer.dataset.inclusionZoneTitle
+            : mapContainer.dataset.exclusionZoneTitle,
+        ),
+        restrictionZoneIndex: String(index + 1),
+        restrictionZoneTotal: String(activeRestrictionFeatures.length),
+        restrictionZoneFirstDisplay: index === 0 ? 'none' : 'inline-flex',
+        restrictionZonePreviousDisplay: index === 0 ? 'none' : 'inline-flex',
+        restrictionZoneNextDisplay: index === activeRestrictionFeatures.length - 1 ? 'none' : 'inline-flex',
+        restrictionZoneLastDisplay: index === activeRestrictionFeatures.length - 1 ? 'none' : 'inline-flex',
+        restrictionZoneSchedule: scheduleLines.length ? scheduleLines.map(escapeOverlayValue).join('<br>') : 'N/A',
+        restrictionZoneAddress: escapeOverlayValue(address || undefined),
+      })
+      const overlay = getShadowRoot(emMap as EmMap)?.querySelector<HTMLElement>('.app-map__overlay')
+      overlay?.setAttribute('role', 'dialog')
+      overlay?.setAttribute('aria-modal', 'false')
+      overlay?.setAttribute('tabindex', '-1')
+    }
+
+    map.on('singleclick', (event: { pixel: number[]; coordinate: Coordinate }) => {
+      if ((!exclusionLayer && !inclusionLayer) || !clickInteraction?.overlay?.showAtCoordinate) return
+
+      const zone = map.forEachFeatureAtPixel(
+        event.pixel,
+        (feature, layer) => ('setStyle' in feature ? { feature, layer } : undefined),
+        { layerFilter: layer => layer === exclusionLayer || layer === inclusionLayer },
+      )
+      highlightedExclusion?.setStyle(undefined)
+      highlightedExclusion = undefined
+      if (!zone) return
+
+      activeRestrictionType = zone.layer === inclusionLayer ? 'inclusion' : 'exclusion'
+      activeRestrictionFeatures = activeRestrictionType === 'inclusion' ? inclusionFeatures : exclusionFeatures
+      const zoneIndex = activeRestrictionFeatures.indexOf(zone.feature)
+      if (zoneIndex !== -1) showRestrictionZone(zoneIndex, event.coordinate)
+    })
+
+    shadowRootMap?.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLElement
+      const navButton = target.closest('[data-zone-nav]') as HTMLElement | null
+      if (!navButton) return
+      e.preventDefault()
+
+      const indexByDirection: Record<string, number> = {
+        first: 0,
+        previous: activeRestrictionIndex - 1,
+        next: activeRestrictionIndex + 1,
+        last: activeRestrictionFeatures.length - 1,
+      }
+      const index = indexByDirection[navButton.dataset.zoneNav ?? '']
+      if (index >= 0 && index < activeRestrictionFeatures.length) showRestrictionZone(index)
+    })
 
     emMap.dispatchEvent(
       new CustomEvent('app:map:layers:ready', {

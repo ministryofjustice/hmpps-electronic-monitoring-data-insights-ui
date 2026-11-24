@@ -6,9 +6,18 @@ const DATA_PROJECTION = 'EPSG:4326'
 const MAP_PROJECTION = 'EPSG:3857'
 const CIRCLE_SIDES = 64
 
+type ZoneSchedule = {
+  activeFrom: string
+  activeTo: string
+  applicableFrom: string
+  applicableTo: string
+  recurrence?: { daysOfWeek: string[] }
+}
+
 type ExclusionZoneData = {
   name: string
   address?: string
+  schedule?: ZoneSchedule
   geometry?:
     | { type: 'Polygon'; coordinates: number[][][] }
     | { type: 'Point'; coordinates: number[]; radiusMetres?: number }
@@ -21,7 +30,7 @@ const getGeoJson = (): GeoJSON => {
 }
 
 const zoneToFeature = (zone: ExclusionZoneData): Feature | null => {
-  const properties = { name: zone.name, address: zone.address }
+  const properties = { name: zone.name, address: zone.address, schedule: zone.schedule }
   const { geometry } = zone
   switch (geometry?.type) {
     case 'Polygon':

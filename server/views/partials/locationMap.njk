@@ -5,6 +5,8 @@
     data-enable-exclusion-zones="{{ enableExclusionZones }}"
     data-enable-heatmap="{{ enableHeatmap }}"
     data-enable-ping-card-navigation="{{ enablePingCardNavigation }}"
+    data-exclusion-zone-title="{{ locale.overlay.exclusionZone }}"
+    data-inclusion-zone-title="{{ locale.overlay.inclusionZone }}"
     data-exclusion-zones="{{ exclusionZones | dump }}"
     data-inclusion-zones="{{ inclusionZones | dump }}"
     data-map-control-base-layer="{{ mapControls.baseLayer }}"
@@ -123,6 +125,31 @@
   </template>
 {% endraw %}
 
+  <template id="overlay-title-mdss-restriction-zone">
+    <div class="zone-details-popup__header">
+      <h4 class="govuk-heading-s zone-details-popup__title">
+        {% raw %}{{ restrictionZoneCardTitle }} {{ restrictionZoneIndex }} of {{ restrictionZoneTotal }}{% endraw %}
+      </h4>
+      <nav class="zone-details-popup__navigation" aria-label="Restriction zones">
+        <button type="button" class="ping-card-navigation__button" aria-label="First zone" data-zone-nav="first" style="display: {% raw %}{{ restrictionZoneFirstDisplay }}{% endraw %}">&laquo;</button>
+        <button type="button" class="ping-card-navigation__button" aria-label="Previous zone" data-zone-nav="previous" style="display: {% raw %}{{ restrictionZonePreviousDisplay }}{% endraw %}">&lsaquo;</button>
+        <button type="button" class="ping-card-navigation__button" aria-label="Next zone" data-zone-nav="next" style="display: {% raw %}{{ restrictionZoneNextDisplay }}{% endraw %}">&rsaquo;</button>
+        <button type="button" class="ping-card-navigation__button" aria-label="Last zone" data-zone-nav="last" style="display: {% raw %}{{ restrictionZoneLastDisplay }}{% endraw %}">&raquo;</button>
+      </nav>
+    </div>
+  </template>
+  <template id="overlay-body-mdss-restriction-zone">
+    <dl class="govuk-summary-list zone-details-popup__summary">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{{ locale.overlay.dateTime }}</dt>
+        <dd class="govuk-summary-list__value">{% raw %}{{ restrictionZoneSchedule }}{% endraw %}</dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{{ locale.overlay.address }}</dt>
+        <dd class="govuk-summary-list__value">{% raw %}{{ restrictionZoneAddress }}{% endraw %}</dd>
+      </div>
+    </dl>
+  </template>
 
 
     <script nonce="{{ cspNonce }}">
@@ -164,6 +191,54 @@
     .app-map__overlay-title {
       flex: 0 0 auto !important;
       width: 100% !important;
+    }
+
+    .app-map__overlay:has(.zone-details-popup__summary) {
+      min-width: 0 !important;
+      width: min(320px, calc(100vw - 32px));
+    }
+
+    .zone-details-popup__title {
+      margin: 0;
+      padding: 8px 16px;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .zone-details-popup__header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .zone-details-popup__navigation {
+      display: flex;
+      align-items: center;
+    }
+
+    .zone-details-popup__summary {
+      margin: 0;
+      padding: 0 0 8px;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .zone-details-popup__summary .govuk-summary-list__row {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid #b1b4b6;
+      overflow-wrap: anywhere;
+    }
+
+    .zone-details-popup__summary dt {
+      font-weight: 700;
+    }
+
+    .zone-details-popup__summary dd {
+      margin: 0;
     }
 
     .app-map__overlay-close {
