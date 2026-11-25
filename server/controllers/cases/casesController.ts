@@ -57,6 +57,8 @@ interface ValidationError {
   highlightOnly?: boolean
 }
 
+const crnPattern = /^[A-Za-z][0-9]{6}$/
+
 export default class CasesController {
   constructor(
     private readonly auditService: AuditService,
@@ -272,7 +274,7 @@ export default class CasesController {
 
     const personId = req.params.person_id
     const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
-    const crn = req.query.crn as string
+    const crn = typeof req.query.crn === 'string' ? req.query.crn : ''
     let positions: CaseLocationBasePosition[] = []
     let positionCardData: CaseLocationPosition[] = []
     let validationErrors: ValidationError[] = sessionErrors
@@ -322,19 +324,23 @@ export default class CasesController {
         const toDate = parseDateTimeFromISOString(queryResult.data.toDate)
         const validation = this.dateSearchValidationService.validateDateSearchRequest(fromDate, toDate)
         if (validation.success) {
-          try {
-            positions = await this.caseLocationActivityService.getPositions(
-              res.locals.user.username,
-              crn,
-              queryResult.data.fromDate,
-              queryResult.data.toDate,
-            )
+          if (!crnPattern.test(crn)) {
+            locationAlert = { text: casesLocationLocale.alerts.invalidCrn }
+          } else {
+            try {
+              positions = await this.caseLocationActivityService.getPositions(
+                res.locals.user.username,
+                crn,
+                queryResult.data.fromDate,
+                queryResult.data.toDate,
+              )
 
-            positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
-          } catch (error) {
-            /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-            console.error('Error fetching locations:', error)
-            locationAlert = { text: casesLocationLocale.alerts.fetchError }
+              positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
+            } catch (error) {
+              /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+              console.error('Error fetching locations:', error)
+              locationAlert = { text: casesLocationLocale.alerts.fetchError }
+            }
           }
         } else {
           validationErrors = validation.errors || []

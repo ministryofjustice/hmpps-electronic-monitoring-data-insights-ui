@@ -29,6 +29,7 @@
     "clear": "Clear filters"
   },
   "alerts": {
+    "invalidCrn": "Enter a CRN with one letter followed by 6 numbers, for example X123456.",
     "fetchError": "Unable to fetch location data. Please try again later.",
     "noResults": "No location data found for the selected date range."
   }
