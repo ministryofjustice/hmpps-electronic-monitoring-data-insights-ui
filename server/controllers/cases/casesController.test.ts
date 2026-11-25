@@ -306,6 +306,52 @@ describe('CasesController', () => {
       )
     })
 
+    it.each(['X172591', 'a123456'])('fetches locations for a valid CRN: %s', async crn => {
+      req.query = { ...mockQueryData, crn }
+      caseLocationActivityService.getPositions.mockResolvedValue([])
+
+      await controller.location(req as Request, res as Response)
+
+      expect(caseLocationActivityService.getPositions).toHaveBeenCalledWith(
+        user.username,
+        crn,
+        expect.any(String),
+        expect.any(String),
+      )
+    })
+
+    it.each(['', '../X123456', 'X12345', 'X1234567', 'X123456/locations', 'X123456\n', 'X12345\uFF16'])(
+      'does not fetch locations for an invalid CRN: %s',
+      async crn => {
+        req.query = { ...mockQueryData, crn }
+
+        await controller.location(req as Request, res as Response)
+
+        expect(caseLocationActivityService.getPositions).not.toHaveBeenCalled()
+        expect(res.render).toHaveBeenCalledWith(
+          'pages/casesLocation',
+          expect.objectContaining({
+            locationAlert: { text: casesLocationLocale.alerts.invalidCrn },
+          }),
+        )
+      },
+    )
+
+    it.each([
+      { description: 'missing', crn: undefined },
+      { description: 'repeated', crn: ['X123456', 'Y123456'] },
+    ])('rejects $description CRN query parameters', async ({ crn }) => {
+      req.query = { ...mockQueryData, crn }
+
+      await controller.location(req as Request, res as Response)
+
+      expect(caseLocationActivityService.getPositions).not.toHaveBeenCalled()
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/casesLocation',
+        expect.objectContaining({ locationAlert: { text: casesLocationLocale.alerts.invalidCrn } }),
+      )
+    })
+
     it('preserves submitted date formatting in the location search form', async () => {
       req.query = {
         crn: 'X172591',
