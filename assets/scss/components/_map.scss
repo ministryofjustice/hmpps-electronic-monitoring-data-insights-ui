@@ -24,6 +24,11 @@
     overflow-y: auto;
     padding: 24px;
     min-height: 0;
+
+    [data-map-person-name] {
+      margin-bottom: 8px !important;
+      @include govuk-font($size: 24, $weight: bold);
+    }
   }
 
   .map-workspace__person-name {
