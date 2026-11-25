@@ -5,7 +5,7 @@ import initialiseMapFullscreen from './mapFullscreen'
 export const mapFullscreenStyles = `
   :host .emdi-map-fullscreen-control {
     top: 8px;
-    left: 8px;
+    left: 0.5em;
     padding: 0;
     background: transparent;
   }
@@ -14,25 +14,22 @@ export const mapFullscreenStyles = `
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 39px;
-    height: 39px;
+    width: 38px;
+    height: 38px;
     margin: 0;
     padding: 0;
-    border: 1px solid #0b0c0c;
-    border-radius: 4px;
-    background: #ffffff;
-    color: #505a5f;
+    border: 1px solid var(--govuk-text-colour, #0b0c0c);
+    background: var(--emdi-map-control-background, #ffffff);
+    color: var(--govuk-text-colour, #0b0c0c);
     cursor: pointer;
   }
 
-  :host .emdi-map-fullscreen-control .emdi-map-fullscreen-toggle:hover {
-    background: #f3f2f1;
-  }
+
 
   .emdi-map-fullscreen-toggle__icon {
     display: block;
-    width: 39px;
-    height: 39px;
+    width: 38px;
+    height: 38px;
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
