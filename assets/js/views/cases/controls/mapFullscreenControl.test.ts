@@ -5,9 +5,15 @@
 import '@testing-library/jest-dom'
 import Map from 'ol/Map'
 import Zoom from 'ol/control/Zoom'
-import MapFullscreenControl from './mapFullscreenControl'
+import MapFullscreenControl, { mapFullscreenStyles } from './mapFullscreenControl'
 
 describe('MapFullscreenControl', () => {
+  it('uses the standard text colour for the icon and configurable control colours', () => {
+    expect(mapFullscreenStyles).toContain('color: var(--govuk-text-colour, #0b0c0c)')
+    expect(mapFullscreenStyles).toContain('stroke: currentColor')
+    expect(mapFullscreenStyles).toContain('background: var(--emdi-map-control-background, #ffffff)')
+  })
+
   beforeEach(() => {
     window.sessionStorage.clear()
     global.ResizeObserver = jest.fn().mockImplementation(() => ({
