@@ -15,6 +15,18 @@ context('Sign In', () => {
     Page.verifyOnPage(AuthSignInPage)
   })
 
+  it('Unauthenticated user cannot access OS map proxy', () => {
+    cy.request({
+      method: 'GET',
+      url: '/os-map/vector/style',
+      followRedirect: false,
+      failOnStatusCode: false,
+    }).then(response => {
+      expect(response.status).to.equal(302)
+      expect(response.headers.location).to.include('/sign-in')
+    })
+  })
+
   it('Unauthenticated user navigating to sign in page directed to auth', () => {
     cy.visit('/sign-in')
     Page.verifyOnPage(AuthSignInPage)
