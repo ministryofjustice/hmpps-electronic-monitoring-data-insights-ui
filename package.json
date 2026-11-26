@@ -28,7 +28,7 @@
     "setup": "npm ci && hmpps-npm-script-run-allowlist"
   },
   "engines": {
-    "node": "^22 || ^24",
+    "node": "^26",
     "npm": "^10 || ^11"
   },
   "jest": {
@@ -128,8 +128,8 @@
   "devDependencies": {
     "@axe-core/playwright": "4.11.3",
     "@jgoz/esbuild-plugin-typecheck": "^5.0.0",
-    "@ministryofjustice/eslint-config-hmpps": "^1.0.3",
-    "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.3",
+    "@ministryofjustice/eslint-config-hmpps": "^1.0.4",
+    "@ministryofjustice/hmpps-npm-script-allowlist": "0.1.0",
     "@playwright/test": "1.60.0",
     "@tsconfig/node22": "^22.0.1",
     "@types/bunyan": "^1.8.11",
@@ -140,7 +140,7 @@
     "@types/http-errors": "^2.0.4",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.15.12",
+    "@types/node": "^26.6.11",
     "@types/nunjucks": "^3.2.6",
     "@types/papaparse": "^5.5.0",
     "@types/passport": "^1.0.17",
