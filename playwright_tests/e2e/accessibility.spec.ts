@@ -1,7 +1,23 @@
 import { expect, test } from '@playwright/test'
 
 import expectNoAccessibilityViolations from '../support/accessibility'
-import { goToCasesPage, mockMapAssets, signIn, stubCommonApis, stubLocationResults } from '../support/setup'
+import {
+  mockMapAssets,
+  openPersonLocations,
+  signIn,
+  stubCommonApis,
+  stubDataFreshness,
+  stubLiveLocationResults,
+  stubPersonSearch,
+} from '../support/setup'
+
+const person = {
+  deliusId: 'X123456',
+  personId: 'person-123456',
+  consumerId: 'consumer-123456',
+  fullName: 'Alex Example',
+  dateOfBirth: '1980-01-01',
+}
 
 test.describe('Accessibility', () => {
   test.beforeEach(async ({ page }) => {
@@ -9,43 +25,70 @@ test.describe('Accessibility', () => {
     await mockMapAssets(page)
   })
 
-  test('home page has no detectable accessibility violations', async ({ page }) => {
+  test('person locations journey has no detectable accessibility violations', async ({ page }) => {
+    await stubPersonSearch(person)
+    await stubDataFreshness()
     await signIn(page)
+    await openPersonLocations(page, person.deliusId)
 
     await expectNoAccessibilityViolations(page)
   })
 
-  test('cases overview has no detectable accessibility violations', async ({ page }) => {
+  test('map help has no detectable accessibility violations', async ({ page }) => {
     await signIn(page)
-    await goToCasesPage(page)
+    await page.goto('/map-help?returnUrl=%2Fpeople%2FX123456%2Flocations')
 
     await expectNoAccessibilityViolations(page)
   })
 
-  test('location activity page has no detectable accessibility violations', async ({ page }) => {
+  test('whats-new has no detectable accessibility violations', async ({ page }) => {
     await signIn(page)
-    await goToCasesPage(page)
-
-    await page.locator('[data-qa=cases-sub-navigation]').getByRole('link', { name: 'GPS data' }).click()
-    await expect(page.getByRole('heading', { name: 'GPS data' })).toBeVisible()
+    await page.goto('/whats-new?returnUrl=%2Fpeople%2FX123456%2Flocations')
 
     await expectNoAccessibilityViolations(page)
   })
 
-  test('location activity map exposes screen reader controls', async ({ page }) => {
-    await stubLocationResults()
-    await signIn(page)
-    await goToCasesPage(page)
+  test('auth error has no detectable accessibility violations', async ({ page }) => {
+    await page.goto('/authError')
+    await expectNoAccessibilityViolations(page)
+  })
 
-    await page.locator('[data-qa=cases-sub-navigation]').getByRole('link', { name: 'GPS data' }).click()
-    await page.locator('#crn').fill('X123456')
-    await page.locator('#start-date').fill('01/01/2026')
-    await page.locator('#start-hour').fill('10')
-    await page.locator('#start-minute').fill('00')
-    await page.locator('#end-date').fill('02/01/2026')
-    await page.locator('#end-hour').fill('15')
-    await page.locator('#end-minute').fill('30')
-    await page.getByRole('button', { name: 'Update map' }).click()
+  test('live location map exposes screen reader controls', async ({ page }) => {
+    await stubPersonSearch(person)
+    await stubDataFreshness()
+    await stubLiveLocationResults({
+      crn: person.deliusId,
+      personId: person.personId,
+      locations: [
+        {
+          positionId: 1,
+          deviceId: null,
+          gpsDate: '2026-01-01T12:00:00Z',
+          speed: 0,
+          satellite: null,
+          direction: 0,
+          precision: 5,
+          lbs: 1,
+          hdop: null,
+          geometry: null,
+          latitude: 51.5074,
+          longitude: -0.1278,
+          tagStatus: null,
+        },
+      ],
+    })
+    await signIn(page)
+    await openPersonLocations(page, person.deliusId)
+
+    const search = new URLSearchParams({
+      'start[date]': '01/01/2026',
+      'start[hour]': '10',
+      'start[minute]': '00',
+      'end[date]': '02/01/2026',
+      'end[hour]': '15',
+      'end[minute]': '30',
+    })
+    await page.goto(`/people/${person.deliusId}/locations?${search}`)
 
     const map = page.locator('[data-qa=em-map]')
     await expect(map).toHaveAttribute('role', 'region')
@@ -61,7 +104,6 @@ test.describe('Accessibility', () => {
     await expect(page.locator('em-map').locator('.ol-zoom-out')).toHaveAttribute('aria-label', 'Zoom out')
 
     const dividers = page.locator('.mlc-panel__divider')
-    await expect(dividers).toHaveCount(1)
     await expect(dividers.first()).toHaveAttribute('aria-hidden', 'true')
 
     const closeMapControls = page.getByRole('button', { name: 'Close map controls' })

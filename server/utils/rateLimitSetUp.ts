@@ -18,12 +18,7 @@ export default function rateLimitSetUp(app: Router, config: Config) {
     windowMs: config.rateWindowMS,
     max: config.rateLimitMax,
     message: 'Too many requests, please try again later.',
-    skip: req => {
-      const userAgent = req.get('User-Agent') || ''
-      const isCypressRequest = userAgent.includes('Cypress')
-
-      return process.env.NODE_ENV === 'test' || (!config.production && isCypressRequest)
-    },
+    skip: () => process.env.NODE_ENV === 'test',
   })
 
   // Apply the general rate limiter to all requests

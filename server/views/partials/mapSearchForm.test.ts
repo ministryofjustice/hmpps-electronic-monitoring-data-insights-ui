@@ -1,6 +1,6 @@
 import express from 'express'
 import nunjucksSetup from '../../utils/nunjucksSetup'
-import casesLocationLocale from '../../controllers/cases/cases-location.locale.json'
+import locationLocale from '../../locales/location.locale.json'
 
 interface ValidationError {
   field: string
@@ -15,7 +15,7 @@ const renderMapSearchForm = async (showCrn?: boolean, errors: ValidationError[] 
     app.render(
       'partials/mapSearchForm',
       {
-        locale: casesLocationLocale,
+        locale: locationLocale,
         enableHeatmap: true,
         enableExclusionZones: true,
         mapControls: {

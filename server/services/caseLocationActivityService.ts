@@ -2,7 +2,7 @@ import { formatDisplayValue } from '../presenters/helpers/formatters'
 import GeolocationMechanism from '../types/entities/geolocationMechanism'
 import { formatGpsDate } from '../utils/date'
 import LocationsService, { type Location } from './locationsService'
-import casesLocationLocale from '../controllers/cases/cases-location.locale.json'
+import locationLocale from '../locales/location.locale.json'
 import { GetLocationsOptions } from '../data/locationsApiClient'
 
 const KILOMETRES_PER_MILE = 1.609344
@@ -105,14 +105,14 @@ export default class CaseLocationActivityService {
         ),
         displayGeolocationMechanism: position.geolocationMechanism,
         displayTagStatus: formatDisplayValue(position.tagStatus, '', 'N/A'),
-        positionCardHeader: casesLocationLocale.overlay.point,
-        positionCardHeaderConjuction: casesLocationLocale.overlay.conjuction,
-        positionCardAccuracyLabel: casesLocationLocale.overlay.accuracy,
-        positionCardDateTimeLabel: casesLocationLocale.overlay.dateTime,
-        positionCardLatLngLabel: casesLocationLocale.overlay.latLng,
-        positionCardSpeedLabel: casesLocationLocale.overlay.speed,
-        positionCardGeolocationMechanismLabel: casesLocationLocale.overlay.geolocationMechanism,
-        positionCardTagStatusLabel: casesLocationLocale.overlay.tagStatus,
+        positionCardHeader: locationLocale.overlay.point,
+        positionCardHeaderConjuction: locationLocale.overlay.conjuction,
+        positionCardAccuracyLabel: locationLocale.overlay.accuracy,
+        positionCardDateTimeLabel: locationLocale.overlay.dateTime,
+        positionCardLatLngLabel: locationLocale.overlay.latLng,
+        positionCardSpeedLabel: locationLocale.overlay.speed,
+        positionCardGeolocationMechanismLabel: locationLocale.overlay.geolocationMechanism,
+        positionCardTagStatusLabel: locationLocale.overlay.tagStatus,
       }))
   }
 

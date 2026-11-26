@@ -5,7 +5,7 @@
     "lib": ["dom", "dom.iterable", "es2018"],
     "outDir": "./dist",
     "sourceMap": true,
-    "noEmit": false,
+    "noEmit": true,
     "allowJs": false,
     "strict": false,
     "resolveJsonModule": true,
@@ -18,10 +18,8 @@
   "exclude": [
     "node_modules",
     "assets/**/*.js",
-    "integration_tests",
-    "accessibility_tests",
+    "playwright_tests",
     "dist",
-    "cypress.config.ts",
     "playwright.config.ts",
     "esbuild",
     "eslint.config.mjs"

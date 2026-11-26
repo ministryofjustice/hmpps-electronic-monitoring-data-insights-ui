@@ -7,7 +7,6 @@ import CaseLocationActivityService, {
   type CaseLocationPosition,
 } from '../../services/caseLocationActivityService'
 import DateSearchValidationService from '../../services/dateSearchValidationService'
-import { ValidationResult } from '../../models/ValidationResult'
 import { searchLocationsQuerySchema } from '../../schemas/locationActivity/searchDateFormSchema'
 import {
   calculateAge,
@@ -16,11 +15,12 @@ import {
   getDateComponents,
   parseDateTimeFromISOString,
 } from '../../utils/date'
-import casesLocationLocale from '../cases/cases-location.locale.json'
+import locationLocale from '../../locales/location.locale.json'
 import { defaultLocationMapControls, heatmapLevelKeys, LocationMapControls } from '../../types/locationMapControls'
 import PeopleExclusionService from '../../services/peopleExclusionService'
 import LocationDataSyncService from '../../services/locationDataSyncService'
 import { ApiLocationDataSyncResponse } from '../../data/locationDataSyncApiClient'
+import logger from '../../../logger'
 import type { RestrictionZonesResult } from '../../data/peopleExclusionApiClient'
 
 type SelectedPersonContext = session.SessionData['peopleSelection'][string]
@@ -30,11 +30,6 @@ interface LocationDateFilterFormData {
   hour: string
   minute: string
   second?: string
-}
-
-interface FilterStateProps {
-  errors: ValidationResult
-  formData: LocationBuildProps
 }
 
 interface LocationBuildProps {
@@ -75,34 +70,7 @@ export default class PeopleController {
     private readonly locationDataSyncService: LocationDataSyncService,
   ) {}
 
-  private conssumeDateFilterState(req: Request): FilterStateProps {
-    const validationErrors = req.session?.validationErrors || []
-    const formData = req.session?.formData as LocationBuildProps | undefined
-
-    delete req.session?.validationErrors
-    delete req.session?.formData
-
-    return {
-      errors: validationErrors,
-      formData,
-    }
-  }
-
-  private normalizeDateFilterFormData(dateFilter: LocationDateFilterFormData): LocationDateFilterFormData {
-    const date = new Date(dateFilter.date)
-    const normalizedDate = date.toISOString().split('T')[0]
-
-    const hour = dateFilter.hour.padStart(2, '0')
-    const minute = dateFilter.minute.padStart(2, '0')
-    return {
-      date: normalizedDate,
-      hour,
-      minute,
-    }
-  }
-
   private buildDateFilterFormValues(
-    sessionFormData: LocationBuildProps | undefined,
     queryRange: { fromDate: string; toDate: string },
     submittedFormData?: LocationBuildProps,
   ): LocationBuildProps {
@@ -110,13 +78,6 @@ export default class PeopleController {
       date: '',
       hour: '',
       minute: '',
-    }
-
-    if (sessionFormData?.fromDate && sessionFormData?.toDate) {
-      return {
-        fromDate: this.normalizeDateFilterFormData(sessionFormData?.fromDate),
-        toDate: this.normalizeDateFilterFormData(sessionFormData.toDate),
-      }
     }
 
     const fromDateRange = queryRange.fromDate ? parseDateTimeFromISOString(queryRange.fromDate) : null
@@ -180,6 +141,10 @@ export default class PeopleController {
       ...defaultLocationMapControls,
       ...sessionControls,
       ...(baseLayer ? { baseLayer } : {}),
+      heatmapLevels: {
+        ...defaultLocationMapControls.heatmapLevels,
+        ...sessionControls.heatmapLevels,
+      },
     }
 
     ;(['tracks', 'confidence', 'numbers', 'heatmap', 'exclusion', 'inclusion'] as const).forEach(key => {
@@ -255,11 +220,10 @@ export default class PeopleController {
       return
     }
 
-    const { errors: sessionErrors, formData: sessionFormData } = this.conssumeDateFilterState(req)
     let positions: CaseLocationBasePosition[] = []
     let positionCardData: CaseLocationPosition[] = []
     let restrictionZonesResult: RestrictionZonesResult | null = null
-    let validationErrors: ValidationError[] = sessionErrors
+    let validationErrors: ValidationError[] = []
     let hasSearched = false
     let locationAlert: { text: string } | null = null
     let queryRange = { fromDate: '', toDate: '' }
@@ -273,8 +237,10 @@ export default class PeopleController {
       locationDataSyncResponse = await this.locationDataSyncService.getLocationDataSyncStatus(res.locals.user.username)
     } catch (error) {
       isDataSyncError = true
-      /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-      console.error('Error fetching data freshness:', error)
+      logger.error(
+        { correlationId: req.id, errorType: error instanceof Error ? error.name : typeof error },
+        'Error fetching data freshness',
+      )
     }
 
     if (hasQueryParams) {
@@ -330,8 +296,11 @@ export default class PeopleController {
                 positionCardData = this.caseLocationActivityService.annotatePositionsWithDisplayProperties(positions)
               })
               .catch(error => {
-                console.error('Error fetching locations:', error)
-                locationAlert = { text: casesLocationLocale.alerts.fetchError }
+                logger.error(
+                  { correlationId: req.id, errorType: error instanceof Error ? error.name : typeof error },
+                  'Error fetching locations',
+                )
+                locationAlert = { text: locationLocale.alerts.fetchError }
               })
 
             const restrictionZonesPromise = res.locals.enableExclusionZones
@@ -341,30 +310,32 @@ export default class PeopleController {
                     restrictionZonesResult = result
                   })
                   .catch(error => {
-                    console.error('Error fetching exclusion zones:', error)
+                    logger.error(
+                      { correlationId: req.id, errorType: error instanceof Error ? error.name : typeof error },
+                      'Error fetching exclusion zones',
+                    )
                   })
               : Promise.resolve()
 
             await Promise.all([positionsPromise, restrictionZonesPromise])
           } else {
-            locationAlert = { text: casesLocationLocale.alerts.fetchError }
+            locationAlert = { text: locationLocale.alerts.fetchError }
           }
         } else {
           validationErrors = validation.errors || []
         }
 
         formValues = this.buildDateFilterFormValues(
-          sessionFormData,
           queryRange,
           this.buildSubmittedDateFilterFormValues(req.query as QueryParams),
         )
       }
     } else {
-      formValues = this.buildDateFilterFormValues(sessionFormData, queryRange)
+      formValues = this.buildDateFilterFormValues(queryRange)
     }
 
     if (!locationAlert && hasSearched && validationErrors.length === 0 && positions.length === 0) {
-      locationAlert = { text: casesLocationLocale.alerts.noResults }
+      locationAlert = { text: locationLocale.alerts.noResults }
     }
 
     const isMapLoading = hasSearched && positions.length > 0 && !(locationAlert && locationAlert.text)
@@ -373,7 +344,7 @@ export default class PeopleController {
     res.render('pages/personLocation', {
       activeNav: 'cases',
       activeTab: 'locations',
-      locale: casesLocationLocale,
+      locale: locationLocale,
       fullName: personContext.fullName,
       popData: {
         crn: deliusId,

@@ -92,7 +92,6 @@ jest.mock('ol/style', () => ({
   Stroke: jest.fn().mockImplementation(() => ({})),
 }))
 
-jest.mock('./controls/layerVisibilityToggle', () => jest.fn())
 jest.mock('./controls/getRotatedDirection', () => jest.fn())
 jest.mock('../../utils/utils')
 

@@ -8,10 +8,11 @@ import CaseLocationActivityService, { type CaseLocationBasePosition } from '../.
 import DateSearchValidationService from '../../services/dateSearchValidationService'
 import PeopleExclusionService from '../../services/peopleExclusionService'
 import LocationDataSyncService from '../../services/locationDataSyncService'
-import casesLocationLocale from '../cases/cases-location.locale.json'
+import locationLocale from '../../locales/location.locale.json'
 import PeopleController from './peopleController'
 import { Geometry } from '../../data/peopleExclusionApiClient'
 import { ApiLocationDataSyncResponse } from '../../data/locationDataSyncApiClient'
+import logger from '../../../logger'
 
 jest.mock('../../services/auditService')
 jest.mock('../../services/peopleExclusionService')
@@ -220,7 +221,7 @@ describe('PeopleController', () => {
       expect.objectContaining({
         activeNav: 'cases',
         activeTab: 'locations',
-        locale: casesLocationLocale,
+        locale: locationLocale,
         fullName: 'DEVWR0004718',
         popData: {
           age: 6,
@@ -263,6 +264,48 @@ describe('PeopleController', () => {
         },
         currentUrl: encodeURIComponent('/people/X31092/locations'),
       }),
+    )
+  })
+
+  it('keeps heatmap defaults isolated between sessions', async () => {
+    setPersonContext()
+    req.query = { mapControls: { heatmapLevels: { high: 'false' } } }
+
+    await controller.location(req as Request, res as Response)
+
+    expect(req.session?.locationMapControls?.heatmapLevels.high).toBe(false)
+
+    req.session = {} as Request['session']
+    req.query = {}
+    setPersonContext()
+    res.render = jest.fn()
+
+    await controller.location(req as Request, res as Response)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'pages/personLocation',
+      expect.objectContaining({
+        mapControls: expect.objectContaining({
+          heatmapLevels: { veryHigh: true, high: true, medium: true, low: true },
+        }),
+      }),
+    )
+  })
+
+  it('persists inclusion and exclusion map controls in an existing session', async () => {
+    setPersonContext()
+    req.query = { mapControls: { inclusion: 'true', exclusion: 'true' } }
+
+    await controller.location(req as Request, res as Response)
+
+    expect(req.session?.locationMapControls).toEqual(expect.objectContaining({ inclusion: true, exclusion: true }))
+
+    req.query = {}
+    await controller.location(req as Request, res as Response)
+
+    expect(res.render).toHaveBeenLastCalledWith(
+      'pages/personLocation',
+      expect.objectContaining({ mapControls: expect.objectContaining({ inclusion: true, exclusion: true }) }),
     )
   })
 
@@ -405,27 +448,37 @@ describe('PeopleController', () => {
     expect(res.render).toHaveBeenCalledWith(
       'pages/personLocation',
       expect.objectContaining({
-        locationAlert: { text: casesLocationLocale.alerts.noResults },
+        locationAlert: { text: locationLocale.alerts.noResults },
       }),
     )
   })
 
   it('shows a fetch error alert when the location service fails', async () => {
     setPersonContext()
+    res.locals.enableExclusionZones = true
     req.query = {
       start: { date: '12/01/2026', hour: '10', minute: '00' },
       end: { date: '14/01/2026', hour: '11', minute: '00' },
     }
+    const loggerErrorSpy = jest.spyOn(logger, 'error')
     caseLocationActivityService.getPositions.mockRejectedValue(new Error('Search service error'))
+    peopleExclusionService.getRestrictionZones.mockResolvedValue({ exclusionZones: [], inclusionZones: [] })
 
     await controller.location(req as Request, res as Response)
 
+    expect(loggerErrorSpy).toHaveBeenCalledWith(
+      { correlationId: 'test-correlation-id', errorType: 'Error' },
+      'Error fetching locations',
+    )
     expect(res.render).toHaveBeenCalledWith(
       'pages/personLocation',
       expect.objectContaining({
-        locationAlert: { text: casesLocationLocale.alerts.fetchError },
+        locationAlert: { text: locationLocale.alerts.fetchError },
+        exclusionZones: [],
+        inclusionZones: [],
       }),
     )
+    loggerErrorSpy.mockRestore()
   })
 
   it('shows a fetch error alert when person context does not include personId', async () => {
@@ -441,7 +494,7 @@ describe('PeopleController', () => {
     expect(res.render).toHaveBeenCalledWith(
       'pages/personLocation',
       expect.objectContaining({
-        locationAlert: { text: casesLocationLocale.alerts.fetchError },
+        locationAlert: { text: locationLocale.alerts.fetchError },
       }),
     )
   })
@@ -486,7 +539,7 @@ describe('PeopleController', () => {
       await locationRequest
     })
 
-    it('fetches and passes exclusion zones when enableExclusionZones feature flag is true', async () => {
+    it('fetches and passes inclusion and exclusion zones when the feature flag is true', async () => {
       res.locals.enableExclusionZones = true
       const mockExclusionZones = [
         {
@@ -504,9 +557,17 @@ describe('PeopleController', () => {
           },
         },
       ]
+      const mockInclusionZones = [
+        {
+          ...mockExclusionZones[0],
+          restrictionZoneId: 2,
+          name: 'Zone B',
+          restrictionType: 'INCLUSION' as const,
+        },
+      ]
       peopleExclusionService.getRestrictionZones.mockResolvedValue({
         exclusionZones: mockExclusionZones,
-        inclusionZones: [],
+        inclusionZones: mockInclusionZones,
       })
 
       await controller.location(req as Request, res as Response)
@@ -522,13 +583,16 @@ describe('PeopleController', () => {
         'pages/personLocation',
         expect.objectContaining({
           exclusionZones: mockExclusionZones,
+          inclusionZones: mockInclusionZones,
         }),
       )
     })
 
     it('handles service errors gracefully when fetching exclusion zones fails', async () => {
       res.locals.enableExclusionZones = true
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+      const loggerErrorSpy = jest.spyOn(logger, 'error')
+      const positions = [{ positionId: 1 }]
+      caseLocationActivityService.getPositions.mockResolvedValue(positions)
       peopleExclusionService.getRestrictionZones.mockRejectedValue(new Error('Exclusion service down'))
 
       await controller.location(req as Request, res as Response)
@@ -540,17 +604,21 @@ describe('PeopleController', () => {
         true,
         true,
       )
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching exclusion zones:', expect.any(Error))
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
+        { correlationId: 'test-correlation-id', errorType: 'Error' },
+        'Error fetching exclusion zones',
+      )
       expect(res.render).toHaveBeenCalledWith(
         'pages/personLocation',
         expect.objectContaining({
+          positions,
+          isMapLoading: true,
           exclusionZones: null,
           inclusionZones: null,
         }),
       )
 
-      consoleErrorSpy.mockRestore()
+      loggerErrorSpy.mockRestore()
     })
 
     it('does not attempt to fetch exclusion zones when enableExclusionZones is false or undefined', async () => {
@@ -606,13 +674,16 @@ describe('PeopleController', () => {
     })
 
     it('handles service errors gracefully when fetching data freshness fails', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+      const loggerErrorSpy = jest.spyOn(logger, 'error')
       locationDataSyncService.getLocationDataSyncStatus.mockRejectedValue(new Error('Data sync service down'))
 
       await controller.location(req as Request, res as Response)
 
       expect(locationDataSyncService.getLocationDataSyncStatus).toHaveBeenCalledWith(user.username)
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching data freshness:', expect.any(Error))
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
+        { correlationId: 'test-correlation-id', errorType: 'Error' },
+        'Error fetching data freshness',
+      )
       expect(res.render).toHaveBeenCalledWith(
         'pages/personLocation',
         expect.objectContaining({
@@ -621,7 +692,7 @@ describe('PeopleController', () => {
         }),
       )
 
-      consoleErrorSpy.mockRestore()
+      loggerErrorSpy.mockRestore()
     })
 
     it('still renders locations and search results when data freshness fetch fails', async () => {

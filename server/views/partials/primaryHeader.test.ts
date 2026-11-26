@@ -85,12 +85,12 @@ describe('primaryHeader template', () => {
       const html = await renderPrimaryHeader({
         showTechnicalUpdatesBanner: true,
         whatsNewVersion: '1.2.3',
-        currentUrl: '/cases/123',
+        currentUrl: '/people/X123456/locations',
       })
 
       expect(html).toContain('New features')
       expect(html).toContain('We’re updating the service all the time,')
-      expect(html).toContain('href="/whats-new?returnUrl=/cases/123"')
+      expect(html).toContain('href="/whats-new?returnUrl=/people/X123456/locations"')
       expect(html).toContain('find out more on the What’s new page.')
       expect(html).toContain('Hide message')
     })

@@ -52,6 +52,8 @@ describe('evaluateFeatureFlags', () => {
     expect(res.locals.flags).toEqual(new FeatureFlags())
     expect(res.locals.enablePingCardNavigation).toEqual(false)
     expect(res.locals.enablePingCardsUpdate).toBe(false)
+    expect(res.locals.enableHeatmap).toBe(false)
+    expect(res.locals.flags.enableHeatmap).toBe(false)
     expect(res.locals.flags.enablePingCardsUpdate).toBe(false)
     expect(next).toHaveBeenCalledWith()
   })

@@ -8,6 +8,11 @@ import whatsNewLocale from './whats-new.locale.json'
 jest.mock('../../services/auditService')
 
 describe('StaticController', () => {
+  const pages = [
+    { method: 'mapHelp', template: 'pages/mapHelp', locale: mapHelpLocale },
+    { method: 'whatsNew', template: 'pages/whatsNew', locale: whatsNewLocale },
+  ] as const
+
   let auditService: jest.Mocked<AuditService>
   let controller: StaticController
   let req: Partial<Request>
@@ -27,11 +32,28 @@ describe('StaticController', () => {
     jest.resetAllMocks()
   })
 
+  it.each(pages)('$method preserves URL encoding in the parsed return URL', async ({ method, template, locale }) => {
+    const returnUrl = '/people/X123456/locations?filter=%E0%A4%A&next=%25'
+    req = { id: 'test-id', query: { returnUrl } }
+
+    await controller[method](req as Request, res as Response)
+
+    expect(res.render).toHaveBeenCalledWith(template, { locale, returnUrl })
+  })
+
+  it.each(pages)('$method defaults non-string return URLs to "/"', async ({ method, template, locale }) => {
+    req = { id: 'test-id', query: { returnUrl: ['/people/X123456/locations', '/'] } }
+
+    await controller[method](req as Request, res as Response)
+
+    expect(res.render).toHaveBeenCalledWith(template, { locale, returnUrl: '/' })
+  })
+
   describe('mapHelp', () => {
     it('logs page view and renders the map help page with locale content', async () => {
       req = {
         id: 'test-correlation-id',
-        query: { returnUrl: '/cases/123?tab=map' },
+        query: { returnUrl: '/people/X123456/locations?tab=map' },
       }
       await controller.mapHelp(req as Request, res as Response)
 
@@ -41,7 +63,7 @@ describe('StaticController', () => {
       })
       expect(res.render).toHaveBeenCalledWith('pages/mapHelp', {
         locale: mapHelpLocale,
-        returnUrl: '/cases/123?tab=map',
+        returnUrl: '/people/X123456/locations?tab=map',
       })
     })
 
@@ -61,7 +83,7 @@ describe('StaticController', () => {
     it('logs page view and renders the whats new page with locale content', async () => {
       req = {
         id: 'test-correlation-id',
-        query: { returnUrl: '/cases/123?tab=something' },
+        query: { returnUrl: '/people/X123456/locations?tab=something' },
       }
       await controller.whatsNew(req as Request, res as Response)
 
@@ -71,7 +93,7 @@ describe('StaticController', () => {
       })
       expect(res.render).toHaveBeenCalledWith('pages/whatsNew', {
         locale: whatsNewLocale,
-        returnUrl: '/cases/123?tab=something',
+        returnUrl: '/people/X123456/locations?tab=something',
       })
     })
 

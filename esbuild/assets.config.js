@@ -15,6 +15,9 @@ const buildAdditionalAssets = buildConfig => {
   return esbuild.build({
     outdir: buildConfig.assets.outDir,
     plugins: [
+      clean({
+        patterns: buildConfig.assets.clearImages,
+      }),
       copy({
         resolveFrom: 'cwd',
         assets: buildConfig.assets.copy,

@@ -1,15 +1,46 @@
-import { FliptClient } from '@flipt-io/flipt-client-js'
+import { FliptClient } from '@flipt-io/flipt-client-js/node'
 import logger from '../../logger'
 import config from '../config'
 import FeatureFlags, { featureFlagKeys } from '../models/FeatureFlags'
 
+type NodeFliptClientInstance = InstanceType<typeof FliptClient> & { close: () => void }
+
 export default class FlagService {
+  private fliptClient?: NodeFliptClientInstance
+
+  private fliptClientPromise?: Promise<NodeFliptClientInstance>
+
+  private closed = false
+
+  private getClient(): Promise<NodeFliptClientInstance> {
+    if (this.fliptClient) return Promise.resolve(this.fliptClient)
+    if (this.closed) return Promise.reject(new Error('Flipt client is closed'))
+
+    if (!this.fliptClientPromise) {
+      this.fliptClientPromise = FliptClient.init({
+        namespace: config.flipt.namespace,
+        url: config.flipt.url,
+        updateInterval: 120,
+      })
+        .then((client: NodeFliptClientInstance) => {
+          if (this.closed) {
+            client.close()
+          } else {
+            this.fliptClient = client
+          }
+          return client
+        })
+        .catch((error: unknown) => {
+          this.fliptClientPromise = undefined
+          throw error
+        })
+    }
+
+    return this.fliptClientPromise
+  }
+
   async getFlags(context: { username?: string }): Promise<FeatureFlags> {
-    const fliptClient = await FliptClient.init({
-      namespace: config.flipt.namespace,
-      url: config.flipt.url,
-      updateInterval: 120,
-    })
+    const fliptClient = await this.getClient()
 
     const featureFlags = new FeatureFlags()
     const flagList = Object.entries(featureFlagKeys)
@@ -33,5 +64,12 @@ export default class FlagService {
       }
     }
     return featureFlags
+  }
+
+  close(): void {
+    this.closed = true
+    this.fliptClient?.close()
+    this.fliptClient = undefined
+    this.fliptClientPromise = undefined
   }
 }
