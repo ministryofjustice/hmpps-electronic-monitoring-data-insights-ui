@@ -2,7 +2,7 @@
   "extends": "@tsconfig/node22/tsconfig.json",
   "compileOnSave": true,
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "es2018"],
+    "lib": ["dom", "dom.iterable", "es2022"],
     "outDir": "./dist",
     "sourceMap": true,
     "noEmit": false,
