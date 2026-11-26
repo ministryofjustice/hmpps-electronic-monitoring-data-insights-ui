@@ -33,15 +33,13 @@ export default function createApp(services: Services): express.Application {
   app.set('trust proxy', 1)
   app.set('port', process.env.PORT || 3000)
 
-  app.use(
-    emOrdnanceSurveyAuth({
-      apiKey: process.env.OS_MAPS_API_KEY!, // from Ordance Survey
-      apiSecret: process.env.OS_MAPS_API_SECRET!, // from Ordnance Survey
-      // Optional: Redis cache + expiry override
-      // redisClient, // connected redis client
-      // cacheExpiry: 3600, // seconds; default is 7 days in production, 0 in dev
-    }),
-  )
+  const osMapProxyAuth = emOrdnanceSurveyAuth({
+    apiKey: process.env.OS_MAPS_API_KEY!, // from Ordance Survey
+    apiSecret: process.env.OS_MAPS_API_SECRET!, // from Ordnance Survey
+    // Optional: Redis cache + expiry override
+    // redisClient, // connected redis client
+    // cacheExpiry: 3600, // seconds; default is 7 days in production, 0 in dev
+  })
   app.use(appInsightsMiddleware())
   app.use(setUpHealthChecks(services.applicationInfo as Parameters<typeof setUpHealthChecks>[0]))
   app.use(setUpWebSecurity())
@@ -58,6 +56,8 @@ export default function createApp(services: Services): express.Application {
   // Map clients request many tiles for a single page view. Keep these authenticated
   // requests ahead of page-only middleware that calls Flipt and the component API.
   app.use(satelliteMapRoutes(services.satelliteMapService))
+  // Keep access to the OS credentials behind authentication and role checks.
+  app.use(osMapProxyAuth)
 
   app.use(setTechnicalUpdatesBannerVisibility())
   app.use(evaluateFeatureFlags(services.flagService))
