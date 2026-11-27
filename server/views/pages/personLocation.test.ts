@@ -150,6 +150,20 @@ describe('personLocation template', () => {
     expect(html).not.toContain('name="crn"')
   })
 
+  it('renders a separate restriction card template with schedule and address rows', async () => {
+    const html = await renderPersonLocation({ enablePingCardsUpdate: true })
+    const pingBody = html.match(/<template id="overlay-body-mdss-location">([\s\S]*?)<\/template>/)?.[1]
+    const zoneBody = html.match(/<template id="overlay-body-mdss-restriction-zone">([\s\S]*?)<\/template>/)?.[1]
+
+    expect(pingBody).not.toContain('overlay-title-mdss-restriction-zone')
+    expect(html).toContain('data-exclusion-zone-title="Exclusion zone"')
+    expect(html).toContain('data-inclusion-zone-title="Inclusion zone"')
+    expect(zoneBody).toContain('Date, time')
+    expect(zoneBody).toContain('{{ restrictionZoneSchedule }}')
+    expect(zoneBody).toContain('Address')
+    expect(zoneBody).toContain('{{ restrictionZoneAddress }}')
+  })
+
   it('renders person details as a labelled region rather than a second header', async () => {
     const html = await renderPersonLocation()
 

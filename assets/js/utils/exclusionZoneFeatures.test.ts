@@ -11,10 +11,19 @@ describe('buildExclusionZoneFeatures', () => {
       [-0.09, 51.51],
       [-0.1, 51.5],
     ]
+    const schedule = {
+      scheduleType: 'SCHEDULED',
+      activeFrom: '2026-02-01',
+      activeTo: '2026-02-15',
+      applicableFrom: '09:00',
+      applicableTo: '17:00',
+      recurrence: { weekFrequency: 1, daysOfWeek: ['MONDAY'] },
+    }
     const features = buildExclusionZoneFeatures([
       {
         name: 'Polygon zone',
         address: '1 Test St',
+        schedule,
         geometry: { type: 'Polygon', coordinates: [boundary] },
       },
     ])
@@ -26,6 +35,7 @@ describe('buildExclusionZoneFeatures', () => {
     expect(geometry.getCoordinates()).toEqual([boundary.map(coordinate => fromLonLat(coordinate))])
     expect(feature.get('name')).toBe('Polygon zone')
     expect(feature.get('address')).toBe('1 Test St')
+    expect(feature.get('schedule')).toEqual(schedule)
   })
 
   it.each([100, 250])('renders a circular exclusion at the supplied centre with radius %s metres', radiusMetres => {

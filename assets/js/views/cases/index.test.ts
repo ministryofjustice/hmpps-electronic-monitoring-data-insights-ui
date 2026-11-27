@@ -29,6 +29,7 @@ interface MockOlMapInstance {
   getSize: jest.Mock
   getViewport: jest.Mock
   getInteractions: jest.Mock
+  forEachFeatureAtPixel: jest.Mock
 }
 
 interface MockEmMapElement {
@@ -43,6 +44,7 @@ interface MockEmMapElement {
 interface MockShadowRoot {
   adoptedStyleSheets: CSSStyleSheet[]
   querySelector: jest.Mock
+  addEventListener: jest.Mock
 }
 
 interface MockEmMapWithShadow extends MockEmMapElement {
@@ -69,7 +71,10 @@ jest.mock('@ministryofjustice/hmpps-electronic-monitoring-components/map/layers'
   TextLayer: jest.fn().mockImplementation(() => ({})),
 }))
 
-jest.mock('ol/extent', () => ({ isEmpty: jest.fn(() => true) }))
+jest.mock('ol/extent', () => ({
+  getCenter: jest.fn(([minX, minY, maxX, maxY]: number[]) => [(minX + maxX) / 2, (minY + maxY) / 2]),
+  isEmpty: jest.fn(() => true),
+}))
 jest.mock('ol/layer/Vector', () => jest.fn().mockImplementation(() => ({})))
 jest.mock('ol/source/Vector', () => jest.fn().mockImplementation(() => ({})))
 jest.mock('ol/Feature', () => jest.fn().mockImplementation(() => ({})))
@@ -110,7 +115,10 @@ describe('initialiseLocationDataView', () => {
       getView: jest.fn(() => ({
         fit: jest.fn(),
         getRotation: jest.fn(() => 0),
+        getResolution: jest.fn(() => 1),
+        animate: jest.fn(),
       })),
+      forEachFeatureAtPixel: jest.fn(),
       getSize: jest.fn(() => [800, 600]),
       getViewport: jest.fn(() => ({
         addEventListener: jest.fn(),
@@ -474,6 +482,90 @@ describe('initialiseLocationDataView', () => {
   })
 
   describe('Exclusion Zones and heatmap feature Flags', () => {
+    it.each([
+      {
+        zoneType: 'inclusion',
+        title: 'Inclusion zone',
+        schedule: {
+          activeFrom: '2026-02-01',
+          activeTo: '2026-02-15',
+          applicableFrom: '09:00:00',
+          applicableTo: '17:00:00',
+          recurrence: { daysOfWeek: ['MONDAY', 'TUESDAY'] },
+        },
+        expectedSchedule: '1 Feb 2026 - 15 Feb 2026<br>09:00 to 17:00<br>Monday, Tuesday',
+      },
+      { zoneType: 'exclusion', title: 'Exclusion zone', schedule: undefined, expectedSchedule: 'N/A' },
+    ])('opens the details card for a clicked $zoneType zone', ({ zoneType, title, schedule, expectedSchedule }) => {
+      const feature = Object.assign(new Feature(), {
+        getProperties: jest.fn(() => ({ name: 'Test zone', address: 'Station <East>', schedule })),
+        getGeometry: jest.fn(() => ({ getExtent: () => [0, 0, 10, 10] })),
+        setStyle: jest.fn(),
+      })
+      const features = [feature, { ...feature }, { ...feature }] as Feature[]
+      const showAtCoordinate = jest.fn()
+      const setPositioning = jest.fn()
+      const setOffset = jest.fn()
+      const overlay = { showAtCoordinate, setPositioning, setOffset }
+      mockMap.getInteractions.mockReturnValue({ getArray: () => [{ overlay }] })
+      mockMapContainer.dataset.enableExclusionZones = 'true'
+      mockMapContainer.dataset[`${zoneType}ZoneTitle`] = title
+      mockMapContainer.dataset[`${zoneType}Zones`] = '[]'
+      jest.mocked(buildExclusionZoneFeatures).mockReturnValueOnce(features)
+
+      initialiseLocationDataView()
+
+      const layer = jest.mocked(VectorLayer).mock.results.at(-1)?.value
+      mockMap.forEachFeatureAtPixel.mockImplementation((_pixel, callback, options) => {
+        expect(options.layerFilter(layer)).toBe(true)
+        expect(options.layerFilter({})).toBe(false)
+        return callback(feature, layer)
+      })
+      const handleClick = mockMap.on.mock.calls.find(([event]) => event === 'singleclick')?.[1]
+      handleClick({ pixel: [10, 20], coordinate: [100, 200] })
+
+      expect(setPositioning).toHaveBeenLastCalledWith('bottom-center')
+      expect(setOffset).toHaveBeenLastCalledWith([0, -24])
+
+      expect(showAtCoordinate).toHaveBeenCalledWith([100, 200], {
+        overlayTitleTemplateId: 'overlay-title-mdss-restriction-zone',
+        overlayBodyTemplateId: 'overlay-body-mdss-restriction-zone',
+        restrictionZoneCardTitle: title,
+        restrictionZoneIndex: '1',
+        restrictionZoneTotal: '3',
+        restrictionZoneFirstDisplay: 'none',
+        restrictionZonePreviousDisplay: 'none',
+        restrictionZoneNextDisplay: 'inline-flex',
+        restrictionZoneLastDisplay: 'inline-flex',
+        restrictionZoneSchedule: expectedSchedule,
+        restrictionZoneAddress: 'Station &lt;East&gt;',
+      })
+
+      const zoneNavigation = (mockEmMap.shadowRoot?.addEventListener as jest.Mock).mock.calls
+        .filter(([eventName]) => eventName === 'click')
+        .at(-1)?.[1]
+      const nextButton = { dataset: { zoneNav: 'next' } }
+      zoneNavigation({
+        target: { closest: () => nextButton },
+        preventDefault: jest.fn(),
+      })
+
+      expect(showAtCoordinate).toHaveBeenLastCalledWith(
+        [5, 5],
+        expect.objectContaining({
+          restrictionZoneIndex: '2',
+          restrictionZoneFirstDisplay: 'inline-flex',
+          restrictionZonePreviousDisplay: 'inline-flex',
+          restrictionZoneNextDisplay: 'inline-flex',
+          restrictionZoneLastDisplay: 'inline-flex',
+        }),
+      )
+
+      overlay.showAtCoordinate([1, 2], { overlayBodyTemplateId: 'overlay-body-mdss-location' })
+      expect(setPositioning).toHaveBeenLastCalledWith('top-center')
+      expect(setOffset).toHaveBeenLastCalledWith([0, 0])
+    })
+
     it.each([
       {
         type: 'Polygon',

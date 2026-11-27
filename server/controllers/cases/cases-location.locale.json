@@ -12,7 +12,10 @@
     "latLng": "Lat, Long",
     "speed": "Speed",
     "geolocationMechanism": "Signal type",
-    "tagStatus": "Tag status"
+    "tagStatus": "Tag status",
+    "exclusionZone": "Exclusion zone",
+    "inclusionZone": "Inclusion zone",
+    "address": "Address"
   },
   "links": {
     "mapHelp": "Guide to the map"
