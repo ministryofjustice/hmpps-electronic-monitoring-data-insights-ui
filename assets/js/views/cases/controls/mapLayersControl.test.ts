@@ -130,6 +130,25 @@ describe('MapLayersControl', () => {
       expect(closeBtn).toHaveAttribute('aria-expanded', 'true')
     })
 
+    it('renders Map View and Map Controls as expanded accordions', () => {
+      const mapViewTrigger = mapContainer.querySelector<HTMLButtonElement>('[aria-controls="mlc-map-view-content"]')!
+      const mapControlsTrigger = mapContainer.querySelector<HTMLButtonElement>(
+        '[aria-controls="mlc-map-controls-content"]',
+      )!
+
+      expect(mapViewTrigger).toHaveTextContent('Map View')
+      expect(mapViewTrigger).toHaveAttribute('aria-expanded', 'true')
+      expect(mapContainer.querySelector('#mlc-map-view-content')).not.toHaveAttribute('hidden')
+      expect(mapControlsTrigger).toHaveTextContent('Map Controls')
+      expect(mapControlsTrigger).toHaveAttribute('aria-expanded', 'true')
+      expect(mapContainer.querySelector('#mlc-map-controls-content')).not.toHaveAttribute('hidden')
+
+      mapControlsTrigger.click()
+
+      expect(mapControlsTrigger).toHaveAttribute('aria-expanded', 'false')
+      expect(mapContainer.querySelector('#mlc-map-controls-content')).toHaveAttribute('hidden')
+    })
+
     it('hides decorative dividers from assistive technology', () => {
       const dividers = mapContainer.querySelectorAll('.mlc-panel__divider')
 
@@ -330,7 +349,7 @@ describe('MapLayersControl', () => {
       new MapLayersControl({ ...opts, enableHeatmap: true })
 
       expect(localContainer.querySelector('#mlc-heatmap')).toBe(null)
-      expect(localContainer.querySelector('.mlc-collapsible-trigger')).toBeTruthy()
+      expect(localContainer.querySelector('[aria-controls="mlc-heatmap-content"]')).toBeTruthy()
       expect(localContainer.querySelectorAll('[data-heatmap-level]')).toHaveLength(4)
     })
 
@@ -341,7 +360,7 @@ describe('MapLayersControl', () => {
       new MapLayersControl({ ...opts, enableHeatmap: false })
 
       expect(localContainer.querySelector('#mlc-heatmap')).toBe(null)
-      expect(localContainer.querySelector('.mlc-collapsible-trigger')).toBe(null)
+      expect(localContainer.querySelector('#mlc-heatmap-content')).toBe(null)
     })
 
     it('does not bind or throw when heatmapLayer is provided but enableHeatmap is false', () => {
@@ -426,7 +445,8 @@ describe('MapLayersControl', () => {
   })
 
   describe('heatmap section', () => {
-    const trigger = (container: HTMLElement) => container.querySelector('.mlc-collapsible-trigger') as HTMLButtonElement
+    const trigger = (container: HTMLElement) =>
+      container.querySelector('[aria-controls="mlc-heatmap-content"]') as HTMLButtonElement
 
     const content = (container: HTMLElement) => container.querySelector('#mlc-heatmap-content') as HTMLElement
 
@@ -445,15 +465,15 @@ describe('MapLayersControl', () => {
     it('does not render the section when enableHeatmap is false', () => {
       const { container } = setupHeatmap({ enableHeatmap: false })
 
-      expect(trigger(container)).toBe(null)
+      expect(container.querySelector('#mlc-heatmap-content')).toBe(null)
       expect(content(container)).toBe(null)
     })
 
-    it('starts expanded when the heatmap is on', () => {
+    it('starts collapsed when the heatmap is on', () => {
       const { container } = setupHeatmap()
 
-      expect(trigger(container)).toHaveAttribute('aria-expanded', 'true')
-      expect(content(container).hasAttribute('hidden')).toBe(false)
+      expect(trigger(container)).toHaveAttribute('aria-expanded', 'false')
+      expect(content(container).hasAttribute('hidden')).toBe(true)
     })
 
     it('keeps the activity levels expanded and usable when all levels are off', () => {
@@ -461,22 +481,22 @@ describe('MapLayersControl', () => {
         initialState: { heatmapLevels: { veryHigh: false, high: false, medium: false, low: false } },
       })
 
-      expect(trigger(container)).toHaveAttribute('aria-expanded', 'true')
-      expect(content(container).hasAttribute('hidden')).toBe(false)
+      expect(trigger(container)).toHaveAttribute('aria-expanded', 'false')
+      expect(content(container).hasAttribute('hidden')).toBe(true)
       expect(container.querySelector('#mlc-heatmap')).toBe(null)
       allLevels.forEach(level => expect(levelInput(container, level)).toBeTruthy())
     })
 
-    it('collapses and expands when the trigger is clicked', () => {
+    it('expands and collapses when the trigger is clicked', () => {
       const { container } = setupHeatmap()
-
-      trigger(container).click()
-      expect(trigger(container)).toHaveAttribute('aria-expanded', 'false')
-      expect(content(container).hasAttribute('hidden')).toBe(true)
 
       trigger(container).click()
       expect(trigger(container)).toHaveAttribute('aria-expanded', 'true')
       expect(content(container).hasAttribute('hidden')).toBe(false)
+
+      trigger(container).click()
+      expect(trigger(container)).toHaveAttribute('aria-expanded', 'false')
+      expect(content(container).hasAttribute('hidden')).toBe(true)
     })
 
     it('does not change any control state or notify when collapsed', () => {
@@ -662,7 +682,7 @@ describe('MapLayersControl', () => {
 
     it('remembers level selections while the section is collapsed and expanded', () => {
       const { container, onHeatmapLevelsChange } = setupHeatmap()
-      const trigger = container.querySelector<HTMLButtonElement>('.mlc-collapsible-trigger')!
+      const trigger = container.querySelector<HTMLButtonElement>('[aria-controls="mlc-heatmap-content"]')!
 
       uncheck(levelInput(container, 'high'))
       trigger.click()
@@ -685,17 +705,17 @@ describe('MapLayersControl', () => {
   })
 
   describe('enableExclusionZones', () => {
-    it('renders the Zones accordion and separate checkbox counts when enabled', () => {
+    it('renders the Zones accordion with exclusion and inclusion labels when enabled', () => {
       const opts = makeOpts(makeMockMap())
       const localContainer = opts.mapContainer
 
-      new MapLayersControl({ ...opts, enableExclusionZones: true, exclusionCount: 2, inclusionCount: 3 })
+      new MapLayersControl({ ...opts, enableExclusionZones: true })
 
       expect(localContainer.querySelector('#mlc-exclusion-content')).toBeTruthy()
       expect(localContainer.querySelector('#mlc-restriction-exclusion')).toBeTruthy()
       expect(localContainer.querySelector('#mlc-restriction-inclusion')).toBeTruthy()
-      expect(localContainer.querySelector('label[for="mlc-restriction-exclusion"]')).toHaveTextContent('Exclusion (2)')
-      expect(localContainer.querySelector('label[for="mlc-restriction-inclusion"]')).toHaveTextContent('Inclusion (3)')
+      expect(localContainer.querySelector('label[for="mlc-restriction-exclusion"]')).toHaveTextContent('Exclusion')
+      expect(localContainer.querySelector('label[for="mlc-restriction-inclusion"]')).toHaveTextContent('Inclusion')
       expect(localContainer.querySelector('#mlc-exclusion-content .govuk-checkboxes--small')).toHaveAttribute(
         'data-module',
         'govuk-checkboxes',

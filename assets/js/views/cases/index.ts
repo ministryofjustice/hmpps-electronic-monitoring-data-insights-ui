@@ -384,8 +384,6 @@ const initialiseLocationDataView = () => {
       enableHeatmap: mapContainer.dataset.enableHeatmap === 'true',
       exclusionLayer,
       inclusionLayer,
-      exclusionCount: exclusionFeatures.length,
-      inclusionCount: inclusionFeatures.length,
       enableExclusionZones,
       initialState: mapControlState,
       onHeatmapLevelsChange: levels => olHeatmapLayer.setLevels(levels),

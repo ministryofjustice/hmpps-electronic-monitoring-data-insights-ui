@@ -210,9 +210,7 @@ describe('initialiseLocationDataView', () => {
     const inclusionLayer = jest.mocked(VectorLayer).mock.results.at(-1)?.value
     expect(mockMap.addLayer).toHaveBeenCalledWith(exclusionLayer)
     expect(mockMap.addLayer).toHaveBeenCalledWith(inclusionLayer)
-    expect(MapLayersControl).toHaveBeenCalledWith(
-      expect.objectContaining({ exclusionLayer, inclusionLayer, exclusionCount: 2, inclusionCount: 1 }),
-    )
+    expect(MapLayersControl).toHaveBeenCalledWith(expect.objectContaining({ exclusionLayer, inclusionLayer }))
   })
 
   it('passes zero exclusion and inclusion counts when restriction data is unavailable', () => {
@@ -223,7 +221,9 @@ describe('initialiseLocationDataView', () => {
 
     initialiseLocationDataView()
 
-    expect(MapLayersControl).toHaveBeenCalledWith(expect.objectContaining({ exclusionCount: 0, inclusionCount: 0 }))
+    expect(MapLayersControl).toHaveBeenCalledWith(
+      expect.not.objectContaining({ exclusionCount: expect.anything(), inclusionCount: expect.anything() }),
+    )
   })
 
   it('should add TracksLayer with visible set to true', () => {

@@ -18,12 +18,15 @@ export const mapFullscreenStyles = `
     height: 38px;
     margin: 0;
     padding: 0;
-    border: 1px solid var(--govuk-text-colour, #0b0c0c);
+    border: 1px solid var(--govuk-border-colour, #cecece);
     background: var(--emdi-map-control-background, #ffffff);
     color: var(--govuk-text-colour, #0b0c0c);
     cursor: pointer;
   }
 
+  :host .ol-zoom button {
+    border-color: var(--govuk-border-colour, #cecece) !important;
+  }
 
 
   .emdi-map-fullscreen-toggle__icon {

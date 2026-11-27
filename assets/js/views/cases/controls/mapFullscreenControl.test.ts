@@ -12,6 +12,9 @@ describe('MapFullscreenControl', () => {
     expect(mapFullscreenStyles).toContain('color: var(--govuk-text-colour, #0b0c0c)')
     expect(mapFullscreenStyles).toContain('stroke: currentColor')
     expect(mapFullscreenStyles).toContain('background: var(--emdi-map-control-background, #ffffff)')
+    expect(mapFullscreenStyles).toContain('border: 1px solid var(--govuk-border-colour, #cecece)')
+    expect(mapFullscreenStyles).toContain(':host .ol-zoom button')
+    expect(mapFullscreenStyles).toContain('border-color: var(--govuk-border-colour, #cecece) !important')
   })
 
   beforeEach(() => {

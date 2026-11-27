@@ -32,8 +32,6 @@ interface MapLayersControlOptions {
   heatmapLayer?: ComposableLayer<BaseLayer | BaseLayer[]>
   exclusionLayer?: BaseLayer
   inclusionLayer?: BaseLayer
-  exclusionCount?: number
-  inclusionCount?: number
   enableHeatmap?: boolean
   enableExclusionZones?: boolean
   mapContainer: HTMLElement
@@ -120,14 +118,16 @@ export default class MapLayersControl extends Control {
                 <input class="govuk-checkboxes__input" id="mlc-restriction-${item}" type="checkbox"
                   data-restriction-level="${item}" ${state[item] ? 'checked' : ''}>
                 <label class="govuk-label govuk-checkboxes__label" for="mlc-restriction-${item}">
-                  ${item[0].toUpperCase()}${item.slice(1)} (${item === 'exclusion' ? (opts.exclusionCount ?? 0) : (opts.inclusionCount ?? 0)})
+                  ${item[0].toUpperCase()}${item.slice(1)}
                 </label>
               </div>`,
       )
       .join('')
 
-    const heatmapExpanded = true
-    const exclusionExpanded = true
+    const mapViewExpanded = true
+    const mapControlsExpanded = true
+    const heatmapExpanded = false
+    const exclusionExpanded = false
 
     panel.innerHTML = `
       <div class="govuk-form-group govuk-!-margin-bottom-0">
@@ -144,22 +144,34 @@ export default class MapLayersControl extends Control {
           </button>
         </div>
         
-        <fieldset class="govuk-fieldset">
-            <span class="govuk-fieldset__heading govuk-!-font-weight-bold">Map View</span>
-            <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+        <div class="govuk-form-group govuk-!-margin-bottom-0 mlc-map-view">
+          <button type="button" class="mlc-collapsible-trigger" aria-controls="mlc-map-view-content"
+            aria-expanded="${mapViewExpanded}">
+            <span class="mlc-collapsible-icon" aria-hidden="true"></span>
+            <span class="mlc-collapsible-title">Map View</span>
+          </button>
+          <div class="mlc-collapsible-content" id="mlc-map-view-content" ${mapViewExpanded ? '' : 'hidden'}>
+            <fieldset class="govuk-fieldset" aria-label="Map View">
+              <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
                 <div class="govuk-radios__item">
                   <input class="govuk-radios__input" id="mlc-base-street" name="mlc-base" type="radio" value="street" ${state.baseLayer === 'street' ? 'checked' : ''}>
                   <label class="govuk-label govuk-radios__label" for="mlc-base-street">Street</label>
                 </div>
-            </div>
-        </fieldset>
-     </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
 
       <hr class="govuk-section-break govuk-section-break--visible mlc-panel__divider" aria-hidden="true">
-      <div class="govuk-form-group govuk-!-margin-bottom-0">
-        <fieldset class="govuk-fieldset">
-            <span class="govuk-fieldset__heading govuk-!-font-weight-bold">Map Controls</span>
-          <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+      <div class="govuk-form-group govuk-!-margin-bottom-0 mlc-map-controls">
+        <button type="button" class="mlc-collapsible-trigger" aria-controls="mlc-map-controls-content"
+          aria-expanded="${mapControlsExpanded}">
+          <span class="mlc-collapsible-icon" aria-hidden="true"></span>
+          <span class="mlc-collapsible-title">Map Controls</span>
+        </button>
+        <div class="mlc-collapsible-content" id="mlc-map-controls-content" ${mapControlsExpanded ? '' : 'hidden'}>
+          <fieldset class="govuk-fieldset" aria-label="Map Controls">
+            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
               <input class="govuk-checkboxes__input" id="mlc-tracks" type="checkbox" ${state.tracks ? 'checked' : ''}>
               <label class="govuk-label govuk-checkboxes__label" for="mlc-tracks">Direction of travel</label>
@@ -178,8 +190,9 @@ export default class MapLayersControl extends Control {
 `
                 : ``
             }
-          </div>
-        </fieldset>
+            </div>
+          </fieldset>
+        </div>
       </div>
       ${
         opts.enableHeatmap
